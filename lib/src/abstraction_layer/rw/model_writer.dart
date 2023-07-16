@@ -124,6 +124,22 @@ mixin ComponentWriter on ModelWriter {
     _canvasModel.updateLinks(componentId);
   }
 
+  /// Translates the component's vertex by [offset] value.
+  moveVertex(String componentId, Offset vertex, Offset offset) {
+    assert(_canvasModel.componentExists(componentId),
+        'model does not contain this component id: $componentId');
+    _canvasModel.getComponent(componentId).moveVertex(vertex, offset / _canvasState.scale);
+    _canvasModel.updateLinks(componentId);
+  }
+
+  /// Translates the component's vertex by [offset] value.
+  addVertex(String componentId, Offset vertex, int index) {
+    assert(_canvasModel.componentExists(componentId),
+    'model does not contain this component id: $componentId');
+    _canvasModel.getComponent(componentId).addVertex(vertex, index);
+    _canvasModel.updateLinks(componentId);
+  }
+
   /// Translates the component by [offset] value and all its children as well.
   moveComponentWithChildren(String componentId, Offset offset) {
     assert(_canvasModel.componentExists(componentId),

@@ -19,7 +19,7 @@ class LinkJointPainter extends CustomPainter {
       ..color = color
       ..style = PaintingStyle.fill;
 
-    canvas.drawCircle(location, scale * radius, paint);
+    //canvas.drawCircle(location, scale * radius, paint);
   }
 
   @override

@@ -22,5 +22,6 @@ export 'src/canvas_context/model/link_data.dart';
 export 'src/utils/link_style.dart';
 export 'src/utils/painter/grid_painter.dart';
 export 'src/utils/painter/rect_highlight_painter.dart';
+export 'src/utils/painter/polygon_highlight_painter.dart';
 export 'src/utils/vector_utils.dart';
 export 'src/widget/editor.dart';
