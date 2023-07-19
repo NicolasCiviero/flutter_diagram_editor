@@ -49,8 +49,16 @@ class ComponentData with ChangeNotifier {
   /// Each point's position is related to the current [position].
   List<Offset> vertices = [];
 
+  Color color;
+  Color borderColor;
+  double borderWidth;
+  String text;
+  Alignment textAlignment;
+  double textSize;
+  bool isHighlightVisible = false;
+
   /// Dynamic data for you to define your own data for this component.
-  final dynamic data;
+  dynamic data;
 
   /// Represents data of a component in the model.
   ComponentData({
@@ -61,6 +69,12 @@ class ComponentData with ChangeNotifier {
     this.minSize = const Size(4, 4),
     this.type,
     this.data,
+    this.color = Colors.white,
+    this.borderColor = Colors.black,
+    this.borderWidth = 0.0,
+    this.text = '',
+    this.textAlignment = Alignment.center,
+    this.textSize = 20,
   })  : assert(minSize <= size),
         this.id = id ?? Uuid().v4();
 
@@ -81,31 +95,12 @@ class ComponentData with ChangeNotifier {
   }
 
   /// Translates component's vertex by [offset] value.
-  moveVertex(Offset vertex, Offset offset) {
+  moveVertex(Offset vertex, Offset newPosition) {
     for (int i = 0; i < vertices.length; i++){
       if (vertices[i] == vertex){
-        vertices[i] += offset;
+        vertices[i] = newPosition - position;
 
-        double minX=double.infinity, minY=double.infinity, maxX=0, maxY=0;
-        for (int i = 0; i < vertices.length; i++) {
-          if (vertices[i].dx < minX) minX = vertices[i].dx;
-          if (vertices[i].dy < minY) minY = vertices[i].dy;
-          if (vertices[i].dx > maxX) maxX = vertices[i].dx;
-          if (vertices[i].dy > maxY) maxY = vertices[i].dy;
-        }
-        if (minX != 0) {
-          var componentOffset = Offset(minX, 0);
-          this.position += componentOffset;
-          for (int i = 0; i < vertices.length; i++) vertices[i] -= componentOffset;
-        }
-        if (minY != 0) {
-          var componentOffset = Offset(0, minY);
-          this.position += componentOffset;
-          for (int i = 0; i < vertices.length; i++) vertices[i] -= componentOffset;
-        }
-
-        size = new Size(maxX - minX, maxY - minY);
-
+        updateComponentPositionAndSize();
         notifyListeners();
         return;
       }
@@ -115,6 +110,28 @@ class ComponentData with ChangeNotifier {
   addVertex(Offset vertex, int position) {
     if (position == vertices.length) vertices.add(vertex);
     else vertices.insert(position, vertex);
+  }
+
+  updateComponentPositionAndSize() {
+    double minX=double.infinity, minY=double.infinity, maxX=0, maxY=0;
+    for (int i = 0; i < vertices.length; i++) {
+      if (vertices[i].dx < minX) minX = vertices[i].dx;
+      if (vertices[i].dy < minY) minY = vertices[i].dy;
+      if (vertices[i].dx > maxX) maxX = vertices[i].dx;
+      if (vertices[i].dy > maxY) maxY = vertices[i].dy;
+    }
+    if (minX != 0) {
+      var componentOffset = Offset(minX, 0);
+      this.position += componentOffset;
+      for (int i = 0; i < vertices.length; i++) vertices[i] -= componentOffset;
+    }
+    if (minY != 0) {
+      var componentOffset = Offset(0, minY);
+      this.position += componentOffset;
+      for (int i = 0; i < vertices.length; i++) vertices[i] -= componentOffset;
+    }
+
+    size = new Size(maxX - minX, maxY - minY);
   }
 
   /// Sets the position of the component to [position] value.
@@ -204,6 +221,23 @@ class ComponentData with ChangeNotifier {
     childrenIds.remove(childId);
   }
 
+  /// Create a copy of this ComponentData
+  ComponentData clone(){
+    return ComponentData(
+      position: this.position,
+      size: this.size,
+      minSize: this.minSize,
+      type: this.type,
+      vertices: this.vertices.map<Offset>((e) => Offset(e.dx, e.dy)).toList(),
+      color: this.color,
+      borderColor: this.borderColor,
+      borderWidth: this.borderWidth,
+      text: this.text,
+      textAlignment: this.textAlignment,
+      textSize: this.textSize,
+    );
+  }
+
   @override
   String toString() {
     return 'Component data ($id), position: $position';
@@ -219,6 +253,12 @@ class ComponentData with ChangeNotifier {
         type = json['type'],
         zOrder = json['z_order'],
         parentId = json['parent_id'],
+        color = json['color,'],
+        borderColor = json['borderColor'],
+        borderWidth = json['borderWidth'],
+        text = json['text'],
+        textAlignment = json['textAlignment'],
+        textSize = json['textSize'],
         data = decodeCustomComponentData?.call(json['dynamic_data']) {
     this.childrenIds.addAll(
         (json['children_ids'] as List).map((id) => id as String).toList());
@@ -236,6 +276,13 @@ class ComponentData with ChangeNotifier {
         'parent_id': parentId,
         'children_ids': childrenIds,
         'connections': connections,
+        //'vertices': vertices,
+        'color': color,
+        'borderColor': borderColor,
+        'borderWidth': borderWidth,
+        'text': text,
+        'textAlignment': textAlignment,
+        'textSize': textSize,
         'dynamic_data': data?.toJson(),
       };
 }

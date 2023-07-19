@@ -124,11 +124,11 @@ mixin ComponentWriter on ModelWriter {
     _canvasModel.updateLinks(componentId);
   }
 
-  /// Translates the component's vertex by [offset] value.
-  moveVertex(String componentId, Offset vertex, Offset offset) {
+  /// Moves the component's vertex to [vertexLocation] value.
+  moveVertex(String componentId, Offset vertex, Offset vertexLocation) {
     assert(_canvasModel.componentExists(componentId),
         'model does not contain this component id: $componentId');
-    _canvasModel.getComponent(componentId).moveVertex(vertex, offset / _canvasState.scale);
+    _canvasModel.getComponent(componentId).moveVertex(vertex, vertexLocation);
     _canvasModel.updateLinks(componentId);
   }
 
