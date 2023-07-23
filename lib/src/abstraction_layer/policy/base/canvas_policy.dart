@@ -1,10 +1,21 @@
+import 'package:diagram_editor/src/abstraction_layer/policy/base/state_policy.dart';
 import 'package:diagram_editor/src/abstraction_layer/policy/base_policy_set.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 /// Allows you to define the canvas behaviour on any gesture registered by the [Canvas].
-mixin CanvasPolicy on BasePolicySet {
-  onCanvasTap() {}
+mixin CanvasPolicy implements StatePolicy {
+  onCanvasTap() {
+    multipleSelected = [];
+
+    if (isReadyToConnect) {
+      isReadyToConnect = false;
+      canvasWriter.model.updateComponent(selectedComponentId);
+    } else {
+      selectedComponentId = null;
+      hideAllHighlights();
+    }
+  }
 
   onCanvasTapDown(TapDownDetails details) {}
 

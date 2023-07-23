@@ -28,7 +28,8 @@ class CanvasModel with ChangeNotifier {
     notifyListeners();
   }
 
-  bool componentExists(String id) {
+  bool componentExists(String? id) {
+    if (id == null) return false;
     return components.containsKey(id);
   }
 

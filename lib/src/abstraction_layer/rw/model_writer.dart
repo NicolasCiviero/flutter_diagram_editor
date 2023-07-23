@@ -102,10 +102,11 @@ mixin ComponentWriter on ModelWriter {
   /// Update a component with [componentId].
   ///
   /// It calls [notifyListeners] function of [ChangeNotifier] on [ComponentData].
-  updateComponent(String componentId) {
+  updateComponent(String? componentId) {
     assert(_canvasModel.componentExists(componentId),
         'model does not contain this component id: $componentId');
-    _canvasModel.getComponent(componentId).updateComponent();
+    if (componentId == null) return;
+    _canvasModel.getComponent(componentId!).updateComponent();
   }
 
   /// Sets the position of the component to [position] value.
