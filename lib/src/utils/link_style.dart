@@ -90,6 +90,8 @@ class LinkStyle {
       case LineType.dotted:
         return getDashedLinePath(
             point1, point2, scale, lineWidth, lineWidth * 5);
+      default:
+        return getSolidLinePath(point1, point2);
     }
   }
 
@@ -159,7 +161,8 @@ class LinkStyle {
     return path;
   }
 
-  double getEndShortening(ArrowType arrowType) {
+  double getEndShortening(ArrowType? arrowType) {
+    if (arrowType == null) return 0;
     double eps = 0.05;
     switch (arrowType) {
       case ArrowType.none:
@@ -233,9 +236,9 @@ class LinkStyle {
         color = Color(int.parse(json['color'], radix: 16));
 
   Map<String, dynamic> toJson() => {
-        'line_type': lineType.index,
-        'arrow_type': arrowType.index,
-        'back_arrow_type': backArrowType.index,
+        'line_type': lineType?.index,
+        'arrow_type': arrowType?.index,
+        'back_arrow_type': backArrowType?.index,
         'arrow_size': arrowSize,
         'back_arrow_size': backArrowSize,
         'line_width': lineWidth,

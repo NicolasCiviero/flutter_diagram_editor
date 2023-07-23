@@ -84,7 +84,7 @@ mixin StatePolicy on BasePolicySet {
   }
 }
 
-mixin CustomBehaviourPolicy implements PolicySet, StatePolicy {
+mixin CustomBehaviourPolicy implements StatePolicy {
   removeAll() {
     canvasWriter.model.removeAllComponents();
   }
