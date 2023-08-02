@@ -29,6 +29,8 @@ class CanvasStateReader {
   /// A base color of the canvas.
   Color get color => canvasState.color;
 
+  double get finalScale => canvasState.canvasFinalScale();
+
   /// Calculates position from Canvas to use it in the model.
   ///
   /// Use when you have localPosition or localOffset from widget on canvas to get real (translated and scaled) coordinates on canvas.
@@ -42,5 +44,20 @@ class CanvasStateReader {
   /// Usually in [ComponentWidgetsPolicy] or [LinkWidgetsPolicy].
   Offset toCanvasCoordinates(Offset position) {
     return canvasState.toCanvasCoordinates(position);
+  }
+
+  /// Calculates position from Canvas to use it in the model, uses the image resize factor.
+  ///
+  /// Use when you have localPosition or localOffset from widget on canvas to get real (translated and scaled) coordinates on canvas.
+  Offset fromCanvasFinalCoordinates(Offset position) {
+    return canvasState.fromCanvasFinalCoordinates(position);
+  }
+
+  /// Calculates position from the model to use it on Canvas, uses the image resize factor.
+  ///
+  /// Use when you want to set widget's position on scaled or translated canvas, eg. in Positioned widget (top, left).
+  /// Usually in [ComponentWidgetsPolicy] or [LinkWidgetsPolicy].
+  Offset toCanvasFinalCoordinates(Offset position) {
+    return canvasState.toCanvasFinalCoordinates(position);
   }
 }

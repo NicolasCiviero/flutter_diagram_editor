@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
+import 'dart:ui' as ui;
 
 class CanvasState with ChangeNotifier {
   Offset _position = Offset(0, 0);
@@ -7,7 +9,30 @@ class CanvasState with ChangeNotifier {
   double mouseScaleSpeed = 0.8;
 
   double maxScale = 8.0;
-  double minScale = 0.1;
+  double minScale = 1.0;
+
+  ui.Image? _image;
+  Size _imageSize = Size(0,0);
+  ui.Image? get image => _image;
+  Size get imageSize => _imageSize;
+  setImage(ui.Image image) {
+    _image = image;
+    _imageSize = Size(image.width.toDouble(), image.height.toDouble());
+  }
+
+  Size? canvasSize() {
+    final RenderBox renderBox = canvasGlobalKey.currentContext?.findRenderObject() as RenderBox;
+    if (renderBox == null) return null;
+    return renderBox.size;
+  }
+  double canvasAutoScale() {
+    var size = canvasSize();
+    if (size == null) return 1;
+    return min(size!.height / imageSize.height, size!.width / imageSize.width);
+  }
+  double canvasFinalScale() {
+    return _scale * canvasAutoScale();
+  }
 
   Color color = Colors.white;
 
@@ -27,6 +52,7 @@ class CanvasState with ChangeNotifier {
 
   setPosition(Offset position) {
     _position = position;
+    _verifyPosition();
   }
 
   setScale(double scale) {
@@ -35,6 +61,32 @@ class CanvasState with ChangeNotifier {
 
   updatePosition(Offset offset) {
     _position += offset;
+    _verifyPosition();
+  }
+
+  _verifyPosition(){
+    var position = _position;
+    var canvas = canvasSize();
+    var img = imageSize * canvasFinalScale();
+    canvas ??= img;
+
+    var dx = position.dx;
+    var dy = position.dy;
+
+    if (img.width < canvas.width) dx = (canvas.width - img.width) / 2;
+    else {
+      dx = max(dx, canvas.width - img.width);
+      dx = min(dx, 0);
+    }
+
+    if (img.height < canvas.height) dy = (canvas.height - img.height) / 2;
+    else {
+      dy = max(dy, canvas.height - img.height);
+      dy = min(dy, 0);
+    }
+    position = Offset(dx, dy);
+
+    _position = position;
   }
 
   updateScale(double scale) {
@@ -53,5 +105,13 @@ class CanvasState with ChangeNotifier {
 
   Offset toCanvasCoordinates(Offset position) {
     return position * scale + this.position;
+  }
+
+  Offset fromCanvasFinalCoordinates(Offset position) {
+    return (position - this.position) / scale / canvasFinalScale();
+  }
+
+  Offset toCanvasFinalCoordinates(Offset position) {
+    return position * scale * canvasAutoScale() + this.position;
   }
 }

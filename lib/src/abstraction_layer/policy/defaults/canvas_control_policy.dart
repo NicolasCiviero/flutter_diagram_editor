@@ -1,6 +1,8 @@
 import 'package:diagram_editor/src/abstraction_layer/policy/base_policy_set.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'dart:math';
+import 'dart:ui' as ui;
 
 /// Optimized implementation of [CanvasPolicy].
 ///
@@ -40,24 +42,26 @@ mixin CanvasControlPolicy on BasePolicySet {
   }
 
   onCanvasScaleUpdate(ScaleUpdateDetails details) {
-    if (canUpdateCanvasModel) {
-      _animationController?.repeat();
-      _updateCanvasModelWithLastValues();
+    if (!canUpdateCanvasModel) return;
 
-      double previousScale = transformScale;
+    _animationController?.repeat();
+    _updateCanvasModelWithLastValues();
 
-      transformPosition += details.focalPoint - _lastFocalPoint;
-      transformScale = keepScaleInBounds(details.scale, _baseScale);
+    double previousScale = transformScale;
 
-      var focalPoint = (details.localFocalPoint - transformPosition);
-      var focalPointScaled = focalPoint * (transformScale / previousScale);
+    transformPosition += details.focalPoint - _lastFocalPoint;
+    transformScale = keepScaleInBounds(details.scale, _baseScale);
 
-      _lastFocalPoint = details.focalPoint;
+    var focalPoint = (details.localFocalPoint - transformPosition);
+    var focalPointScaled = focalPoint * (transformScale / previousScale);
 
-      transformPosition += focalPoint - focalPointScaled;
+    _lastFocalPoint = details.focalPoint;
 
-      _animationController?.reset();
-    }
+    transformPosition += focalPoint - focalPointScaled;
+
+    fitOffsetLimits();
+    _animationController?.reset();
+
   }
 
   onCanvasScaleEnd(ScaleEndDetails details) {
@@ -71,6 +75,30 @@ mixin CanvasControlPolicy on BasePolicySet {
     transformScale = 1.0;
 
     canvasWriter.state.updateCanvas();
+  }
+
+  fitOffsetLimits() {
+    var canvasState = canvasReader.state.canvasState;
+    var canvas = canvasState.canvasSize();
+    var img = canvasState.imageSize * canvasState.canvasFinalScale();
+    canvas ??= img;
+
+    var dx = transformPosition.dx;
+    var dy = transformPosition.dy;
+
+    if (img.width < canvas.width) dx = (canvas.width - img.width) / 2 - _basePosition.dx;
+    else {
+      dx = max(dx, - _basePosition.dx - img.width + canvas.width);
+      dx = min(dx, - _basePosition.dx);
+    }
+
+    if (img.height < canvas.height) dy = (canvas.height - img.height) / 2 - _basePosition.dy;
+    else {
+      dy = max(dy, - _basePosition.dy - img.height + canvas.height);
+      dy = min(dy, - _basePosition.dy);
+    }
+
+    transformPosition = Offset(dx, dy);
   }
 
   _updateCanvasModelWithLastValues() {
@@ -88,17 +116,14 @@ mixin CanvasControlPolicy on BasePolicySet {
 
       scaleChange = keepScaleInBounds(scaleChange, canvasReader.state.scale);
 
-      if (scaleChange == 0.0) {
-        return;
-      }
+      if (scaleChange == 0.0) return;
 
       double previousScale = canvasReader.state.scale;
 
       canvasWriter.state.updateScale(scaleChange);
 
       var focalPoint = (event.localPosition - canvasReader.state.position);
-      var focalPointScaled =
-          focalPoint * (canvasReader.state.scale / previousScale);
+      var focalPointScaled = focalPoint * (canvasReader.state.scale / previousScale);
 
       canvasWriter.state.updatePosition(focalPoint - focalPointScaled);
       canvasWriter.state.updateCanvas();

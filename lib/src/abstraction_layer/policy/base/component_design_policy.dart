@@ -10,10 +10,10 @@ mixin ComponentDesignPolicy on BasePolicySet {
   /// Returns a widget that specifies a design of this component.
   ///
   /// Recommendation: type can by used to determine what widget should be returned.
-  Widget? showComponentBody(ComponentData componentData) {
+  Widget? showComponentBody(ComponentData componentData, double scale) {
     switch (componentData.type) {
       case 'polygon':
-        return PolygonBody(componentData: componentData);
+        return PolygonBody(componentData: componentData, scale: scale);
         break;
       case 'rect':
         return RectBody(componentData: componentData);

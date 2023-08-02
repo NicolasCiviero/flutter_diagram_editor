@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:diagram_editor/diagram_editor.dart';
 
 /// Allows you to add any widget to the canvas.
-mixin CanvasWidgetsPolicy on BasePolicySet implements StatePolicy {
+mixin CanvasWidgetsPolicy on BasePolicySet implements StatePolicy, CanvasControlPolicy {
   /// Allows you to add any widget to the canvas.
   ///
   /// The widgets will be displayed under all components and links.
@@ -24,6 +24,7 @@ mixin CanvasWidgetsPolicy on BasePolicySet implements StatePolicy {
                 : 1.0,
             matchParentSize: false,
             lineColor: Colors.blue[900]!,
+            image: canvasReader.state.canvasState.image,
           ),
         ),
       ),
@@ -36,13 +37,10 @@ mixin CanvasWidgetsPolicy on BasePolicySet implements StatePolicy {
     ];
   }
 
-  _onAcceptWithDetails(
-      DragTargetDetails details,
-      BuildContext context,
-      ) {
+  _onAcceptWithDetails( DragTargetDetails details, BuildContext context) {
     final renderBox = context.findRenderObject() as RenderBox;
     final Offset localOffset = renderBox.globalToLocal(details.offset);
-    Offset componentPosition = canvasReader.state.fromCanvasCoordinates(localOffset);
+    Offset componentPosition = canvasReader.state.fromCanvasFinalCoordinates(localOffset);
 
     ComponentData componentData = details.data;
     var componentDataCopy = componentData.clone();

@@ -1,4 +1,9 @@
+import 'dart:async';
+import 'dart:ui' as ui;
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class GridPainter extends CustomPainter {
   final double lineWidth;
@@ -17,6 +22,8 @@ class GridPainter extends CustomPainter {
 
   final bool isAntiAlias;
   final bool matchParentSize;
+  final ui.Image? image;
+
 
   /// Paints a grid.
   ///
@@ -33,10 +40,12 @@ class GridPainter extends CustomPainter {
     this.lineLength = 1e4,
     this.isAntiAlias = true,
     this.matchParentSize = true,
-  });
+    this.image,
+  }) { }
 
   @override
   void paint(Canvas canvas, Size size) {
+
     var lineHorizontalLength;
     var lineVerticalLength;
     if (matchParentSize) {
@@ -81,8 +90,21 @@ class GridPainter extends CustomPainter {
         );
       }
     }
+
+
+    if (image != null) {
+      var imageScale = min(size.height / image!.height, size.width / image!.width);
+      var finalScale = imageScale * scale;
+      var scaledOffset = offset * scale;
+      var imageRect = Rect.fromLTWH(scaledOffset.dx, scaledOffset.dy,
+          image!.width * finalScale, image!.height * finalScale);
+      paintImage(canvas: canvas, rect: imageRect, image: image!, scale: 1/finalScale);
+    }
+
   }
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => true;
+
+
 }

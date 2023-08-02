@@ -18,14 +18,12 @@ class Component extends StatelessWidget {
   Widget build(BuildContext context) {
     final componentData = Provider.of<ComponentData>(context);
     final canvasState = Provider.of<CanvasState>(context);
-
+    final position = canvasState.toCanvasFinalCoordinates(componentData.position);
     return Positioned(
-      left: canvasState.scale * componentData.position.dx +
-          canvasState.position.dx,
-      top: canvasState.scale * componentData.position.dy +
-          canvasState.position.dy,
-      width: canvasState.scale * componentData.size.width,
-      height: canvasState.scale * componentData.size.height,
+      left: position.dx,
+      top: position.dy,
+      width: canvasState.canvasFinalScale() * componentData.size.width,
+      height: canvasState.canvasFinalScale() * componentData.size.height,
       child: Listener(
         onPointerSignal: (PointerSignalEvent event) {
           policy.onComponentPointerSignal(componentData.id, event);
@@ -38,11 +36,10 @@ class Component extends StatelessWidget {
               Positioned(
                 left: 0,
                 top: 0,
-                width: componentData.size.width,
-                height: componentData.size.height,
+                width: componentData.size.width * canvasState.canvasFinalScale(),
+                height: componentData.size.height * canvasState.canvasFinalScale(),
                 child: Container(
-                  transform: Matrix4.identity()..scale(canvasState.scale),
-                  child: policy.showComponentBody(componentData),
+                  child: policy.showComponentBody(componentData, canvasState.canvasFinalScale()),
                 ),
               ),
               policy.showCustomWidgetWithComponentData(context, componentData),

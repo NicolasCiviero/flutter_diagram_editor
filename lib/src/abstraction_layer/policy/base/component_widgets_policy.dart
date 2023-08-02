@@ -44,8 +44,8 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
       visible: componentData.isHighlightVisible,
       child: Stack(
         children: [
-          if (showOptions) componentTopOptions(componentData, context),
-          if (showOptions) componentBottomOptions(componentData),
+          //if (showOptions) componentTopOptions(componentData, context),
+          //if (showOptions) componentBottomOptions(componentData),
           highlight( componentData, isMultipleSelectionOn ? Colors.cyan : Colors.red),
           if (isPolygon) ...appendVertices(componentData),
           if (isPolygon) ...dragVertices(componentData),
@@ -154,35 +154,14 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
   }
 
   Widget highlight(ComponentData componentData, Color color) {
-    // if (componentData.type == "polygon") {
-    //   return Positioned(
-    //     left: canvasReader.state
-    //         .toCanvasCoordinates(componentData.position - Offset(2, 2))
-    //         .dx,
-    //     top: canvasReader.state
-    //         .toCanvasCoordinates(componentData.position - Offset(2, 2))
-    //         .dy,
-    //     child: CustomPaint(
-    //       painter: PolygonHighlightPainter(
-    //         width: (componentData.size.width + 4) * canvasReader.state.scale,
-    //         height: (componentData.size.height + 4) * canvasReader.state.scale,
-    //         vertices: componentData.vertices,
-    //         color: color,
-    //       ),
-    //     ),
-    //   );
-    // }
+    final position = componentData.position * canvasReader.state.finalScale - Offset(2, 2) + canvasReader.state.position;
     return Positioned(
-      left: canvasReader.state
-          .toCanvasCoordinates(componentData.position - Offset(2, 2))
-          .dx,
-      top: canvasReader.state
-          .toCanvasCoordinates(componentData.position - Offset(2, 2))
-          .dy,
+      left: position.dx,
+      top: position.dy,
       child: CustomPaint(
         painter: ComponentHighlightPainter(
-          width: (componentData.size.width + 4) * canvasReader.state.scale,
-          height: (componentData.size.height + 4) * canvasReader.state.scale,
+          width: componentData.size.width * canvasReader.state.finalScale + 4,
+          height: componentData.size.height * canvasReader.state.finalScale + 4,
           color: color,
         ),
       ),
@@ -190,7 +169,7 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
   }
 
   resizeCorner(ComponentData componentData) {
-    Offset componentBottomRightCorner = canvasReader.state.toCanvasCoordinates(
+    Offset componentBottomRightCorner = canvasReader.state.toCanvasFinalCoordinates(
         componentData.position + componentData.size.bottomRight(Offset.zero));
     return Positioned(
       left: componentBottomRightCorner.dx - 12,
@@ -198,42 +177,9 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
       child: GestureDetector(
         onPanUpdate: (details) {
           canvasWriter.model.resizeComponent(
-              componentData.id, details.delta / canvasReader.state.scale);
+              componentData.id, details.delta / canvasReader.state.finalScale);
           canvasWriter.model.updateComponentLinks(componentData.id);
         },
-        child: MouseRegion(
-          cursor: SystemMouseCursors.resizeDownRight,
-          child: Container(
-            width: 24,
-            height: 24,
-            color: Colors.transparent,
-            child: Center(
-              child: Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  border: Border.all(color: Colors.grey[200]!),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  dragVertices(ComponentData componentData) {
-    return componentData.vertices.map<Widget>(
-            (vertex) => dragVertex(componentData, vertex) ).toList();
-  }
-  dragVertex(ComponentData componentData, Offset vertex) {
-    Offset vertexPosition = canvasReader.state.toCanvasCoordinates(
-        componentData.position + Offset(vertex.dx, vertex.dy));
-    return Positioned(
-      left: vertexPosition.dx - 12,
-      top: vertexPosition.dy - 12,
-      child: GestureDetector(
         child: MouseRegion(
           cursor: SystemMouseCursors.resizeDownRight,
           child: Container(
@@ -252,11 +198,46 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  dragVertices(ComponentData componentData) {
+    return componentData.vertices.map<Widget>(
+            (vertex) => dragVertex(componentData, vertex) ).toList();
+  }
+  dragVertex(ComponentData componentData, Offset vertex) {
+    Offset vertexPosition = canvasReader.state.toCanvasFinalCoordinates(
+        componentData.position + Offset(vertex.dx, vertex.dy));
+    return Positioned(
+      left: vertexPosition.dx - 12,
+      top: vertexPosition.dy - 12,
+      child: GestureDetector(
         onPanUpdate: (details) {
-          var position = canvasReader.state.fromCanvasCoordinates(details.globalPosition - Offset(16, 16));
+          final RenderBox renderBox = canvasReader.state.canvasState
+              .canvasGlobalKey.currentContext?.findRenderObject() as RenderBox;
+          var position = canvasReader.state.fromCanvasFinalCoordinates(renderBox.globalToLocal(details.globalPosition));
           canvasWriter.model.moveVertex(componentData.id, vertex, position);
           canvasWriter.model.updateComponentLinks(componentData.id);
         },
+        child: MouseRegion(
+          cursor: SystemMouseCursors.resizeDownRight,
+          child: Container(
+            width: 24,
+            height: 24,
+            color: Colors.transparent,
+            child: Center(
+              child: Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: Colors.grey[800]!),
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -276,7 +257,7 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
   }
 
   appendVertex(ComponentData componentData, Offset vertex, int index) {
-    Offset vertexPosition = canvasReader.state.toCanvasCoordinates(
+    Offset vertexPosition = canvasReader.state.toCanvasFinalCoordinates(
         componentData.position + Offset(vertex.dx, vertex.dy));
     return Positioned(
       left: vertexPosition.dx - 12,

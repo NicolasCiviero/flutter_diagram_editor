@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 
 class PolygonBody extends StatelessWidget {
   final ComponentData componentData;
+  final double scale;
 
   const PolygonBody({
     Key? key,
     required this.componentData,
+    required this.scale,
   }) : super(key: key);
 
   @override
@@ -15,6 +17,7 @@ class PolygonBody extends StatelessWidget {
     return BaseComponentBody(
       componentData: componentData,
       componentPainter: PolygonPainter(
+        scale: scale,
         color: componentData.color,
         borderColor: componentData.borderColor,
         borderWidth: componentData.borderWidth,
@@ -25,6 +28,7 @@ class PolygonBody extends StatelessWidget {
 }
 
 class PolygonPainter extends CustomPainter {
+  final double scale;
   final Color color;
   final Color borderColor;
   final double borderWidth;
@@ -32,6 +36,7 @@ class PolygonPainter extends CustomPainter {
   Size componentSize = Size(0,0);
 
   PolygonPainter({
+    this.scale = 1,
     this.color = Colors.grey,
     this.borderColor = Colors.black,
     this.borderWidth = 1.0,
@@ -72,9 +77,9 @@ class PolygonPainter extends CustomPainter {
     Path path = Path();
     if (vertices == null || vertices.length == 0) return path;
 
-    path.moveTo(vertices[0].dx.toDouble(), vertices[0].dy.toDouble());
+    path.moveTo(vertices[0].dx * scale, vertices[0].dy * scale);
     for (var i = 1 ; i < vertices.length; i++ ) {
-      path.lineTo(vertices[i].dx.toDouble(), vertices[i].dy.toDouble());
+      path.lineTo(vertices[i].dx * scale, vertices[i].dy * scale);
     }
     path.close();
     return path;

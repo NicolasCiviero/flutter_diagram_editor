@@ -121,7 +121,7 @@ mixin ComponentWriter on ModelWriter {
   moveComponent(String componentId, Offset offset) {
     assert(_canvasModel.componentExists(componentId),
         'model does not contain this component id: $componentId');
-    _canvasModel.getComponent(componentId).move(offset / _canvasState.scale);
+    _canvasModel.getComponent(componentId).move(offset / _canvasState.canvasFinalScale());
     _canvasModel.updateLinks(componentId);
   }
 
