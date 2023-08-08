@@ -53,8 +53,7 @@ class _DiagramEditorCanvasState extends State<DiagramEditorCanvas>
     var zOrderedComponents = canvasModel.components.values.toList();
     zOrderedComponents.sort((a, b) => a.zOrder.compareTo(b.zOrder));
 
-    return zOrderedComponents
-        .map(
+    return zOrderedComponents.map(
           (componentData) => ChangeNotifierProvider<ComponentData>.value(
             value: componentData,
             child: Component(
@@ -155,37 +154,52 @@ class _DiagramEditorCanvasState extends State<DiagramEditorCanvas>
     final canvasModel = Provider.of<CanvasModel>(context);
     final canvasState = Provider.of<CanvasState>(context);
 
-    return RepaintBoundary(
-      key: canvasState.canvasGlobalKey,
-      child: AbsorbPointer(
-        absorbing: canvasState.shouldAbsorbPointer,
-        child: Listener(
-          onPointerSignal: (PointerSignalEvent event) =>
-              widget.policy.onCanvasPointerSignal(event),
-          child: GestureDetector(
-            child: Container(
-              color: canvasState.color,
-              child: ClipRect(
-                child: (withControlPolicy != null)
-                    ? canvasAnimated(canvasModel)
-                    : canvasStack(canvasModel),
+    return NotificationListener<SizeChangedLayoutNotification>(
+      onNotification: gotNotification,
+      child: SizeChangedLayoutNotifier(
+          child: RepaintBoundary(
+            key: canvasState.canvasGlobalKey,
+            child: AbsorbPointer(
+              absorbing: canvasState.shouldAbsorbPointer,
+              child: Listener(
+                onPointerSignal: (PointerSignalEvent event) => widget.policy.onCanvasPointerSignal(event),
+                child: GestureDetector(
+                  onScaleStart: (details) => widget.policy.onCanvasScaleStart(details),
+                  onScaleUpdate: (details) => widget.policy.onCanvasScaleUpdate(details),
+                  onScaleEnd: (details) => widget.policy.onCanvasScaleEnd(details),
+                  onTap: () => widget.policy.onCanvasTap(),
+                  onTapDown: (TapDownDetails details) => widget.policy.onCanvasTapDown(details),
+                  onTapUp: (TapUpDetails details) => widget.policy.onCanvasTapUp(details),
+                  onTapCancel: () => widget.policy.onCanvasTapCancel(),
+                  onLongPress: () => widget.policy.onCanvasLongPress(),
+                  onLongPressStart: (LongPressStartDetails details) => widget.policy.onCanvasLongPressStart(details),
+                  onLongPressMoveUpdate: (LongPressMoveUpdateDetails details) => widget.policy.onCanvasLongPressMoveUpdate(details),
+                  onLongPressEnd: (LongPressEndDetails details) => widget.policy.onCanvasLongPressEnd(details),
+                  onLongPressUp: () => widget.policy.onCanvasLongPressUp(),
+                  child: Container(
+                    color: canvasState.color,
+                    child: ClipRect(
+                      child: (withControlPolicy != null)
+                          ? canvasAnimated(canvasModel)
+                          : canvasStack(canvasModel),
+                    ),
+                  ),
+                ),
               ),
             ),
-            onScaleStart: (details) => widget.policy.onCanvasScaleStart(details),
-            onScaleUpdate: (details) => widget.policy.onCanvasScaleUpdate(details),
-            onScaleEnd: (details) => widget.policy.onCanvasScaleEnd(details),
-            onTap: () => widget.policy.onCanvasTap(),
-            onTapDown: (TapDownDetails details) => widget.policy.onCanvasTapDown(details),
-            onTapUp: (TapUpDetails details) => widget.policy.onCanvasTapUp(details),
-            onTapCancel: () => widget.policy.onCanvasTapCancel(),
-            onLongPress: () => widget.policy.onCanvasLongPress(),
-            onLongPressStart: (LongPressStartDetails details) => widget.policy.onCanvasLongPressStart(details),
-            onLongPressMoveUpdate: (LongPressMoveUpdateDetails details) => widget.policy.onCanvasLongPressMoveUpdate(details),
-            onLongPressEnd: (LongPressEndDetails details) => widget.policy.onCanvasLongPressEnd(details),
-            onLongPressUp: () => widget.policy.onCanvasLongPressUp(),
           ),
         ),
-      ),
-    );
+      );
+
   }
+
+  bool gotNotification(SizeChangedLayoutNotification notification) {
+    final canvasState = Provider.of<CanvasState>(context, listen: false);
+    canvasState.updateCanvasSize();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() { });
+    });
+    return true;
+  }
+
 }

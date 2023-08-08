@@ -79,7 +79,7 @@ mixin CanvasControlPolicy on BasePolicySet {
 
   fitOffsetLimits() {
     var canvasState = canvasReader.state.canvasState;
-    var canvas = canvasState.canvasSize();
+    var canvas = canvasState.canvasSize;
     var img = canvasState.imageSize * canvasState.canvasFinalScale();
     canvas ??= img;
 

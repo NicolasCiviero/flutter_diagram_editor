@@ -46,24 +46,16 @@ class Component extends StatelessWidget {
             ],
           ),
           onTap: () => policy.onComponentTap(componentData.id),
-          onTapDown: (TapDownDetails details) =>
-              policy.onComponentTapDown(componentData.id, details),
-          onTapUp: (TapUpDetails details) =>
-              policy.onComponentTapUp(componentData.id, details),
+          onTapDown: (details) => policy.onComponentTapDown(componentData.id, details),
+          onTapUp: (details) => policy.onComponentTapUp(componentData.id, details),
           onTapCancel: () => policy.onComponentTapCancel(componentData.id),
-          onScaleStart: (ScaleStartDetails details) =>
-              policy.onComponentScaleStart(componentData.id, details),
-          onScaleUpdate: (ScaleUpdateDetails details) =>
-              policy.onComponentScaleUpdate(componentData.id, details),
-          onScaleEnd: (ScaleEndDetails details) =>
-              policy.onComponentScaleEnd(componentData.id, details),
+          onScaleStart: (details) => policy.onComponentScaleStart(componentData.id, details),
+          onScaleUpdate: (details) => policy.onComponentScaleUpdate(componentData.id, details),
+          onScaleEnd: (details) => policy.onComponentScaleEnd(componentData.id, details),
           onLongPress: () => policy.onComponentLongPress(componentData.id),
-          onLongPressStart: (LongPressStartDetails details) =>
-              policy.onComponentLongPressStart(componentData.id, details),
-          onLongPressMoveUpdate: (LongPressMoveUpdateDetails details) =>
-              policy.onComponentLongPressMoveUpdate(componentData.id, details),
-          onLongPressEnd: (LongPressEndDetails details) =>
-              policy.onComponentLongPressEnd(componentData.id, details),
+          onLongPressStart: (details) => policy.onComponentLongPressStart(componentData.id, details),
+          onLongPressMoveUpdate: (details) => policy.onComponentLongPressMoveUpdate(componentData.id, details),
+          onLongPressEnd: (details) => policy.onComponentLongPressEnd(componentData.id, details),
           onLongPressUp: () => policy.onComponentLongPressUp(componentData.id),
         ),
       ),

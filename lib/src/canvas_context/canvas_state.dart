@@ -20,13 +20,19 @@ class CanvasState with ChangeNotifier {
     _imageSize = Size(image.width.toDouble(), image.height.toDouble());
   }
 
-  Size? canvasSize() {
+  Size? _canvasSize;
+  Size? get canvasSize {
+    if (_canvasSize == null) updateCanvasSize();
+    return _canvasSize;
+  }
+  updateCanvasSize(){
     final RenderBox renderBox = canvasGlobalKey.currentContext?.findRenderObject() as RenderBox;
     if (renderBox == null) return null;
-    return renderBox.size;
+    _canvasSize = renderBox.size;
   }
+
   double canvasAutoScale() {
-    var size = canvasSize();
+    var size = canvasSize;
     if (size == null) return 1;
     return min(size!.height / imageSize.height, size!.width / imageSize.width);
   }
@@ -66,7 +72,7 @@ class CanvasState with ChangeNotifier {
 
   _verifyPosition(){
     var position = _position;
-    var canvas = canvasSize();
+    var canvas = canvasSize;
     var img = imageSize * canvasFinalScale();
     canvas ??= img;
 
@@ -108,7 +114,7 @@ class CanvasState with ChangeNotifier {
   }
 
   Offset fromCanvasFinalCoordinates(Offset position) {
-    return (position - this.position) / scale / canvasFinalScale();
+    return (position - this.position) / scale / canvasAutoScale();
   }
 
   Offset toCanvasFinalCoordinates(Offset position) {
