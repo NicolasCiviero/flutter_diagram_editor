@@ -1,5 +1,5 @@
-import 'package:diagram_editor/diagram_editor.dart';
-import 'package:diagram_editor/src/widget/dialog/pick_color_dialog.dart';
+import 'package:shape_editor/diagram_editor.dart';
+import 'package:shape_editor/src/widget/dialog/pick_color_dialog.dart';
 import 'package:flutter/material.dart';
 
 void showEditComponentDialog(

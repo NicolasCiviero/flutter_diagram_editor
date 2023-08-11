@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'dart:ui' as ui;
+import 'package:event/event.dart';
+
+import 'model/component_data.dart';
 
 class CanvasState with ChangeNotifier {
+  final componentUpdateEvent = Event<ComponentEvent>();
+
   Offset _position = Offset(0, 0);
   double _scale = 1.0;
 
@@ -34,7 +39,7 @@ class CanvasState with ChangeNotifier {
   double canvasAutoScale() {
     var size = canvasSize;
     if (size == null) return 1;
-    return min(size!.height / imageSize.height, size!.width / imageSize.width);
+    return min(size.height / imageSize.height, size.width / imageSize.width);
   }
   double canvasFinalScale() {
     return _scale * canvasAutoScale();

@@ -1,4 +1,4 @@
-import 'package:diagram_editor/src/abstraction_layer/policy/base/link_joints_policy.dart';
+import 'package:shape_editor/src/abstraction_layer/policy/base/link_joints_policy.dart';
 import 'package:flutter/material.dart';
 
 /// Optimized implementation of [LinkJointPolicy].

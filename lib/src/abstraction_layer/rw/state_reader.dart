@@ -1,8 +1,14 @@
-import 'package:diagram_editor/src/canvas_context/canvas_state.dart';
+import 'package:shape_editor/src/canvas_context/canvas_state.dart';
 import 'package:flutter/material.dart';
+import 'package:event/event.dart';
+
+import '../../../diagram_editor.dart';
 
 class CanvasStateReader {
   final CanvasState canvasState;
+
+  /// Triggered when o component or one of it's vertices move.
+  Event<ComponentEvent> get componentUpdateEvent => canvasState.componentUpdateEvent;
 
   /// Allows you to read state (position and scale) of the canvas.
   CanvasStateReader(this.canvasState);
@@ -11,6 +17,7 @@ class CanvasStateReader {
   ///
   /// Initial value equals to [Offset(0, 0)].
   Offset get position => canvasState.position;
+
 
   /// Scale od the canvas. It must be always positive.
   ///

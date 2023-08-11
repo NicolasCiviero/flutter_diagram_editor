@@ -1,4 +1,4 @@
-import 'package:diagram_editor/src/canvas_context/model/link_data.dart';
+import 'package:shape_editor/src/canvas_context/model/link_data.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

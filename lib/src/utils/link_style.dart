@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:diagram_editor/src/utils/vector_utils.dart';
+import 'package:shape_editor/src/utils/vector_utils.dart';
 import 'package:flutter/material.dart';
 
 enum ArrowType {

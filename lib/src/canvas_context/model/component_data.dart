@@ -1,6 +1,7 @@
-import 'package:diagram_editor/src/canvas_context/model/connection.dart';
+import 'package:shape_editor/src/canvas_context/model/connection.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
+import 'package:event/event.dart';
 
 class ComponentData with ChangeNotifier {
   /// Unique id of this component.
@@ -285,4 +286,11 @@ class ComponentData with ChangeNotifier {
         'textSize': textSize,
         'dynamic_data': data?.toJson(),
       };
+}
+
+class ComponentEvent extends EventArgs {
+  String description;
+  ComponentData component;
+
+  ComponentEvent(this.description, this.component);
 }

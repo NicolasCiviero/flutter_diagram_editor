@@ -1,4 +1,4 @@
-import 'package:diagram_editor/diagram_editor.dart';
+import 'package:shape_editor/diagram_editor.dart';
 import 'package:flutter/material.dart';
 
 class BaseComponentBody extends StatelessWidget {

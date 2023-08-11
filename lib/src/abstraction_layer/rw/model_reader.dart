@@ -1,10 +1,10 @@
 import 'dart:collection';
 import 'dart:convert';
 
-import 'package:diagram_editor/src/canvas_context/canvas_model.dart';
-import 'package:diagram_editor/src/canvas_context/canvas_state.dart';
-import 'package:diagram_editor/src/canvas_context/model/component_data.dart';
-import 'package:diagram_editor/src/canvas_context/model/link_data.dart';
+import 'package:shape_editor/src/canvas_context/canvas_model.dart';
+import 'package:shape_editor/src/canvas_context/canvas_state.dart';
+import 'package:shape_editor/src/canvas_context/model/component_data.dart';
+import 'package:shape_editor/src/canvas_context/model/link_data.dart';
 import 'package:flutter/material.dart';
 
 class CanvasModelReader {

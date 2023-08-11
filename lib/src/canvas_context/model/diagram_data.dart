@@ -1,4 +1,4 @@
-import 'package:diagram_editor/diagram_editor.dart';
+import 'package:shape_editor/diagram_editor.dart';
 
 class DiagramData {
   final List<ComponentData> components;

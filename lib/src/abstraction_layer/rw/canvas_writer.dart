@@ -1,5 +1,5 @@
-import 'package:diagram_editor/src/abstraction_layer/rw/model_writer.dart';
-import 'package:diagram_editor/src/abstraction_layer/rw/state_writer.dart';
+import 'package:shape_editor/src/abstraction_layer/rw/model_writer.dart';
+import 'package:shape_editor/src/abstraction_layer/rw/state_writer.dart';
 
 /// Takes care of writing to model and state of the canvas.
 class CanvasWriter {

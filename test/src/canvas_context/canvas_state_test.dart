@@ -1,6 +1,6 @@
-import 'package:diagram_editor/src/abstraction_layer/policy/base/policy_set.dart';
-import 'package:diagram_editor/src/canvas_context/diagram_editor_context.dart';
-import 'package:diagram_editor/src/widget/editor.dart';
+import 'package:shape_editor/src/abstraction_layer/policy/base/policy_set.dart';
+import 'package:shape_editor/src/canvas_context/diagram_editor_context.dart';
+import 'package:shape_editor/src/widget/editor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

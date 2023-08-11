@@ -1,5 +1,5 @@
-import 'package:diagram_editor/src/canvas_context/model/component_data.dart';
-import 'package:diagram_editor/src/canvas_context/model/connection.dart';
+import 'package:shape_editor/src/canvas_context/model/component_data.dart';
+import 'package:shape_editor/src/canvas_context/model/connection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

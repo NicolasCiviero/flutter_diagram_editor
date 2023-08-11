@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:diagram_editor/diagram_editor.dart';
+import 'package:shape_editor/diagram_editor.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(const DiagramApp());
@@ -110,7 +110,7 @@ mixin MyInitPolicy implements InitPolicy {
 // Use switch on componentData.type or componentData.data to define different component designs.
 mixin MyComponentDesignPolicy implements ComponentDesignPolicy {
   @override
-  Widget showComponentBody(ComponentData componentData) {
+  Widget showComponentBody(ComponentData componentData, double scale) {
     return Container(
       decoration: BoxDecoration(
         color: (componentData.data as MyComponentData).color,

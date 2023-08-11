@@ -1,5 +1,5 @@
-import 'package:diagram_editor/src/abstraction_layer/rw/canvas_reader.dart';
-import 'package:diagram_editor/src/abstraction_layer/rw/canvas_writer.dart';
+import 'package:shape_editor/src/abstraction_layer/rw/canvas_reader.dart';
+import 'package:shape_editor/src/abstraction_layer/rw/canvas_writer.dart';
 
 class BasePolicySet {
   /// Allows you to read all data from diagram/canvas model.

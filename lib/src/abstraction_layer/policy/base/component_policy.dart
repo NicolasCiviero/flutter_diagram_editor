@@ -1,8 +1,8 @@
-import 'package:diagram_editor/src/abstraction_layer/policy/base/state_policy.dart';
-import 'package:diagram_editor/src/abstraction_layer/policy/base_policy_set.dart';
-import 'package:diagram_editor/src/canvas_context/model/connection.dart';
-import 'package:diagram_editor/src/utils/my_link_data.dart';
-import 'package:diagram_editor/src/utils/link_style.dart';
+import 'package:shape_editor/src/abstraction_layer/policy/base/state_policy.dart';
+import 'package:shape_editor/src/abstraction_layer/policy/base_policy_set.dart';
+import 'package:shape_editor/src/canvas_context/model/connection.dart';
+import 'package:shape_editor/src/utils/my_link_data.dart';
+import 'package:shape_editor/src/utils/link_style.dart';
 import 'package:flutter/gestures.dart';
 
 /// Allows you to define the component behaviour on any gesture registered by the [Component].

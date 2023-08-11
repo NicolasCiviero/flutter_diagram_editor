@@ -1,5 +1,5 @@
-import 'package:diagram_editor/diagram_editor.dart';
-import 'package:diagram_editor/src/widget/component/base_component_body.dart';
+import 'package:shape_editor/diagram_editor.dart';
+import 'package:shape_editor/src/widget/component/base_component_body.dart';
 import 'package:flutter/material.dart';
 
 class RectBody extends StatelessWidget {

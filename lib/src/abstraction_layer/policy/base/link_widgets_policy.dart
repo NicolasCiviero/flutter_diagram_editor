@@ -1,8 +1,8 @@
-import 'package:diagram_editor/src/abstraction_layer/policy/base/state_policy.dart';
-import 'package:diagram_editor/src/abstraction_layer/policy/base_policy_set.dart';
-import 'package:diagram_editor/src/canvas_context/model/link_data.dart';
-import 'package:diagram_editor/src/utils/vector_utils.dart';
-import 'package:diagram_editor/src/widget/dialog/edit_link_dialog.dart';
+import 'package:shape_editor/src/abstraction_layer/policy/base/state_policy.dart';
+import 'package:shape_editor/src/abstraction_layer/policy/base_policy_set.dart';
+import 'package:shape_editor/src/canvas_context/model/link_data.dart';
+import 'package:shape_editor/src/utils/vector_utils.dart';
+import 'package:shape_editor/src/widget/dialog/edit_link_dialog.dart';
 import 'package:flutter/material.dart';
 
 /// Allows you to add any widget to a link.

@@ -1,5 +1,5 @@
-import 'package:diagram_editor/src/abstraction_layer/policy/base/link_attachment_policy.dart';
-import 'package:diagram_editor/src/canvas_context/model/component_data.dart';
+import 'package:shape_editor/src/abstraction_layer/policy/base/link_attachment_policy.dart';
+import 'package:shape_editor/src/canvas_context/model/component_data.dart';
 import 'package:flutter/material.dart';
 
 /// Attaches a link endpoint to border of an oval.

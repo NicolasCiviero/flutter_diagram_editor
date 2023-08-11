@@ -1,5 +1,5 @@
-import 'package:diagram_editor/src/utils/link_style.dart';
-import 'package:diagram_editor/src/utils/vector_utils.dart';
+import 'package:shape_editor/src/utils/link_style.dart';
+import 'package:shape_editor/src/utils/vector_utils.dart';
 import 'package:flutter/material.dart';
 
 /// Class that carries all link data.

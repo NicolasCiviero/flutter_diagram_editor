@@ -1,4 +1,4 @@
-import 'package:diagram_editor/src/canvas_context/canvas_state.dart';
+import 'package:shape_editor/src/canvas_context/canvas_state.dart';
 import 'package:flutter/material.dart';
 
 class CanvasStateWriter {

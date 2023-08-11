@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:diagram_editor/src/canvas_context/canvas_model.dart';
-import 'package:diagram_editor/src/canvas_context/canvas_state.dart';
-import 'package:diagram_editor/src/canvas_context/model/component_data.dart';
-import 'package:diagram_editor/src/canvas_context/model/diagram_data.dart';
-import 'package:diagram_editor/src/utils/link_style.dart';
+import 'package:shape_editor/src/canvas_context/canvas_model.dart';
+import 'package:shape_editor/src/canvas_context/canvas_state.dart';
+import 'package:shape_editor/src/canvas_context/model/component_data.dart';
+import 'package:shape_editor/src/canvas_context/model/diagram_data.dart';
+import 'package:shape_editor/src/utils/link_style.dart';
 import 'package:flutter/material.dart';
 
 class ModelWriter {
@@ -30,8 +30,7 @@ class CanvasModelWriter extends ModelWriter
 
   /// Removes a component with [componentId] and all its links.
   removeComponent(String componentId) {
-    assert(_canvasModel.componentExists(componentId),
-        'model does not contain this component id: $componentId');
+    _checkComponentId(componentId);
     removeComponentParent(componentId);
     _removeParentFromChildren(componentId);
     _canvasModel.removeComponent(componentId);
@@ -39,8 +38,7 @@ class CanvasModelWriter extends ModelWriter
 
   /// Removes a component with [componentId] and also removes all its children components.
   removeComponentWithChildren(String componentId) {
-    assert(_canvasModel.componentExists(componentId),
-        'model does not contain this component id: $componentId');
+    _checkComponentId(componentId);
     List<String> componentsToRemove = [];
     _removeComponentWithChildren(componentId, componentsToRemove);
     componentsToRemove.reversed.forEach(removeComponent);
@@ -103,48 +101,52 @@ mixin ComponentWriter on ModelWriter {
   ///
   /// It calls [notifyListeners] function of [ChangeNotifier] on [ComponentData].
   updateComponent(String? componentId) {
-    assert(_canvasModel.componentExists(componentId),
-        'model does not contain this component id: $componentId');
+    _checkComponentId(componentId);
     if (componentId == null) return;
-    _canvasModel.getComponent(componentId!).updateComponent();
+    final component = _canvasModel.getComponent(componentId);
+    component.updateComponent();
+    _canvasState.componentUpdateEvent.broadcast(ComponentEvent("update", component));
   }
 
   /// Sets the position of the component to [position] value.
   setComponentPosition(String componentId, Offset position) {
-    assert(_canvasModel.componentExists(componentId),
-        'model does not contain this component id: $componentId');
-    _canvasModel.getComponent(componentId).setPosition(position);
+    _checkComponentId(componentId);
+    final component = _canvasModel.getComponent(componentId);
+    component.setPosition(position);
     _canvasModel.updateLinks(componentId);
+    _canvasState.componentUpdateEvent.broadcast(ComponentEvent("setPosition", component));
   }
 
   /// Translates the component by [offset] value.
   moveComponent(String componentId, Offset offset) {
-    assert(_canvasModel.componentExists(componentId),
-        'model does not contain this component id: $componentId');
-    _canvasModel.getComponent(componentId).move(offset / _canvasState.canvasFinalScale());
+    _checkComponentId(componentId);
+    final component = _canvasModel.getComponent(componentId);
+    component.move(offset / _canvasState.canvasFinalScale());
     _canvasModel.updateLinks(componentId);
+    _canvasState.componentUpdateEvent.broadcast(ComponentEvent("move", component));
   }
 
   /// Moves the component's vertex to [vertexLocation] value.
   moveVertex(String componentId, Offset vertex, Offset vertexLocation) {
-    assert(_canvasModel.componentExists(componentId),
-        'model does not contain this component id: $componentId');
-    _canvasModel.getComponent(componentId).moveVertex(vertex, vertexLocation);
+    _checkComponentId(componentId);
+    final component = _canvasModel.getComponent(componentId);
+    component.moveVertex(vertex, vertexLocation);
     _canvasModel.updateLinks(componentId);
+    _canvasState.componentUpdateEvent.broadcast(ComponentEvent("moveVertex", component));
   }
 
   /// Translates the component's vertex by [offset] value.
   addVertex(String componentId, Offset vertex, int index) {
-    assert(_canvasModel.componentExists(componentId),
-    'model does not contain this component id: $componentId');
-    _canvasModel.getComponent(componentId).addVertex(vertex, index);
+    _checkComponentId(componentId);
+    final component = _canvasModel.getComponent(componentId);
+    component.addVertex(vertex, index);
     _canvasModel.updateLinks(componentId);
+    _canvasState.componentUpdateEvent.broadcast(ComponentEvent("addVertex", component));
   }
 
   /// Translates the component by [offset] value and all its children as well.
   moveComponentWithChildren(String componentId, Offset offset) {
-    assert(_canvasModel.componentExists(componentId),
-        'model does not contain this component id: $componentId');
+    _checkComponentId(componentId);
     moveComponent(componentId, offset);
     _canvasModel.getComponent(componentId).childrenIds.forEach((childId) {
       moveComponentWithChildren(childId, offset);
@@ -153,8 +155,7 @@ mixin ComponentWriter on ModelWriter {
 
   /// Removes all connections that the component with [componentId] has.
   removeComponentConnections(String componentId) {
-    assert(_canvasModel.componentExists(componentId),
-        'model does not contain this component id: $componentId');
+    _checkComponentId(componentId);
     _canvasModel.removeComponentConnections(componentId);
   }
 
@@ -162,8 +163,7 @@ mixin ComponentWriter on ModelWriter {
   ///
   /// Use it when the component is somehow changed (its size or position) and the links are not updated to their proper positions.
   updateComponentLinks(String componentId) {
-    assert(_canvasModel.componentExists(componentId),
-        'model does not contain this component id: $componentId');
+    _checkComponentId(componentId);
     _canvasModel.updateLinks(componentId);
   }
 
@@ -171,30 +171,26 @@ mixin ComponentWriter on ModelWriter {
   ///
   /// Higher z-order means that the component will be shown on top of another component with lower z-order.
   setComponentZOrder(String componentId, int zOrder) {
-    assert(_canvasModel.componentExists(componentId),
-        'model does not contain this component id: $componentId');
+    _checkComponentId(componentId);
     _canvasModel.setComponentZOrder(componentId, zOrder);
   }
 
   /// Sets the components's z-order to the highest z-order value of all components +1.
   int moveComponentToTheFront(String componentId) {
-    assert(_canvasModel.componentExists(componentId),
-        'model does not contain this component id: $componentId');
+    _checkComponentId(componentId);
     return _canvasModel.moveComponentToTheFront(componentId);
   }
 
   /// Sets the components's z-order to the highest z-order value of all components +1 and sets z-order of its children to +2...
   int moveComponentToTheFrontWithChildren(String componentId) {
-    assert(_canvasModel.componentExists(componentId),
-        'model does not contain this component id: $componentId');
+    _checkComponentId(componentId);
     int zOrder = moveComponentToTheFront(componentId);
     _setZOrderToChildren(componentId, zOrder);
     return zOrder;
   }
 
   _setZOrderToChildren(String componentId, int zOrder) {
-    assert(_canvasModel.componentExists(componentId),
-        'model does not contain this component id: $componentId');
+    _checkComponentId(componentId);
     setComponentZOrder(componentId, zOrder);
     _canvasModel.getComponent(componentId).childrenIds.forEach((childId) {
       _setZOrderToChildren(childId, zOrder + 1);
@@ -203,15 +199,13 @@ mixin ComponentWriter on ModelWriter {
 
   /// Sets the components's z-order to the lowest z-order value of all components -1.
   int moveComponentToTheBack(String componentId) {
-    assert(_canvasModel.componentExists(componentId),
-        'model does not contain this component id: $componentId');
+    _checkComponentId(componentId);
     return _canvasModel.moveComponentToTheBack(componentId);
   }
 
   /// Sets the components's z-order to the lowest z-order value of all components -1 and sets z-order of its children to one more than the component and their children to one more..
   int moveComponentToTheBackWithChildren(String componentId) {
-    assert(_canvasModel.componentExists(componentId),
-        'model does not contain this component id: $componentId');
+    _checkComponentId(componentId);
     int zOrder = moveComponentToTheBack(componentId);
     _setZOrderToChildren(componentId, zOrder);
     return zOrder;
@@ -221,15 +215,13 @@ mixin ComponentWriter on ModelWriter {
   ///
   /// You cannot change its size to smaller than [minSize] defined on the component.
   resizeComponent(String componentId, Offset deltaSize) {
-    assert(_canvasModel.componentExists(componentId),
-        'model does not contain this component id: $componentId');
+    _checkComponentId(componentId);
     _canvasModel.getComponent(componentId).resizeDelta(deltaSize);
   }
 
   /// Sets the component's to [size].
   setComponentSize(String componentId, Size size) {
-    assert(_canvasModel.componentExists(componentId),
-        'model does not contain this component id: $componentId');
+    _checkComponentId(componentId);
     _canvasModel.getComponent(componentId).setSize(size);
   }
 
@@ -237,8 +229,7 @@ mixin ComponentWriter on ModelWriter {
   ///
   /// It's not possible to make a parent-child loop. (its ancestor cannot be its child)
   setComponentParent(String componentId, String parentId) {
-    assert(_canvasModel.componentExists(componentId),
-        'model does not contain this component id: $componentId');
+    _checkComponentId(componentId);
     removeComponentParent(componentId);
     if (_checkParentChildLoop(componentId, parentId)) {
       _canvasModel.getComponent(componentId).setParent(parentId);
@@ -260,8 +251,7 @@ mixin ComponentWriter on ModelWriter {
   ///
   /// It also removes child from former parent.
   removeComponentParent(String componentId) {
-    assert(_canvasModel.componentExists(componentId),
-        'model does not contain this component id: $componentId');
+    _checkComponentId(componentId);
     final _parentId = _canvasModel.getComponent(componentId).parentId;
     if (_parentId != null) {
       _canvasModel.getComponent(componentId).removeParent();
@@ -270,13 +260,17 @@ mixin ComponentWriter on ModelWriter {
   }
 
   _removeParentFromChildren(componentId) {
-    assert(_canvasModel.componentExists(componentId),
-        'model does not contain this component id: $componentId');
+    _checkComponentId(componentId);
     final _component = _canvasModel.getComponent(componentId);
     final _childrenToRemove = List.from(_component.childrenIds);
     _childrenToRemove.forEach((childId) {
       removeComponentParent(childId);
     });
+  }
+
+  _checkComponentId(String? id){
+    assert(_canvasModel.componentExists(id),
+      'model does not contain this component id: $id');
   }
 }
 

@@ -1,4 +1,4 @@
-# diagram_editor
+# shape_editor
 
 [![pub package](https://img.shields.io/pub/v/diagram_editor.svg)](https://pub.dev/packages/diagram_editor)
 

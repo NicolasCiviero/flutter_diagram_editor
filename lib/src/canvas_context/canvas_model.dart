@@ -1,11 +1,11 @@
 import 'dart:collection';
 
-import 'package:diagram_editor/src/abstraction_layer/policy/base/policy_set.dart';
-import 'package:diagram_editor/src/canvas_context/model/component_data.dart';
-import 'package:diagram_editor/src/canvas_context/model/connection.dart';
-import 'package:diagram_editor/src/canvas_context/model/diagram_data.dart';
-import 'package:diagram_editor/src/canvas_context/model/link_data.dart';
-import 'package:diagram_editor/src/utils/link_style.dart';
+import 'package:shape_editor/src/abstraction_layer/policy/base/policy_set.dart';
+import 'package:shape_editor/src/canvas_context/model/component_data.dart';
+import 'package:shape_editor/src/canvas_context/model/connection.dart';
+import 'package:shape_editor/src/canvas_context/model/diagram_data.dart';
+import 'package:shape_editor/src/canvas_context/model/link_data.dart';
+import 'package:shape_editor/src/utils/link_style.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
