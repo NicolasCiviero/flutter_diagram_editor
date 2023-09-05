@@ -1,17 +1,17 @@
 name: shape_editor
 description: A flutter shape editor library that provides DiagramEditor widget.
-version: 0.0.1
+version: 0.0.6
 homepage: https://github.com/NicolasCiviero/flutter_diagram_editor
 repository: https://github.com/NicolasCiviero/flutter_diagram_editor
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: '>=2.12.0 <4.0.0'
   flutter: ">=1.17.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  provider: ^6.0.5
+  provider: ^6.0.4
   uuid: ^3.0.7
   flutter_colorpicker: ^1.0.3
   event: ^2.1.2

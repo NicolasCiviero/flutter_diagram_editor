@@ -6,7 +6,7 @@ mixin StatePolicy on BasePolicySet {
   bool isGridVisible = true;
 
   List<String> bodies = [
-    'junction',
+    //'junction',
     'rect',
     'polygon',
     'oval',

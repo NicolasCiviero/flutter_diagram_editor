@@ -25,15 +25,18 @@ class CanvasModelWriter extends ModelWriter
   /// Returns component's id (if [componentData] doesn't contain id, new id if generated).
   /// Canvas is updated and this new components is shown on it.
   String addComponent(ComponentData componentData) {
+    _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.created, componentData));
     return _canvasModel.addComponent(componentData);
   }
 
   /// Removes a component with [componentId] and all its links.
   removeComponent(String componentId) {
     _checkComponentId(componentId);
+    final component = _canvasModel.getComponent(componentId);
     removeComponentParent(componentId);
     _removeParentFromChildren(componentId);
     _canvasModel.removeComponent(componentId);
+    _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.removed, component));
   }
 
   /// Removes a component with [componentId] and also removes all its children components.
@@ -105,7 +108,7 @@ mixin ComponentWriter on ModelWriter {
     if (componentId == null) return;
     final component = _canvasModel.getComponent(componentId);
     component.updateComponent();
-    _canvasState.componentUpdateEvent.broadcast(ComponentEvent("update", component));
+    _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.update, component));
   }
 
   /// Sets the position of the component to [position] value.
@@ -114,7 +117,7 @@ mixin ComponentWriter on ModelWriter {
     final component = _canvasModel.getComponent(componentId);
     component.setPosition(position);
     _canvasModel.updateLinks(componentId);
-    _canvasState.componentUpdateEvent.broadcast(ComponentEvent("setPosition", component));
+    _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.setPosition, component));
   }
 
   /// Translates the component by [offset] value.
@@ -123,7 +126,12 @@ mixin ComponentWriter on ModelWriter {
     final component = _canvasModel.getComponent(componentId);
     component.move(offset / _canvasState.canvasFinalScale());
     _canvasModel.updateLinks(componentId);
-    _canvasState.componentUpdateEvent.broadcast(ComponentEvent("move", component));
+    _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.move, component));
+  }
+
+  moveComponentEnd(String componentId){
+    final component = _canvasModel.getComponent(componentId);
+    _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.moveEnded, component));
   }
 
   /// Moves the component's vertex to [vertexLocation] value.
@@ -132,7 +140,7 @@ mixin ComponentWriter on ModelWriter {
     final component = _canvasModel.getComponent(componentId);
     component.moveVertex(vertex, vertexLocation);
     _canvasModel.updateLinks(componentId);
-    _canvasState.componentUpdateEvent.broadcast(ComponentEvent("moveVertex", component));
+    _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.moveVertex, component));
   }
 
   /// Translates the component's vertex by [offset] value.
@@ -141,7 +149,7 @@ mixin ComponentWriter on ModelWriter {
     final component = _canvasModel.getComponent(componentId);
     component.addVertex(vertex, index);
     _canvasModel.updateLinks(componentId);
-    _canvasState.componentUpdateEvent.broadcast(ComponentEvent("addVertex", component));
+    _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.addVertex, component));
   }
 
   /// Translates the component by [offset] value and all its children as well.
@@ -216,7 +224,14 @@ mixin ComponentWriter on ModelWriter {
   /// You cannot change its size to smaller than [minSize] defined on the component.
   resizeComponent(String componentId, Offset deltaSize) {
     _checkComponentId(componentId);
-    _canvasModel.getComponent(componentId).resizeDelta(deltaSize);
+    final component = _canvasModel.getComponent(componentId);
+    component.resizeDelta(deltaSize);
+    _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.resize, component));
+  }
+
+  resizeComponentEnd(String componentId){
+    final component = _canvasModel.getComponent(componentId);
+    _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.resizeEnded, component));
   }
 
   /// Sets the component's to [size].

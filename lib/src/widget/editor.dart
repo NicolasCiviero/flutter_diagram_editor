@@ -35,65 +35,6 @@ class _DiagramEditorState extends State<DiagramEditor> {
       this.widget.diagramEditorContext.policySet.initializeDiagramEditor();
       widget.diagramEditorContext.canvasState.isInitialized = true;
     }
-
-    // TEST: loading components before on editor creation
-    final c1 = ComponentData(
-      position: Offset(50, 50),
-      size: Size(50, 50),
-      minSize: Size(0, 0),
-      color: Colors.transparent,
-      borderColor: Colors.white,
-      borderWidth: 2.0,
-      type: 'polygon',
-      vertices: [Offset(0,0), Offset(50,0), Offset(50,50), Offset(0,50)],
-    );
-    final c2 = ComponentData(
-      position: Offset(150, 50),
-      size: Size(50, 50),
-      minSize: Size(0, 0),
-      color: Colors.transparent,
-      borderColor: Colors.white,
-      borderWidth: 2.0,
-      type: 'polygon',
-      vertices: [Offset(0,0), Offset(50,0), Offset(50,50), Offset(0,50)],
-    );
-    final c3 = ComponentData(
-      position: Offset(100, 100),
-      size: Size(50, 50),
-      minSize: Size(0, 0),
-      color: Colors.transparent,
-      borderColor: Colors.white,
-      borderWidth: 2.0,
-      type: 'polygon',
-      vertices: [Offset(0,0), Offset(50,0), Offset(50,50), Offset(0,50)],
-    );
-    final c4 = ComponentData(
-      position: Offset(0, 100),
-      size: Size(50, 50),
-      minSize: Size(0, 0),
-      color: Colors.transparent,
-      borderColor: Colors.white,
-      borderWidth: 2.0,
-      type: 'polygon',
-      vertices: [Offset(0,0), Offset(50,0), Offset(50,50), Offset(0,50)],
-    );
-    final c5 = ComponentData(
-      position: Offset(0, 0),
-      size: Size(50, 50),
-      minSize: Size(0, 0),
-      color: Colors.transparent,
-      borderColor: Colors.white,
-      borderWidth: 2.0,
-      type: 'polygon',
-      vertices: [Offset(0,0), Offset(50,0), Offset(50,50), Offset(0,50)],
-    );
-    widget.diagramEditorContext.canvasModel.addComponent(c1);
-    widget.diagramEditorContext.canvasModel.addComponent(c2);
-    widget.diagramEditorContext.canvasModel.addComponent(c3);
-    widget.diagramEditorContext.canvasModel.addComponent(c4);
-    widget.diagramEditorContext.canvasModel.addComponent(c5);
-
-
     super.initState();
   }
 

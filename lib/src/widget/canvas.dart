@@ -8,7 +8,9 @@ import 'package:shape_editor/src/widget/component.dart';
 import 'package:shape_editor/src/widget/link.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+
 
 class DiagramEditorCanvas extends StatefulWidget {
   final PolicySet policy;
@@ -27,12 +29,23 @@ class _DiagramEditorCanvasState extends State<DiagramEditorCanvas>
     with TickerProviderStateMixin {
   PolicySet? withControlPolicy;
 
+  bool _onKey(KeyEvent event) {
+    final key = event.logicalKey;
+
+    if (event is KeyUpEvent && key == LogicalKeyboardKey.delete) {
+      if (widget.policy.selectedComponentId != null) {
+        widget.policy.canvasWriter.model.removeComponent(widget.policy.selectedComponentId!);
+        widget.policy.selectedComponentId = null;
+      }
+    }
+    return false;
+  }
+
   @override
   void initState() {
-    withControlPolicy = (widget.policy is CanvasControlPolicy ||
-            widget.policy is CanvasMovePolicy)
-        ? widget.policy
-        : null;
+    ServicesBinding.instance.keyboard.addHandler(_onKey);
+    withControlPolicy = (widget.policy is CanvasControlPolicy || widget.policy is CanvasMovePolicy)
+        ? widget.policy : null;
 
     (withControlPolicy as CanvasControlPolicy?)?.setAnimationController(
       AnimationController(
@@ -41,6 +54,7 @@ class _DiagramEditorCanvasState extends State<DiagramEditorCanvas>
       ),
     );
     super.initState();
+
   }
 
   @override

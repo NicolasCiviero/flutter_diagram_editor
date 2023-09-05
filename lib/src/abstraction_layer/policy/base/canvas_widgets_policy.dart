@@ -12,20 +12,18 @@ mixin CanvasWidgetsPolicy on BasePolicySet implements StatePolicy, CanvasControl
   /// Recommendation: use Positioned as the root widget.
   List<Widget> showCustomWidgetsOnCanvasBackground(BuildContext context) {
     return [
-      Visibility(
-        visible: isGridVisible,
-        child: CustomPaint(
-          size: Size.infinite,
-          painter: GridPainter(
-            offset: canvasReader.state.position / canvasReader.state.scale,
-            scale: canvasReader.state.scale,
-            lineWidth: (canvasReader.state.scale < 1.0)
-                ? canvasReader.state.scale
-                : 1.0,
-            matchParentSize: false,
-            lineColor: Colors.blue[900]!,
-            image: canvasReader.state.canvasState.image,
-          ),
+      CustomPaint(
+        size: Size.infinite,
+        painter: GridPainter(
+          offset: canvasReader.state.position / canvasReader.state.scale,
+          scale: canvasReader.state.scale,
+          lineWidth: (canvasReader.state.scale < 1.0)
+              ? canvasReader.state.scale : 1.0,
+          matchParentSize: false,
+          lineColor: Colors.blue[900]!,
+          image: canvasReader.state.canvasState.image,
+          showHorizontal: isGridVisible,
+          showVertical: isGridVisible,
         ),
       ),
       DragTarget<ComponentData>(
@@ -42,10 +40,10 @@ mixin CanvasWidgetsPolicy on BasePolicySet implements StatePolicy, CanvasControl
     final Offset localOffset = renderBox.globalToLocal(details.offset);
     Offset componentPosition = canvasReader.state.fromCanvasFinalCoordinates(localOffset);
 
-    ComponentData componentData = details.data;
-    var componentDataCopy = componentData.clone();
-    componentDataCopy.position = componentPosition;
-    String componentId = canvasWriter.model.addComponent(componentDataCopy);
+    ComponentData componentDataModel = details.data;
+    var newComponentData = componentDataModel.clone();
+    newComponentData.position = componentPosition;
+    String componentId = canvasWriter.model.addComponent(newComponentData);
 
     canvasWriter.model.moveComponentToTheFrontWithChildren(componentId);
   }

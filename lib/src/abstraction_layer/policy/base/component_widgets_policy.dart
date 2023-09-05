@@ -9,6 +9,8 @@ import 'package:shape_editor/diagram_editor.dart';
 
 /// Allows you to add any widget to a component.
 mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
+  Color buttonBackColor = Colors.grey.withOpacity(0.7);
+
   /// Allows you to add any widget to a component.
   ///
   /// These widgets will be displayed under all components.
@@ -44,7 +46,7 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
       visible: componentData.isHighlightVisible,
       child: Stack(
         children: [
-          //if (showOptions) componentTopOptions(componentData, context),
+          if (showOptions) componentTopOptions(componentData, context),
           //if (showOptions) componentBottomOptions(componentData),
           highlight( componentData, isMultipleSelectionOn ? Colors.cyan : Colors.red),
           if (isPolygon) ...appendVertices(componentData),
@@ -58,14 +60,14 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
 
   Widget componentTopOptions(ComponentData componentData, context) {
     Offset componentPosition =
-    canvasReader.state.toCanvasCoordinates(componentData.position);
+    canvasReader.state.toCanvasFinalCoordinates(componentData.position);
     return Positioned(
-      left: componentPosition.dx - 24,
+      left: componentPosition.dx,
       top: componentPosition.dy - 48,
       child: Row(
         children: [
           OptionIcon(
-            color: Colors.grey.withOpacity(0.7),
+            color: buttonBackColor,
             iconData: Icons.delete_forever,
             tooltip: 'delete',
             size: 40,
@@ -74,37 +76,37 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
               selectedComponentId = null;
             },
           ),
-          SizedBox(width: 12),
-          OptionIcon(
-            color: Colors.grey.withOpacity(0.7),
-            iconData: Icons.copy,
-            tooltip: 'duplicate',
-            size: 40,
-            onPressed: () {
-              String newId = componentData.clone().id;
-              canvasWriter.model.moveComponentToTheFront(newId);
-              selectedComponentId = newId;
-              hideComponentHighlight(componentData.id);
-              highlightComponent(newId);
-            },
-          ),
-          SizedBox(width: 12),
-          OptionIcon(
-            color: Colors.grey.withOpacity(0.7),
-            iconData: Icons.edit,
-            tooltip: 'edit',
-            size: 40,
-            onPressed: () => showEditComponentDialog(context, componentData),
-          ),
-          SizedBox(width: 12),
-          OptionIcon(
-            color: Colors.grey.withOpacity(0.7),
-            iconData: Icons.link_off,
-            tooltip: 'remove links',
-            size: 40,
-            onPressed: () =>
-                canvasWriter.model.removeComponentConnections(componentData.id),
-          ),
+          // SizedBox(width: 12),
+          // OptionIcon(
+          //   color: Colors.grey.withOpacity(0.7),
+          //   iconData: Icons.copy,
+          //   tooltip: 'duplicate',
+          //   size: 40,
+          //   onPressed: () {
+          //     String newId = componentData.clone().id;
+          //     canvasWriter.model.moveComponentToTheFront(newId);
+          //     selectedComponentId = newId;
+          //     hideComponentHighlight(componentData.id);
+          //     highlightComponent(newId);
+          //   },
+          // ),
+          // SizedBox(width: 12),
+          // OptionIcon(
+          //   color: Colors.grey.withOpacity(0.7),
+          //   iconData: Icons.edit,
+          //   tooltip: 'edit',
+          //   size: 40,
+          //   onPressed: () => showEditComponentDialog(context, componentData),
+          // ),
+          // SizedBox(width: 12),
+          // OptionIcon(
+          //   color: Colors.grey.withOpacity(0.7),
+          //   iconData: Icons.link_off,
+          //   tooltip: 'remove links',
+          //   size: 40,
+          //   onPressed: () =>
+          //       canvasWriter.model.removeComponentConnections(componentData.id),
+          // ),
         ],
       ),
     );
@@ -180,6 +182,7 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
               componentData.id, details.delta / canvasReader.state.finalScale);
           canvasWriter.model.updateComponentLinks(componentData.id);
         },
+        onPanEnd: (details) { },
         child: MouseRegion(
           cursor: SystemMouseCursors.resizeDownRight,
           child: Container(

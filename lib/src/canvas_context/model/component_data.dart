@@ -293,4 +293,15 @@ class ComponentEvent extends EventArgs {
   ComponentData component;
 
   ComponentEvent(this.description, this.component);
+
+  static String created = "created";
+  static String removed = "removed";
+  static String move = "move";
+  static String moveEnded = "moveEnded";
+  static String moveVertex = "moveVertex";
+  static String addVertex = "addVertex";
+  static String setPosition = "setPosition";
+  static String update = "update";
+  static String resize = "resize";
+  static String resizeEnded = "resizeEnded";
 }

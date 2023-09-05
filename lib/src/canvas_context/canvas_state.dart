@@ -23,6 +23,8 @@ class CanvasState with ChangeNotifier {
   setImage(ui.Image image) {
     _image = image;
     _imageSize = Size(image.width.toDouble(), image.height.toDouble());
+    setPosition(Offset.zero);
+
   }
 
   Size? _canvasSize;

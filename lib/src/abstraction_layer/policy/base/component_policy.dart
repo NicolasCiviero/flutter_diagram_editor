@@ -23,10 +23,10 @@ mixin ComponentPolicy on BasePolicySet implements StatePolicy  {
         isReadyToConnect = false;
         bool connected = connectComponents(selectedComponentId, componentId);
         if (connected) {
-          print('connected');
+          //print('connected');
           selectedComponentId = null;
         } else {
-          print('not connected');
+          //print('not connected');
           selectedComponentId = componentId;
           highlightComponent(componentId);
         }
@@ -55,6 +55,7 @@ mixin ComponentPolicy on BasePolicySet implements StatePolicy  {
   }
 
   onComponentScaleUpdate(componentId, details) {
+    if (details.scale != 1) return;
     Offset positionDelta = details.localFocalPoint - lastFocalPoint;
     if (isMultipleSelectionOn) {
       multipleSelected.forEach((compId) {
@@ -74,7 +75,9 @@ mixin ComponentPolicy on BasePolicySet implements StatePolicy  {
     lastFocalPoint = details.localFocalPoint;
   }
 
-  onComponentScaleEnd(String componentId, ScaleEndDetails details) {}
+  onComponentScaleEnd(String componentId, ScaleEndDetails details) {
+    canvasWriter.model.moveComponentEnd(componentId);
+  }
 
   onComponentLongPress(String componentId) {}
 
