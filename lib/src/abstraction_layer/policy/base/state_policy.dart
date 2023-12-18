@@ -1,5 +1,5 @@
 import 'package:shape_editor/src/abstraction_layer/policy/base_policy_set.dart';
-import 'package:shape_editor/diagram_editor.dart';
+import 'package:shape_editor/shape_editor.dart';
 import 'package:flutter/material.dart';
 
 mixin StatePolicy on BasePolicySet {

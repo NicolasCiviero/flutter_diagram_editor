@@ -4,7 +4,7 @@ import 'package:shape_editor/src/widget/canvas.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../diagram_editor.dart';
+import '../../shape_editor.dart';
 
 class DiagramEditor extends StatefulWidget {
   final DiagramEditorContext diagramEditorContext;

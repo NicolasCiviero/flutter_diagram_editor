@@ -1,4 +1,4 @@
-import 'package:shape_editor/diagram_editor.dart';
+import 'package:shape_editor/shape_editor.dart';
 import 'package:shape_editor/src/widget/component.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

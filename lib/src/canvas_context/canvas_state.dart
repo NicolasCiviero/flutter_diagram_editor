@@ -27,15 +27,31 @@ class CanvasState with ChangeNotifier {
 
   }
 
-  Size? _canvasSize;
-  Size? get canvasSize {
-    if (_canvasSize == null) updateCanvasSize();
-    return _canvasSize;
-  }
-  updateCanvasSize(){
-    final RenderBox renderBox = canvasGlobalKey.currentContext?.findRenderObject() as RenderBox;
-    if (renderBox == null) return null;
-    _canvasSize = renderBox.size;
+
+  double? _width;
+  double? _height;
+  Size? canvasSize;
+  // Size? get canvasSize {
+  //   if (_canvasSize == null) updateCanvasSize();
+  //   return _canvasSize;
+  // }
+  // updateCanvasSize(){
+  //   // if (_width != null && _height != null) {
+  //   //   _canvasSize = Size(_width!, _height!);
+  //   // }
+  //   try {
+  //     final RenderBox renderBox = canvasGlobalKey.currentContext?.findRenderObject() as RenderBox;
+  //     _canvasSize = (renderBox == null) ? Size(0,0) : renderBox.size;
+  //   } catch (e) {
+  //     print("Errrro\nerro\nerro\nerro\nerro\nerro\nerro");
+  //   }
+  // }
+
+  setCanvasSize(width, height){
+    _width = width;
+    _height = height;
+    canvasSize = Size(width, height);
+    _verifyPosition();
   }
 
   double canvasAutoScale() {

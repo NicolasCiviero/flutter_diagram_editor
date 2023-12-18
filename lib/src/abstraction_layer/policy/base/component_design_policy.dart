@@ -14,25 +14,18 @@ mixin ComponentDesignPolicy on BasePolicySet {
     switch (componentData.type) {
       case 'polygon':
         return PolygonBody(componentData: componentData, scale: scale);
-        break;
       case 'rect':
         return RectBody(componentData: componentData);
-        break;
       case 'rectangle':
         return RectBody(componentData: componentData);
-        break;
       case 'ellipse':
         return OvalBody(componentData: componentData);
-        break;
       case 'body':
         return RectBody(componentData: componentData);
-        break;
       case 'junction':
         return OvalBody(componentData: componentData);
-        break;
       default:
         return null;
-        break;
     }
   }
 }

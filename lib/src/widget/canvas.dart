@@ -173,7 +173,16 @@ class _DiagramEditorCanvasState extends State<DiagramEditorCanvas>
       child: SizeChangedLayoutNotifier(
           child: RepaintBoundary(
             key: canvasState.canvasGlobalKey,
-            child: AbsorbPointer(
+            child: canvasState.image == null ?
+            Container(
+              color: canvasState.color,
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: widget.policy.loadingIndicatorColor,
+                ),
+              ),
+            ) :
+            AbsorbPointer(
               absorbing: canvasState.shouldAbsorbPointer,
               child: Listener(
                 onPointerSignal: (PointerSignalEvent event) => widget.policy.onCanvasPointerSignal(event),
@@ -208,11 +217,6 @@ class _DiagramEditorCanvasState extends State<DiagramEditorCanvas>
   }
 
   bool gotNotification(SizeChangedLayoutNotification notification) {
-    final canvasState = Provider.of<CanvasState>(context, listen: false);
-    canvasState.updateCanvasSize();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() { });
-    });
     return true;
   }
 

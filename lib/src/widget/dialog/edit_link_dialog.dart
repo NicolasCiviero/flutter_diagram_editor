@@ -1,4 +1,4 @@
-import 'package:shape_editor/diagram_editor.dart';
+import 'package:shape_editor/shape_editor.dart';
 import 'package:shape_editor/src/utils/my_link_data.dart';
 import 'package:shape_editor/src/widget/dialog/pick_color_dialog.dart';
 import 'package:flutter/material.dart';

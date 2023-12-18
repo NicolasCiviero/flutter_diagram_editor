@@ -2,7 +2,7 @@ import 'package:shape_editor/src/canvas_context/canvas_state.dart';
 import 'package:flutter/material.dart';
 import 'package:event/event.dart';
 
-import '../../../diagram_editor.dart';
+import '../../../shape_editor.dart';
 
 class CanvasStateReader {
   final CanvasState canvasState;

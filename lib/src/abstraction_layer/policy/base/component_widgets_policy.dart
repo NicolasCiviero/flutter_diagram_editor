@@ -5,7 +5,7 @@ import 'package:shape_editor/src/widget/dialog/edit_component_dialog.dart';
 import 'package:shape_editor/src/widget/option_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:shape_editor/diagram_editor.dart';
+import 'package:shape_editor/shape_editor.dart';
 
 /// Allows you to add any widget to a component.
 mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {

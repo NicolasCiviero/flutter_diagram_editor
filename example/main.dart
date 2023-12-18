@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:shape_editor/diagram_editor.dart';
+import 'package:shape_editor/shape_editor.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(const DiagramApp());
