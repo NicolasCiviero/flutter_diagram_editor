@@ -10,6 +10,7 @@ import 'package:shape_editor/diagram_editor.dart';
 /// Allows you to add any widget to a component.
 mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
   Color buttonBackColor = Colors.grey.withOpacity(0.7);
+  Color loadingIndicatorColor = Colors.grey.withOpacity(0.7);
 
   /// Allows you to add any widget to a component.
   ///

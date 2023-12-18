@@ -18,7 +18,10 @@ mixin ComponentDesignPolicy on BasePolicySet {
       case 'rect':
         return RectBody(componentData: componentData);
         break;
-      case 'oval':
+      case 'rectangle':
+        return RectBody(componentData: componentData);
+        break;
+      case 'ellipse':
         return OvalBody(componentData: componentData);
         break;
       case 'body':

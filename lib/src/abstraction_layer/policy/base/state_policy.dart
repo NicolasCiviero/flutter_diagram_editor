@@ -9,7 +9,7 @@ mixin StatePolicy on BasePolicySet {
     //'junction',
     'rect',
     'polygon',
-    'oval',
+    'ellipse',
   ];
 
   String? selectedComponentId;

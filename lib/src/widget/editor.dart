@@ -29,6 +29,9 @@ class DiagramEditor extends StatefulWidget {
 }
 
 class _DiagramEditorState extends State<DiagramEditor> {
+  final GlobalKey _key = GlobalKey();
+  Size _lastSize = Size(0, 0);
+
   @override
   void initState() {
     if (!widget.diagramEditorContext.canvasState.isInitialized) {
@@ -36,11 +39,14 @@ class _DiagramEditorState extends State<DiagramEditor> {
       widget.diagramEditorContext.canvasState.isInitialized = true;
     }
     super.initState();
+
   }
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkSize());
     return MultiProvider(
+      key: _key,
       providers: [
         ChangeNotifierProvider<CanvasModel>.value(
           value: widget.diagramEditorContext.canvasModel,
@@ -55,5 +61,18 @@ class _DiagramEditorState extends State<DiagramEditor> {
         );
       },
     );
+  }
+
+  void _checkSize() {
+    final RenderObject? renderObject = _key.currentContext?.findRenderObject();
+    if (renderObject == null) return;
+    final RenderBox renderBox = renderObject as RenderBox;
+    final Size newSize = renderBox.size;
+
+    if (_lastSize != newSize) {
+      widget.diagramEditorContext.canvasState.setCanvasSize(newSize.width, newSize.height);
+      _lastSize = newSize;
+      setState(() { });
+    }
   }
 }
