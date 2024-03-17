@@ -1,3 +1,4 @@
+import 'package:shape_editor/shape_editor.dart';
 import 'package:shape_editor/src/abstraction_layer/policy/base/state_policy.dart';
 import 'package:shape_editor/src/abstraction_layer/policy/base_policy_set.dart';
 import 'package:shape_editor/src/canvas_context/model/connection.dart';
@@ -33,11 +34,42 @@ mixin ComponentPolicy on BasePolicySet implements StatePolicy  {
       } else {
         selectedComponentId = componentId;
         highlightComponent(componentId);
+
+        final componentData = canvasReader.model.getComponent(componentId);
+        canvasWriter.model.sendEvent(ComponentEvent(ComponentEvent.selected, componentData));
       }
     }
   }
 
-  onComponentTapDown(String componentId, TapDownDetails details) {}
+  onComponentTapDown(String componentId, TapDownDetails details) {
+    if (isMultipleSelectionOn) {
+      if (multipleSelected.contains(componentId)) {
+        removeComponentFromMultipleSelection(componentId);
+        hideComponentHighlight(componentId);
+      } else {
+        addComponentToMultipleSelection(componentId);
+        highlightComponent(componentId);
+      }
+    } else {
+      hideAllHighlights();
+
+      if (isReadyToConnect) {
+        isReadyToConnect = false;
+        bool connected = connectComponents(selectedComponentId, componentId);
+        if (connected) {
+          //print('connected');
+          selectedComponentId = null;
+        } else {
+          //print('not connected');
+          selectedComponentId = componentId;
+          highlightComponent(componentId);
+        }
+      } else {
+        selectedComponentId = componentId;
+        highlightComponent(componentId);
+      }
+    }
+  }
 
   onComponentTapUp(String componentId, TapUpDetails details) {}
 

@@ -372,6 +372,10 @@ mixin LinkWriter on ModelWriter {
         .getLink(linkId)
         .moveAllMiddlePoints(position / _canvasState.scale);
   }
+
+  sendEvent(ComponentEvent event) {
+    _canvasState.componentUpdateEvent.broadcast(event);
+  }
 }
 
 mixin ConnectionWriter on ModelWriter {
