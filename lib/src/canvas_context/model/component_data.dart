@@ -297,6 +297,7 @@ class ComponentEvent extends EventArgs {
   static String created = "created";
   static String removed = "removed";
   static String selected = "selected";
+  static String deselected = "deselected";
   static String move = "move";
   static String moveEnded = "moveEnded";
   static String moveVertex = "moveVertex";

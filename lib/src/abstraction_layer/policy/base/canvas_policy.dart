@@ -1,3 +1,4 @@
+import 'package:shape_editor/shape_editor.dart';
 import 'package:shape_editor/src/abstraction_layer/policy/base/state_policy.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,10 @@ mixin CanvasPolicy implements StatePolicy {
       isReadyToConnect = false;
       canvasWriter.model.updateComponent(selectedComponentId);
     } else {
+      if (selectedComponentId != null) {
+        final componentData = canvasReader.model.getComponent(selectedComponentId!);
+        canvasWriter.model.sendEvent(ComponentEvent(ComponentEvent.deselected, componentData));
+      }
       selectedComponentId = null;
       hideAllHighlights();
     }
