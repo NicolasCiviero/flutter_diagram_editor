@@ -159,7 +159,13 @@ class _DiagramEditorCanvasState extends State<DiagramEditorCanvas>
           child: child,
         );
       },
-      child: canvasStack(canvasModel),
+      child: DragTarget<ComponentData>(
+        builder: (_, __, ___) => canvasStack(canvasModel),
+        onWillAccept: (ComponentData? data) => true,
+        onAcceptWithDetails: (DragTargetDetails<ComponentData> details) =>
+            widget.policy.receiveDraggedComponent(details, context),
+
+      ),
     );
   }
 

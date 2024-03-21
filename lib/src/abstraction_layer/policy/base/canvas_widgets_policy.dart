@@ -26,16 +26,10 @@ mixin CanvasWidgetsPolicy on BasePolicySet implements StatePolicy, CanvasControl
           showVertical: isGridVisible,
         ),
       ),
-      DragTarget<ComponentData>(
-        builder: (_, __, ___) => SizedBox(),
-        onWillAccept: (ComponentData? data) => true,
-        onAcceptWithDetails: (DragTargetDetails<ComponentData> details) =>
-            _onAcceptWithDetails(details, context),
-      ),
     ];
   }
 
-  _onAcceptWithDetails( DragTargetDetails details, BuildContext context) {
+  receiveDraggedComponent( DragTargetDetails details, BuildContext context) {
     final renderBox = context.findRenderObject() as RenderBox;
     final Offset localOffset = renderBox.globalToLocal(details.offset);
     Offset componentPosition = canvasReader.state.fromCanvasFinalCoordinates(localOffset);
