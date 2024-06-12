@@ -36,7 +36,7 @@ class _DiagramAppState extends State<DiagramApp> {
                   children: [
                     ElevatedButton(
                         onPressed: () => myPolicySet.deleteAllComponents(),
-                        style: ElevatedButton.styleFrom(primary: Colors.red),
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                         child: const Text('delete all')),
                     const Spacer(),
                     ElevatedButton(

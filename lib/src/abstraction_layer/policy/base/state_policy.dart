@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:shape_editor/src/abstraction_layer/policy/base_policy_set.dart';
 import 'package:shape_editor/shape_editor.dart';
 import 'package:flutter/material.dart';
@@ -122,5 +123,27 @@ mixin CustomBehaviourPolicy implements StatePolicy {
       addComponentToMultipleSelection(componentId);
       highlightComponent(componentId);
     });
+  }
+
+  moveHighlighted(KeyEvent event) {
+    if (selectedComponentId == null) return KeyEventResult.handled;
+    if (event is KeyUpEvent) return KeyEventResult.handled;
+
+    final step = 1.0;
+    if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
+      final componentData = canvasReader.model.getComponent(selectedComponentId!);
+      componentData.move(Offset(0, -step));
+    } else if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+      final componentData = canvasReader.model.getComponent(selectedComponentId!);
+      componentData.move(Offset(0, step));
+    } else if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+      final componentData = canvasReader.model.getComponent(selectedComponentId!);
+      componentData.move(Offset(-step, 0));
+    } else if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
+      final componentData = canvasReader.model.getComponent(selectedComponentId!);
+      componentData.move(Offset(step, 0));
+    }
+
+    return KeyEventResult.handled;
   }
 }

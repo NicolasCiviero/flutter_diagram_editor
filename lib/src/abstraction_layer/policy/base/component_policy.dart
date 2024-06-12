@@ -77,6 +77,7 @@ mixin ComponentPolicy on BasePolicySet implements StatePolicy  {
 
   Offset lastFocalPoint = Offset(0,0);
   onComponentScaleStart(componentId, details) {
+    if (selectedComponentId != componentId) return;
     lastFocalPoint = details.localFocalPoint;
 
     hideLinkOption();
@@ -87,6 +88,8 @@ mixin ComponentPolicy on BasePolicySet implements StatePolicy  {
   }
 
   onComponentScaleUpdate(componentId, details) {
+    if (selectedComponentId != componentId) return;
+
     if (details.scale != 1) return;
     Offset positionDelta = details.localFocalPoint - lastFocalPoint;
     if (isMultipleSelectionOn) {
