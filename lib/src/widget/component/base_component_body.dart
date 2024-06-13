@@ -22,7 +22,7 @@ class BaseComponentBody extends StatelessWidget {
           child: Align(
             alignment: componentData.textAlignment,
             child: Text(
-              componentData.text,
+              componentData.type == "text" ? "" : componentData.text,
               style: TextStyle(fontSize: componentData.textSize),
             ),
           ),

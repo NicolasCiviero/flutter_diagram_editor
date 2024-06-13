@@ -40,6 +40,7 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
   Widget showCustomWidgetWithComponentDataOver(BuildContext context, ComponentData componentData) {
     bool isJunction = componentData.type == 'junction';
     bool isPolygon = componentData.type == 'polygon';
+    bool hasVertices = componentData.type == 'polygon' || componentData.type == 'arrow';
     bool showOptions =
         (!isMultipleSelectionOn) && (!isReadyToConnect) && !isJunction;
 
@@ -51,8 +52,8 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
           //if (showOptions) componentBottomOptions(componentData),
           highlight( componentData, isMultipleSelectionOn ? Colors.cyan : Colors.red),
           if (isPolygon) ...appendVertices(componentData),
-          if (isPolygon) ...dragVertices(componentData),
-          if (!isPolygon) resizeCorner(componentData),
+          if (hasVertices) ...dragVertices(componentData),
+          if (!hasVertices) resizeCorner(componentData),
           if (isJunction && !isReadyToConnect) junctionOptions(componentData),
         ],
       ),

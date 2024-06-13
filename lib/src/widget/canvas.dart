@@ -133,6 +133,8 @@ class _DiagramEditorCanvasState extends State<DiagramEditorCanvas>
     return Stack(
       clipBehavior: Clip.none,
       fit: StackFit.expand,
+
+
       children: [
         ...showBackgroundWidgets(),
         ...showOtherWithComponentDataUnder(canvasModel),
@@ -188,33 +190,29 @@ class _DiagramEditorCanvasState extends State<DiagramEditorCanvas>
                 ),
               ),
             ) :
-            Focus(
-              autofocus: true,
-              onKeyEvent: (FocusNode node, KeyEvent event) => widget.policy.moveHighlighted(event),
-              child: AbsorbPointer(
-                absorbing: canvasState.shouldAbsorbPointer,
-                child: Listener(
-                  onPointerSignal: (PointerSignalEvent event) => widget.policy.onCanvasPointerSignal(event),
-                  child: GestureDetector(
-                    onScaleStart: (details) => widget.policy.onCanvasScaleStart(details),
-                    onScaleUpdate: (details) => widget.policy.onCanvasScaleUpdate(details),
-                    onScaleEnd: (details) => widget.policy.onCanvasScaleEnd(details),
-                    onTap: () => widget.policy.onCanvasTap(),
-                    onTapDown: (TapDownDetails details) => widget.policy.onCanvasTapDown(details),
-                    onTapUp: (TapUpDetails details) => widget.policy.onCanvasTapUp(details),
-                    onTapCancel: () => widget.policy.onCanvasTapCancel(),
-                    onLongPress: () => widget.policy.onCanvasLongPress(),
-                    onLongPressStart: (LongPressStartDetails details) => widget.policy.onCanvasLongPressStart(details),
-                    onLongPressMoveUpdate: (LongPressMoveUpdateDetails details) => widget.policy.onCanvasLongPressMoveUpdate(details),
-                    onLongPressEnd: (LongPressEndDetails details) => widget.policy.onCanvasLongPressEnd(details),
-                    onLongPressUp: () => widget.policy.onCanvasLongPressUp(),
-                    child: Container(
-                      color: canvasState.color,
-                      child: ClipRect(
-                        child: (withControlPolicy != null)
-                            ? canvasAnimated(canvasModel)
-                            : canvasStack(canvasModel),
-                      ),
+            AbsorbPointer(
+              absorbing: canvasState.shouldAbsorbPointer,
+              child: Listener(
+                onPointerSignal: (PointerSignalEvent event) => widget.policy.onCanvasPointerSignal(event),
+                child: GestureDetector(
+                  onScaleStart: (details) => widget.policy.onCanvasScaleStart(details),
+                  onScaleUpdate: (details) => widget.policy.onCanvasScaleUpdate(details),
+                  onScaleEnd: (details) => widget.policy.onCanvasScaleEnd(details),
+                  onTap: () => widget.policy.onCanvasTap(),
+                  onTapDown: (TapDownDetails details) => widget.policy.onCanvasTapDown(details),
+                  onTapUp: (TapUpDetails details) => widget.policy.onCanvasTapUp(details),
+                  onTapCancel: () => widget.policy.onCanvasTapCancel(),
+                  onLongPress: () => widget.policy.onCanvasLongPress(),
+                  onLongPressStart: (LongPressStartDetails details) => widget.policy.onCanvasLongPressStart(details),
+                  onLongPressMoveUpdate: (LongPressMoveUpdateDetails details) => widget.policy.onCanvasLongPressMoveUpdate(details),
+                  onLongPressEnd: (LongPressEndDetails details) => widget.policy.onCanvasLongPressEnd(details),
+                  onLongPressUp: () => widget.policy.onCanvasLongPressUp(),
+                  child: Container(
+                    color: canvasState.color,
+                    child: ClipRect(
+                      child: (withControlPolicy != null)
+                          ? canvasAnimated(canvasModel)
+                          : canvasStack(canvasModel),
                     ),
                   ),
                 ),

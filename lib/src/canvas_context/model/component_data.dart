@@ -56,6 +56,7 @@ class ComponentData with ChangeNotifier {
   String text;
   Alignment textAlignment;
   double textSize;
+  Color textColor;
   bool isHighlightVisible = false;
 
   /// Dynamic data for you to define your own data for this component.
@@ -76,6 +77,7 @@ class ComponentData with ChangeNotifier {
     this.text = '',
     this.textAlignment = Alignment.center,
     this.textSize = 20,
+    this.textColor = Colors.black,
   })  : assert(minSize <= size),
         this.id = id ?? Uuid().v4();
 
@@ -260,6 +262,7 @@ class ComponentData with ChangeNotifier {
         text = json['text'],
         textAlignment = json['textAlignment'],
         textSize = json['textSize'],
+        textColor = json['textColor'],
         data = decodeCustomComponentData?.call(json['dynamic_data']) {
     this.childrenIds.addAll(
         (json['children_ids'] as List).map((id) => id as String).toList());
@@ -284,6 +287,7 @@ class ComponentData with ChangeNotifier {
         'text': text,
         'textAlignment': textAlignment,
         'textSize': textSize,
+        'textColor': textColor,
         'dynamic_data': data?.toJson(),
       };
 }

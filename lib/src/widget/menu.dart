@@ -5,16 +5,22 @@ class DraggableMenu extends StatelessWidget {
   final PolicySet myPolicySet;
   final Color color;
   final Color borderColor;
+  final Color textColor;
+  final Color textBackgroundColor;
   final double borderWidth;
   final double scale;
+  final double textSize;
 
   const DraggableMenu({
         Key? key,
         required this.myPolicySet,
-        this.color = Colors.transparent,
-        this.borderColor = Colors.white,
+        this.color = Colors.black12,
+        this.borderColor = Colors.black,
+        this.textColor = Colors.black,
+        this.textBackgroundColor = Colors.white54,
         this.borderWidth = 2.0,
         this.scale = 1.0,
+        this.textSize = 16.0,
       }) : super(key: key);
 
   @override
@@ -71,6 +77,30 @@ class DraggableMenu extends StatelessWidget {
       //     type: componentType,
       //   );
       //   break;
+      case 'arrow':
+        return ComponentData(
+          size: Size(100 * scale, 72 * scale),
+          minSize: Size(80 * scale, 64 * scale),
+          color: color,
+          borderColor: borderColor,
+          borderWidth: borderWidth,
+          type: componentType,
+          vertices: [
+            Offset(0, 72 * scale),
+            Offset(100 * scale, 0),
+          ],
+        );
+      case 'text':
+        return ComponentData(
+          size: Size(50 * scale, 20 * scale),
+          minSize: Size(16 * scale, 12 * scale),
+          color: textBackgroundColor,
+          borderColor: Colors.transparent,
+          borderWidth: borderWidth,
+          type: componentType,
+          textColor: textColor,
+          textSize: textSize
+        );
       case 'polygon':
         return ComponentData(
           size: Size(100 * scale, 72 * scale),
@@ -85,7 +115,6 @@ class DraggableMenu extends StatelessWidget {
             Offset(0 * scale,72 * scale)
           ],
         );
-        break;
       default:
         return ComponentData(
           size: Size(120 * scale, 72 * scale),
@@ -95,7 +124,6 @@ class DraggableMenu extends StatelessWidget {
           borderWidth: borderWidth,
           type: componentType,
         );
-        break;
     }
   }
 }
@@ -112,7 +140,7 @@ class DraggableComponent extends StatelessWidget {
       affinity: Axis.horizontal,
       ignoringFeedbackSemantics: true,
       data: componentData,
-      childWhenDragging: policySet.showComponentBody(componentData, 1),
+      childWhenDragging: policySet.showComponentThumb(componentData, 1),
       feedback: Material(
         color: Colors.transparent,
         child: Container(
@@ -121,7 +149,7 @@ class DraggableComponent extends StatelessWidget {
           child: policySet.showComponentBody(componentData, 1),
         ),
       ),
-      child: policySet.showComponentBody(componentData, 1) ?? Container(),//TODO replace Container
+      child: policySet.showComponentThumb(componentData, 1) ?? Container(),//TODO replace Container
     );
   }
 }

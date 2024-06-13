@@ -11,6 +11,8 @@ mixin StatePolicy on BasePolicySet {
     'rect',
     'polygon',
     'ellipse',
+    'text',
+    'arrow',
   ];
 
   String? selectedComponentId;
