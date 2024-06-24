@@ -1,6 +1,7 @@
 import 'package:shape_editor/src/abstraction_layer/policy/base/state_policy.dart';
 import 'package:shape_editor/src/abstraction_layer/policy/base_policy_set.dart';
 import 'package:shape_editor/src/canvas_context/model/component_data.dart';
+import 'package:shape_editor/src/utils/painter/arrow_highlight_painter.dart';
 import 'package:shape_editor/src/widget/dialog/edit_component_dialog.dart';
 import 'package:shape_editor/src/widget/option_icon.dart';
 import 'package:flutter/material.dart';
@@ -158,14 +159,22 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
   }
 
   Widget highlight(ComponentData componentData, Color color) {
-    final position = componentData.position * canvasReader.state.finalScale - Offset(2, 2) + canvasReader.state.position;
+    var position = componentData.position * canvasReader.state.finalScale + canvasReader.state.position;
+    if (componentData.type != "arrow") position = position - Offset(2, 2);
+    final finalScale = canvasReader.state.finalScale;
     return Positioned(
       left: position.dx,
       top: position.dy,
       child: CustomPaint(
-        painter: ComponentHighlightPainter(
-          width: componentData.size.width * canvasReader.state.finalScale + 4,
-          height: componentData.size.height * canvasReader.state.finalScale + 4,
+        painter: componentData.type == "arrow" ?
+        ArrowHighlightPainter(
+            p1: componentData.vertices[0].scale(finalScale, finalScale),
+            p2: componentData.vertices[1].scale(finalScale, finalScale),
+            color: color,
+        ) :
+        RectHighlightPainter(
+          width: componentData.size.width * finalScale + 4,
+          height: componentData.size.height * finalScale + 4,
           color: color,
         ),
       ),

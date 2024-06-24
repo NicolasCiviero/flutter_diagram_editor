@@ -7,3 +7,8 @@
 
 ### Added
 - loading animation appeas before image has loaded
+
+## 0.0.10
+
+### Added
+- New components Text and Arrow can be created.

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ComponentHighlightPainter extends CustomPainter {
+class RectHighlightPainter extends CustomPainter {
   final double width;
   final double height;
   final Color color;
@@ -11,7 +11,7 @@ class ComponentHighlightPainter extends CustomPainter {
   /// Rectangular dashed line painter.
   ///
   /// Useful if added as component widget to highlight it.
-  ComponentHighlightPainter({
+  RectHighlightPainter({
     required this.width,
     required this.height,
     this.color = Colors.red,

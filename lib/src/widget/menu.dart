@@ -68,32 +68,23 @@ class DraggableMenu extends StatelessWidget {
 
   ComponentData getComponentData(String componentType) {
     switch (componentType) {
-      // case 'junction':
-      //   return ComponentData(
-      //     size: Size(16, 16),
-      //     minSize: Size(4, 4),
-      //     color: Colors.black,
-      //     borderWidth: 0.0,
-      //     type: componentType,
-      //   );
-      //   break;
       case 'arrow':
         return ComponentData(
-          size: Size(100 * scale, 72 * scale),
+          size: Size(150 * scale, 100 * scale),
           minSize: Size(80 * scale, 64 * scale),
           color: color,
           borderColor: borderColor,
           borderWidth: borderWidth,
           type: componentType,
           vertices: [
-            Offset(0, 72 * scale),
-            Offset(100 * scale, 0),
+            Offset(0, 100 * scale),
+            Offset(150 * scale, 0),
           ],
         );
       case 'text':
         return ComponentData(
-          size: Size(50 * scale, 20 * scale),
-          minSize: Size(16 * scale, 12 * scale),
+          size: Size(350 * scale, 120 * scale),
+          minSize: Size(60 * scale, 30 * scale),
           color: textBackgroundColor,
           borderColor: Colors.transparent,
           borderWidth: borderWidth,
@@ -103,21 +94,21 @@ class DraggableMenu extends StatelessWidget {
         );
       case 'polygon':
         return ComponentData(
-          size: Size(100 * scale, 72 * scale),
+          size: Size(150 * scale, 110 * scale),
           minSize: Size(80 * scale, 64 * scale),
           color: color,
           borderColor: borderColor,
           borderWidth: borderWidth,
           type: componentType,
           vertices: [
-            Offset(50 * scale,0),
-            Offset(100 * scale,72 * scale),
-            Offset(0 * scale,72 * scale)
+            Offset(75 * scale,0),
+            Offset(150 * scale,110 * scale),
+            Offset(0 * scale, 110 * scale)
           ],
         );
       default:
         return ComponentData(
-          size: Size(120 * scale, 72 * scale),
+          size: Size(160 * scale, 100 * scale),
           minSize: Size(32 * scale, 24 * scale),
           color: color,
           borderColor: borderColor,
@@ -140,7 +131,7 @@ class DraggableComponent extends StatelessWidget {
       affinity: Axis.horizontal,
       ignoringFeedbackSemantics: true,
       data: componentData,
-      childWhenDragging: policySet.showComponentThumb(componentData, 1),
+      childWhenDragging: policySet.showComponentBody(componentData, 1),
       feedback: Material(
         color: Colors.transparent,
         child: Container(

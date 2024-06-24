@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:shape_editor/shape_editor.dart';
 import 'package:shape_editor/src/widget/component/base_component_body.dart';
 import 'package:flutter/material.dart';
+import 'package:vector_math/vector_math.dart' as vector_math;
 
 class ArrowBody extends StatelessWidget {
   final ComponentData componentData;
@@ -24,6 +25,19 @@ class ArrowBody extends StatelessWidget {
         borderColor: componentData.borderColor,
         borderWidth: componentData.borderWidth,
         vertices: componentData.vertices,
+      ),
+    );
+    return Container(
+      color: Color.fromARGB(0, 255, 255, 255),
+      child: BaseComponentBody(
+        componentData: componentData,
+        componentPainter: ArrowPainter(
+          scale: scale,
+          color: componentData.color,
+          borderColor: componentData.borderColor,
+          borderWidth: componentData.borderWidth,
+          vertices: componentData.vertices,
+        ),
       ),
     );
   }
@@ -70,13 +84,36 @@ class ArrowPainter extends CustomPainter {
   bool shouldRepaint(CustomPainter oldDelegate) => true;
 
   @override
-  bool hitTest(Offset position) {
-    Path path = componentPath();
-    return path.contains(position);
+  bool hitTest(Offset point) {
+    Path path = Path();
+    if (vertices == null || vertices.length < 2) return false;
+    path.moveTo(vertices[0].dx * scale, vertices[0].dy * scale);
+    path.lineTo(vertices[1].dx * scale, vertices[1].dy * scale);
+    path.close();
+
+    double minDistance = double.infinity;
+    final pathMetrics = path.computeMetrics();
+    for (final metric in pathMetrics) {
+      final extractPath = metric.extractPath(0, metric.length);
+      final pathPoints = extractPath.computeMetrics();
+      for (final pathMetric in pathPoints) {
+        for (double t = 0.0; t < pathMetric.length; t += 1.0) {
+          final tangent = pathMetric.getTangentForOffset(t);
+          if (tangent == null) continue;
+          final position = tangent!.position;
+          final distance = vector_math.Vector2(position.dx, position.dy)
+              .distanceTo(vector_math.Vector2(point.dx, point.dy));
+          if (distance < minDistance) {
+            minDistance = distance;
+          }
+        }
+      }
+    }
+    return minDistance < 10;
   }
 
   Path componentPath() {
-    var tip_size = 20 /scale;
+    var tip_size = 20 / scale;
 
     Path path = Path();
     if (vertices == null || vertices.length < 2) return path;

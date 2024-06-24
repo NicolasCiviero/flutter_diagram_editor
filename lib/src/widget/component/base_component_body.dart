@@ -14,17 +14,15 @@ class BaseComponentBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return GestureDetector(
-      child: CustomPaint(
-        painter: componentPainter,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 4),
-          child: Align(
-            alignment: componentData.textAlignment,
-            child: Text(
-              componentData.type == "text" ? "" : componentData.text,
-              style: TextStyle(fontSize: componentData.textSize),
-            ),
+    return CustomPaint(
+      painter: componentPainter,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 4),
+        child: Align(
+          alignment: componentData.textAlignment,
+          child: Text(
+            componentData.type == "text" ? "" : componentData.text,
+            style: TextStyle(fontSize: componentData.textSize),
           ),
         ),
       ),

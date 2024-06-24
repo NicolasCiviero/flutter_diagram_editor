@@ -224,6 +224,13 @@ class ComponentData with ChangeNotifier {
     childrenIds.remove(childId);
   }
 
+  /// Returns true for non-shape components
+  bool isOverlay() {
+    if (this.type == "arrow") return true;
+    if (this.type == "text") return true;
+    return false;
+  }
+
   /// Create a copy of this ComponentData
   ComponentData clone(){
     return ComponentData(
@@ -256,7 +263,7 @@ class ComponentData with ChangeNotifier {
         type = json['type'],
         zOrder = json['z_order'],
         parentId = json['parent_id'],
-        color = json['color,'],
+        color = json['color'],
         borderColor = json['borderColor'],
         borderWidth = json['borderWidth'],
         text = json['text'],
