@@ -25,5 +25,6 @@ export 'src/utils/painter/grid_painter.dart';
 export 'src/utils/painter/rect_highlight_painter.dart';
 export 'src/utils/vector_utils.dart';
 export 'src/widget/editor.dart';
+export 'src/widget/viewer.dart';
 export 'src/widget/option_icon.dart';
 export 'src/widget/menu.dart';

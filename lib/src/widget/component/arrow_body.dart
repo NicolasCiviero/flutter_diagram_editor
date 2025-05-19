@@ -7,12 +7,10 @@ import 'package:vector_math/vector_math.dart' as vector_math;
 
 class ArrowBody extends StatelessWidget {
   final ComponentData componentData;
-  final double scale;
 
   const ArrowBody({
     Key? key,
     required this.componentData,
-    required this.scale,
   }) : super(key: key);
 
   @override
@@ -20,43 +18,30 @@ class ArrowBody extends StatelessWidget {
     return BaseComponentBody(
       componentData: componentData,
       componentPainter: ArrowPainter(
-        scale: scale,
         color: componentData.color,
         borderColor: componentData.borderColor,
         borderWidth: componentData.borderWidth,
         vertices: componentData.vertices,
-      ),
-    );
-    return Container(
-      color: Color.fromARGB(0, 255, 255, 255),
-      child: BaseComponentBody(
-        componentData: componentData,
-        componentPainter: ArrowPainter(
-          scale: scale,
-          color: componentData.color,
-          borderColor: componentData.borderColor,
-          borderWidth: componentData.borderWidth,
-          vertices: componentData.vertices,
-        ),
+        componentSize: componentData.size,
       ),
     );
   }
 }
 
 class ArrowPainter extends CustomPainter {
-  final double scale;
   final Color color;
   final Color borderColor;
   final double borderWidth;
+  final Size componentSize;
   List<Offset> vertices = [];
-  Size componentSize = Size(0,0);
+  Size availableSize = Size(0,0);
 
   ArrowPainter({
-    this.scale = 1,
     this.color = Colors.grey,
     this.borderColor = Colors.black,
     this.borderWidth = 1.0,
     required this.vertices,
+    required this.componentSize,
   });
 
   @override
@@ -64,7 +49,7 @@ class ArrowPainter extends CustomPainter {
     var paint = Paint()
       ..color = borderColor
       ..style = PaintingStyle.fill;
-    componentSize = size;
+    availableSize = size;
 
     Path path = componentPath();
 
@@ -86,9 +71,13 @@ class ArrowPainter extends CustomPainter {
   @override
   bool hitTest(Offset point) {
     Path path = Path();
-    if (vertices == null || vertices.length < 2) return false;
-    path.moveTo(vertices[0].dx * scale, vertices[0].dy * scale);
-    path.lineTo(vertices[1].dx * scale, vertices[1].dy * scale);
+    if (vertices.length < 2) return false;
+
+    var xScale = availableSize.width / componentSize.width;
+    var yScale = availableSize.height / componentSize.height;
+
+    path.moveTo(vertices[0].dx * xScale, vertices[0].dy * yScale);
+    path.lineTo(vertices[1].dx * xScale, vertices[1].dy * yScale);
     path.close();
 
     double minDistance = double.infinity;
@@ -100,7 +89,7 @@ class ArrowPainter extends CustomPainter {
         for (double t = 0.0; t < pathMetric.length; t += 1.0) {
           final tangent = pathMetric.getTangentForOffset(t);
           if (tangent == null) continue;
-          final position = tangent!.position;
+          final position = tangent.position;
           final distance = vector_math.Vector2(position.dx, position.dy)
               .distanceTo(vector_math.Vector2(point.dx, point.dy));
           if (distance < minDistance) {
@@ -113,10 +102,12 @@ class ArrowPainter extends CustomPainter {
   }
 
   Path componentPath() {
-    var tip_size = 20 / scale;
+    var xScale = availableSize.width / componentSize.width;
+    var yScale = availableSize.height / componentSize.height;
+    var tip_size = 20 / yScale;
 
     Path path = Path();
-    if (vertices == null || vertices.length < 2) return path;
+    if (vertices.length < 2) return path;
 
     // maths
     final p1 = vertices[0];
@@ -133,12 +124,12 @@ class ArrowPainter extends CustomPainter {
     var redge = Offset(base.dx + dy * tip_size * 0.3, base.dy - dx * tip_size * 0.3);
 
     // move to arrow back
-    path.moveTo(p1.dx * scale, p1.dy * scale);
-    path.lineTo(base.dx * scale, base.dy * scale); //base
-    path.lineTo(ledge.dx * scale, ledge.dy * scale); //ledge
-    path.lineTo(p2.dx * scale, p2.dy * scale); // arrow tip
-    path.lineTo(redge.dx * scale, redge.dy * scale); //redge
-    path.lineTo(base.dx * scale, base.dy * scale); //base
+    path.moveTo(p1.dx * xScale, p1.dy * yScale);
+    path.lineTo(base.dx * xScale, base.dy * yScale); //base
+    path.lineTo(ledge.dx * xScale, ledge.dy * yScale); //ledge
+    path.lineTo(p2.dx * xScale, p2.dy * yScale); // arrow tip
+    path.lineTo(redge.dx * xScale, redge.dy * yScale); //redge
+    path.lineTo(base.dx * xScale, base.dy * yScale); //base
     path.close();
     return path;
   }

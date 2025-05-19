@@ -83,7 +83,7 @@ class DraggableMenu extends StatelessWidget {
         );
       case 'text':
         return ComponentData(
-          size: Size(350 * scale, 120 * scale),
+          size: Size(350 * scale, 180 * scale),
           minSize: Size(60 * scale, 30 * scale),
           color: textBackgroundColor,
           borderColor: Colors.transparent,
@@ -131,16 +131,16 @@ class DraggableComponent extends StatelessWidget {
       affinity: Axis.horizontal,
       ignoringFeedbackSemantics: true,
       data: componentData,
-      childWhenDragging: policySet.showComponentBody(componentData, 1),
+      childWhenDragging: policySet.showComponentBody(componentData),
       feedback: Material(
         color: Colors.transparent,
         child: Container(
           width: componentData.size.width,
           height: componentData.size.height,
-          child: policySet.showComponentBody(componentData, 1),
+          child: policySet.showComponentBody(componentData),
         ),
       ),
-      child: policySet.showComponentThumb(componentData, 1) ?? Container(),//TODO replace Container
+      child: policySet.showComponentThumb(componentData) ?? Container(),//TODO replace Container
     );
   }
 }

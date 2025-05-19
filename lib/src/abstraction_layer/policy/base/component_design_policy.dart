@@ -14,12 +14,12 @@ mixin ComponentDesignPolicy on BasePolicySet {
   /// Returns a widget that specifies a design of this component.
   ///
   /// Recommendation: type can by used to determine what widget should be returned.
-  Widget? showComponentBody(ComponentData componentData, double scale) {
+  Widget? showComponentBody(ComponentData componentData) {
     switch (componentData.type) {
       case 'arrow':
-        return ArrowBody(componentData: componentData, scale: scale);
+        return ArrowBody(componentData: componentData);
       case 'polygon':
-        return PolygonBody(componentData: componentData, scale: scale);
+        return PolygonBody(componentData: componentData);
       case 'rect':
         return RectBody(componentData: componentData);
       case 'rectangle':
@@ -37,12 +37,12 @@ mixin ComponentDesignPolicy on BasePolicySet {
     }
   }
 
-  Widget? showComponentThumb(ComponentData componentData, double scale) {
+  Widget? showComponentThumb(ComponentData componentData) {
     switch (componentData.type) {
       case 'arrow':
-        return ArrowBody(componentData: componentData, scale: scale);
+        return ArrowBody(componentData: componentData);
       case 'polygon':
-        return PolygonBody(componentData: componentData, scale: scale);
+        return PolygonBody(componentData: componentData);
       case 'rect':
         return RectBody(componentData: componentData);
       case 'rectangle':

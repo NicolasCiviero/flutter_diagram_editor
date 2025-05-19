@@ -4,12 +4,10 @@ import 'package:flutter/material.dart';
 
 class PolygonBody extends StatelessWidget {
   final ComponentData componentData;
-  final double scale;
 
   const PolygonBody({
     Key? key,
     required this.componentData,
-    required this.scale,
   }) : super(key: key);
 
   @override
@@ -17,30 +15,30 @@ class PolygonBody extends StatelessWidget {
     return BaseComponentBody(
       componentData: componentData,
       componentPainter: PolygonPainter(
-        scale: scale,
         color: componentData.color,
         borderColor: componentData.borderColor,
         borderWidth: componentData.borderWidth,
         vertices: componentData.vertices,
+        componentSize: componentData.size,
       ),
     );
   }
 }
 
 class PolygonPainter extends CustomPainter {
-  final double scale;
   final Color color;
   final Color borderColor;
   final double borderWidth;
+  final Size componentSize;
   List<Offset> vertices = [];
-  Size componentSize = Size(0,0);
+  Size availableSize = Size(0,0);
 
   PolygonPainter({
-    this.scale = 1,
     this.color = Colors.grey,
     this.borderColor = Colors.black,
     this.borderWidth = 1.0,
     required this.vertices,
+    required this.componentSize,
   });
 
   @override
@@ -48,7 +46,7 @@ class PolygonPainter extends CustomPainter {
     var paint = Paint()
       ..color = color
       ..style = PaintingStyle.fill;
-    componentSize = size;
+    availableSize = size;
 
     Path path = componentPath();
 
@@ -77,9 +75,12 @@ class PolygonPainter extends CustomPainter {
     Path path = Path();
     if (vertices == null || vertices.length == 0) return path;
 
-    path.moveTo(vertices[0].dx * scale, vertices[0].dy * scale);
+    var xScale = availableSize.width / componentSize.width;
+    var yScale = availableSize.height / componentSize.height;
+
+    path.moveTo(vertices[0].dx * xScale, vertices[0].dy * yScale);
     for (var i = 1 ; i < vertices.length; i++ ) {
-      path.lineTo(vertices[i].dx * scale, vertices[i].dy * scale);
+      path.lineTo(vertices[i].dx * xScale, vertices[i].dy * yScale);
     }
     path.close();
     return path;

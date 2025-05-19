@@ -14,11 +14,13 @@ import 'package:provider/provider.dart';
 
 class DiagramEditorCanvas extends StatefulWidget {
   final PolicySet policy;
+  final bool noEditing;
 
   /// The canvas where all components and links are shown on.
   const DiagramEditorCanvas({
     Key? key,
     required this.policy,
+    this.noEditing = false
   }) : super(key: key);
 
   @override
@@ -65,7 +67,12 @@ class _DiagramEditorCanvasState extends State<DiagramEditorCanvas>
 
   List<Widget> showComponents(CanvasModel canvasModel) {
     var zOrderedComponents = canvasModel.components.values.toList();
-    zOrderedComponents.sort((a, b) => a.zOrder.compareTo(b.zOrder));
+    zOrderedComponents.sort((a, b) {
+      if (a.type != "arrow" && b.type == "arrow") { return -1;}
+      else if (a.type == "arrow" && b.type != "arrow") { return 1; } else {
+      return a.zOrder.compareTo(b.zOrder);
+      }
+    });
 
     return zOrderedComponents.map(
           (componentData) => ChangeNotifierProvider<ComponentData>.value(
@@ -134,7 +141,6 @@ class _DiagramEditorCanvasState extends State<DiagramEditorCanvas>
       clipBehavior: Clip.none,
       fit: StackFit.expand,
 
-
       children: [
         ...showBackgroundWidgets(),
         ...showOtherWithComponentDataUnder(canvasModel),
@@ -175,6 +181,15 @@ class _DiagramEditorCanvasState extends State<DiagramEditorCanvas>
   Widget build(BuildContext context) {
     final canvasModel = Provider.of<CanvasModel>(context);
     final canvasState = Provider.of<CanvasState>(context);
+
+    if (widget.noEditing) return Container(
+      color: canvasState.color,
+      child: ClipRect(
+        child: (withControlPolicy != null)
+            ? canvasAnimated(canvasModel)
+            : canvasStack(canvasModel),
+      ),
+    );
 
     return NotificationListener<SizeChangedLayoutNotification>(
       onNotification: gotNotification,

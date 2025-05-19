@@ -39,7 +39,7 @@ class Component extends StatelessWidget {
               },
               child: GestureDetector(
                 //behavior: HitTestBehavior.translucent,
-                child: policy.showComponentBody(componentData, canvasState.canvasFinalScale()) ?? Container(),
+                child: policy.showComponentBody(componentData) ?? Container(),
                 onTap: () => policy.onComponentTap(componentData.id),
                 onTapDown: (details) => policy.onComponentTapDown(componentData.id, details),
                 onTapUp: (details) => policy.onComponentTapUp(componentData.id, details),
