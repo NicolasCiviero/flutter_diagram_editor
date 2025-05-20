@@ -12,6 +12,7 @@ class CanvasState with ChangeNotifier {
   double _scale = 1.0;
 
   double mouseScaleSpeed = 0.8;
+  double imageRescaleFactor = 1;
 
   double maxScale = 8.0;
   double minScale = 1.0;
@@ -57,7 +58,7 @@ class CanvasState with ChangeNotifier {
   double canvasAutoScale() {
     var size = canvasSize;
     if (size == null) return 1;
-    return min(size.height / imageSize.height, size.width / imageSize.width);
+    return min(size.height / imageSize.height, size.width / imageSize.width) / imageRescaleFactor;
   }
   double canvasFinalScale() {
     return _scale * canvasAutoScale();
@@ -96,7 +97,7 @@ class CanvasState with ChangeNotifier {
   _verifyPosition(){
     var position = _position;
     var canvas = canvasSize;
-    var img = imageSize * canvasFinalScale();
+    var img = imageSize * canvasFinalScale() * imageRescaleFactor;
     canvas ??= img;
 
     var dx = position.dx;
