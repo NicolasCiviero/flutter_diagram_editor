@@ -12,3 +12,8 @@
 
 ### Added
 - New components Text and Arrow can be created.
+
+## 0.0.15
+
+### Added
+- Scale factor for the background image
