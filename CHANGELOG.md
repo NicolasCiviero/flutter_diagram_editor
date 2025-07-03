@@ -17,3 +17,10 @@
 
 ### Added
 - Scale factor for the background image
+
+
+## 0.0.18
+
+### Added
+- Image type components
+- 'locked' flag to lock components

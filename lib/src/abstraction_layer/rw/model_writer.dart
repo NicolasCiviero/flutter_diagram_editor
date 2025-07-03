@@ -124,6 +124,7 @@ mixin ComponentWriter on ModelWriter {
   moveComponent(String componentId, Offset offset) {
     _checkComponentId(componentId);
     final component = _canvasModel.getComponent(componentId);
+    if (component.locked) return;
     component.move(offset / _canvasState.canvasFinalScale());
     _canvasModel.updateLinks(componentId);
     _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.move, component));
@@ -141,6 +142,11 @@ mixin ComponentWriter on ModelWriter {
     component.moveVertex(vertex, vertexLocation);
     _canvasModel.updateLinks(componentId);
     _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.moveVertex, component));
+  }
+
+  moveVertexEnd(String componentId) {
+    final component = _canvasModel.getComponent(componentId);
+    _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.moveVertexEnded, component));
   }
 
   /// Translates the component's vertex by [offset] value.

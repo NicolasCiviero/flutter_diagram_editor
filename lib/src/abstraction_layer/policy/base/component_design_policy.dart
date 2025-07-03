@@ -2,6 +2,7 @@ import 'package:shape_editor/shape_editor.dart';
 import 'package:shape_editor/src/abstraction_layer/policy/base_policy_set.dart';
 import 'package:shape_editor/src/canvas_context/model/component_data.dart';
 import 'package:shape_editor/src/widget/component/arrow_body.dart';
+import 'package:shape_editor/src/widget/component/pixel_map_body.dart';
 import 'package:shape_editor/src/widget/component/oval_body.dart';
 import 'package:shape_editor/src/widget/component/polygon_body.dart';
 import 'package:shape_editor/src/widget/component/rect_body.dart';
@@ -26,6 +27,8 @@ mixin ComponentDesignPolicy on BasePolicySet {
         return RectBody(componentData: componentData);
       case 'ellipse':
         return OvalBody(componentData: componentData);
+      case 'pixel_map':
+        return PixelMapBody(componentData: componentData);
       case 'body':
         return RectBody(componentData: componentData);
       case 'junction':

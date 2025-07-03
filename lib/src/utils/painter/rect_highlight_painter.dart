@@ -8,9 +8,10 @@ class RectHighlightPainter extends CustomPainter {
   final double dashWidth;
   final double dashSpace;
 
-  /// Rectangular dashed line painter.
-  ///
-  /// Useful if added as component widget to highlight it.
+  Path? _cachedPath;
+  double? _cachedWidth;
+  double? _cachedHeight;
+
   RectHighlightPainter({
     required this.width,
     required this.height,
@@ -22,23 +23,26 @@ class RectHighlightPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    var paint = Paint()
+    final paint = Paint()
       ..color = color
       ..strokeWidth = strokeWidth
       ..style = PaintingStyle.stroke;
 
     if (dashWidth <= 0 || dashSpace <= 0) {
-      canvas.drawRect(
-          Rect.fromLTWH(
-            0,
-            0,
-            this.width,
-            this.height,
-          ),
-          paint);
+      canvas.drawRect( Rect.fromLTWH( 0, 0, this.width, this.height ), paint);
       return;
     }
 
+    if (_cachedPath == null || _cachedWidth != this.width || _cachedHeight != this.height) {
+      _cachedPath = _createDashedPath();
+      _cachedWidth = this.width;
+      _cachedHeight = this.height;
+    }
+
+    canvas.drawPath(_cachedPath!, paint);
+  }
+
+  Path _createDashedPath() {
     Path dashedPath = Path();
 
     var width = this.width + strokeWidth;
@@ -92,8 +96,7 @@ class RectHighlightPainter extends CustomPainter {
         pathLength = pathLength + dashWidth + dashSpace;
       }
     }
-
-    canvas.drawPath(dashedPath, paint);
+    return dashedPath;
   }
 
   @override

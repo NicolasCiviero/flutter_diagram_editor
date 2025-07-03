@@ -2,6 +2,7 @@ import 'package:shape_editor/src/canvas_context/model/connection.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'package:event/event.dart';
+import 'dart:typed_data';
 
 class ComponentData with ChangeNotifier {
   /// Unique id of this component.
@@ -13,15 +14,22 @@ class ComponentData with ChangeNotifier {
   /// Size of the component.
   Size size;
 
+
   /// Minimal size of a component.
   ///
   /// When [resizeDelta] is called the size will not go under this value.
   final Size minSize;
 
+  /// Size of the component.
+  bool locked;
+
   /// Component type to distinguish components.
   ///
   /// You can use it for example to distinguish what [data] type this component has.
   final String? type;
+
+  /// Store data to build the pixelmap.
+  final Uint8List? encodedBinaryData;
 
   /// This value determines if this component will be above or under other components.
   /// Higher value means on the top.
@@ -51,6 +59,7 @@ class ComponentData with ChangeNotifier {
   List<Offset> vertices = [];
 
   Color color;
+  Color highlightColor;
   Color borderColor;
   double borderWidth;
   String text;
@@ -69,12 +78,15 @@ class ComponentData with ChangeNotifier {
     this.vertices = const [],
     this.size = const Size(80, 80),
     this.minSize = const Size(4, 4),
+    this.locked = false,
     this.type,
     this.data,
     this.color = Colors.white,
+    this.highlightColor = Colors.white,
     this.borderColor = Colors.black,
     this.borderWidth = 0.0,
     this.text = '',
+    this.encodedBinaryData = null,
     this.textAlignment = Alignment.center,
     this.textSize = 20,
     this.textColor = Colors.black,
@@ -260,13 +272,16 @@ class ComponentData with ChangeNotifier {
         position = Offset(json['position'][0], json['position'][1]),
         size = Size(json['size'][0], json['size'][1]),
         minSize = Size(json['min_size'][0], json['min_size'][1]),
+        locked = json['locked'],
         type = json['type'],
         zOrder = json['z_order'],
         parentId = json['parent_id'],
         color = json['color'],
+        highlightColor = json['highlightColor'],
         borderColor = json['borderColor'],
         borderWidth = json['borderWidth'],
         text = json['text'],
+        encodedBinaryData = json['encodedBinaryData'],
         textAlignment = json['textAlignment'],
         textSize = json['textSize'],
         textColor = json['textColor'],
@@ -312,6 +327,7 @@ class ComponentEvent extends EventArgs {
   static String move = "move";
   static String moveEnded = "moveEnded";
   static String moveVertex = "moveVertex";
+  static String moveVertexEnded = "moveVertexEnded";
   static String addVertex = "addVertex";
   static String setPosition = "setPosition";
   static String update = "update";

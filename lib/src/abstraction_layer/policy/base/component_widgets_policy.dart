@@ -43,8 +43,8 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
     bool isJunction = componentData.type == 'junction';
     bool isPolygon = componentData.type == 'polygon';
     bool hasVertices = componentData.type == 'polygon' || componentData.type == 'arrow';
-    bool showOptions =
-        (!isMultipleSelectionOn) && (!isReadyToConnect) && !isJunction;
+    bool showOptions = (!isMultipleSelectionOn) && (!isReadyToConnect) && !isJunction;
+    bool isResizable = componentData.type != 'image' && !hasVertices;
 
     return Visibility(
       visible: componentData.isHighlightVisible,
@@ -55,7 +55,7 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
           highlight( componentData, isMultipleSelectionOn ? Colors.cyan : Colors.red),
           if (isPolygon) ...appendVertices(componentData),
           if (hasVertices) ...dragVertices(componentData),
-          if (!hasVertices) resizeCorner(componentData),
+          if (isResizable) resizeCorner(componentData),
           if (isJunction && !isReadyToConnect) junctionOptions(componentData),
         ],
       ),
@@ -194,7 +194,9 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
               componentData.id, details.delta / canvasReader.state.finalScale);
           canvasWriter.model.updateComponentLinks(componentData.id);
         },
-        onPanEnd: (details) { },
+        onPanEnd: (details) {
+          canvasWriter.model.resizeComponentEnd(componentData.id);
+        },
         child: MouseRegion(
           cursor: SystemMouseCursors.resizeDownRight,
           child: Container(
@@ -236,7 +238,7 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
           canvasWriter.model.updateComponentLinks(componentData.id);
         },
         onPanEnd: (details) {
-          canvasWriter.model.moveComponentEnd(componentData.id);
+          canvasWriter.model.moveVertexEnd(componentData.id);
         },
         child: MouseRegion(
           cursor: SystemMouseCursors.resizeDownRight,
