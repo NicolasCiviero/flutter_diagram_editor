@@ -44,7 +44,7 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
     bool isPolygon = componentData.type == 'polygon';
     bool hasVertices = componentData.type == 'polygon' || componentData.type == 'arrow';
     bool showOptions = (!isMultipleSelectionOn) && (!isReadyToConnect) && !isJunction;
-    bool isResizable = componentData.type != 'image' && !hasVertices;
+    bool isResizable = componentData.type != 'pixel_map' && !hasVertices;
 
     return Visibility(
       visible: componentData.isHighlightVisible,
