@@ -1,0 +1,655 @@
+{
+    "Shapes": [
+        {
+            "Name": "head",
+            "Type": "rectangle",
+            "X": 150,
+            "Y": 12,
+            "Width": 33,
+            "Height": 46,
+            "Vertices": []
+        },
+        {
+            "Name": "neck-right",
+            "Type": "polygon",
+            "X": 150,
+            "Y": 58,
+            "Width": 16,
+            "Height": 15,
+            "Vertices": [
+                {
+                    "X": 2,
+                    "Y": 0
+                },
+                {
+                    "X": 16,
+                    "Y": 0
+                },
+                {
+                    "X": 16,
+                    "Y": 15
+                },
+                {
+                    "X": 0,
+                    "Y": 8
+                }
+            ]
+        },
+        {
+            "Name": "neck-left",
+            "Type": "polygon",
+            "X": 166,
+            "Y": 58,
+            "Width": 14,
+            "Height": 15,
+            "Vertices": [
+                {
+                    "X": 0,
+                    "Y": 0
+                },
+                {
+                    "X": 14,
+                    "Y": 0
+                },
+                {
+                    "X": 13,
+                    "Y": 8
+                },
+                {
+                    "X": 0,
+                    "Y": 15
+                }
+            ]
+        },
+        {
+            "Name": "scalene-right",
+            "Type": "polygon",
+            "X": 131,
+            "Y": 66,
+            "Width": 36,
+            "Height": 8,
+            "Vertices": [
+                {
+                    "X": 0,
+                    "Y": 6
+                },
+                {
+                    "X": 19,
+                    "Y": 0
+                },
+                {
+                    "X": 36,
+                    "Y": 7
+                },
+                {
+                    "X": 10,
+                    "Y": 8
+                }
+            ]
+        },
+        {
+            "Name": "scalene-left",
+            "Type": "polygon",
+            "X": 166,
+            "Y": 66,
+            "Width": 32,
+            "Height": 10,
+            "Vertices": [
+                {
+                    "X": 13,
+                    "Y": 0
+                },
+                {
+                    "X": 32,
+                    "Y": 8
+                },
+                {
+                    "X": 22,
+                    "Y": 10
+                },
+                {
+                    "X": 0,
+                    "Y": 7
+                }
+            ]
+        },
+        {
+            "Name": "chest-right",
+            "Type": "polygon",
+            "X": 136,
+            "Y": 73,
+            "Width": 30,
+            "Height": 45,
+            "Vertices": [
+                {
+                    "X": 5,
+                    "Y": 1
+                },
+                {
+                    "X": 30,
+                    "Y": 0
+                },
+                {
+                    "X": 29,
+                    "Y": 45
+                },
+                {
+                    "X": 9,
+                    "Y": 45
+                },
+                {
+                    "X": 0,
+                    "Y": 19
+                }
+            ]
+        },
+        {
+            "Name": "chest-left",
+            "Type": "polygon",
+            "X": 165,
+            "Y": 73,
+            "Width": 28,
+            "Height": 45,
+            "Vertices": [
+                {
+                    "X": 2,
+                    "Y": 0
+                },
+                {
+                    "X": 23,
+                    "Y": 3
+                },
+                {
+                    "X": 28,
+                    "Y": 21
+                },
+                {
+                    "X": 20,
+                    "Y": 45
+                },
+                {
+                    "X": 0,
+                    "Y": 45
+                }
+            ]
+        },
+        {
+            "Name": "shoulder-right",
+            "Type": "polygon",
+            "X": 118,
+            "Y": 72,
+            "Width": 23,
+            "Height": 24,
+            "Vertices": [
+                {
+                    "X": 23,
+                    "Y": 2
+                },
+                {
+                    "X": 18,
+                    "Y": 20
+                },
+                {
+                    "X": 0,
+                    "Y": 24
+                },
+                {
+                    "X": 3,
+                    "Y": 11
+                },
+                {
+                    "X": 7,
+                    "Y": 5
+                },
+                {
+                    "X": 13,
+                    "Y": 0
+                }
+            ]
+        },
+        {
+            "Name": "shoulder-left",
+            "Type": "polygon",
+            "X": 188,
+            "Y": 74,
+            "Width": 22,
+            "Height": 25,
+            "Vertices": [
+                {
+                    "X": 0,
+                    "Y": 2
+                },
+                {
+                    "X": 5,
+                    "Y": 20
+                },
+                {
+                    "X": 22,
+                    "Y": 25
+                },
+                {
+                    "X": 20,
+                    "Y": 11
+                },
+                {
+                    "X": 17,
+                    "Y": 4
+                },
+                {
+                    "X": 10,
+                    "Y": 0
+                }
+            ]
+        },
+        {
+            "Name": "biceps-right",
+            "Type": "polygon",
+            "X": 109,
+            "Y": 92,
+            "Width": 27,
+            "Height": 40,
+            "Vertices": [
+                {
+                    "X": 9,
+                    "Y": 4
+                },
+                {
+                    "X": 27,
+                    "Y": 0
+                },
+                {
+                    "X": 24,
+                    "Y": 9
+                },
+                {
+                    "X": 14,
+                    "Y": 40
+                },
+                {
+                    "X": 0,
+                    "Y": 35
+                }
+            ]
+        },
+        {
+            "Name": "biceps-left",
+            "Type": "polygon",
+            "X": 193,
+            "Y": 94,
+            "Width": 23,
+            "Height": 39,
+            "Vertices": [
+                {
+                    "X": 17,
+                    "Y": 5
+                },
+                {
+                    "X": 23,
+                    "Y": 36
+                },
+                {
+                    "X": 8,
+                    "Y": 39
+                },
+                {
+                    "X": 2,
+                    "Y": 9
+                },
+                {
+                    "X": 0,
+                    "Y": 0
+                }
+            ]
+        },
+        {
+            "Name": "elbow-right",
+            "Type": "ellipse",
+            "X": 105,
+            "Y": 129,
+            "Width": 16,
+            "Height": 16,
+            "Vertices": []
+        },
+        {
+            "Name": "elbow-left",
+            "Type": "ellipse",
+            "X": 203,
+            "Y": 131,
+            "Width": 16,
+            "Height": 16,
+            "Vertices": []
+        },
+        {
+            "Name": "flexor-right",
+            "Type": "polygon",
+            "X": 87,
+            "Y": 144,
+            "Width": 29,
+            "Height": 39,
+            "Vertices": [
+                {
+                    "X": 22,
+                    "Y": 0
+                },
+                {
+                    "X": 29,
+                    "Y": 4
+                },
+                {
+                    "X": 5,
+                    "Y": 39
+                },
+                {
+                    "X": 0,
+                    "Y": 36
+                }
+            ]
+        },
+        {
+            "Name": "flexor-left",
+            "Type": "polygon",
+            "X": 207,
+            "Y": 146,
+            "Width": 27,
+            "Height": 41,
+            "Vertices": [
+                {
+                    "X": 0,
+                    "Y": 4
+                },
+                {
+                    "X": 7,
+                    "Y": 0
+                },
+                {
+                    "X": 27,
+                    "Y": 39
+                },
+                {
+                    "X": 22,
+                    "Y": 41
+                }
+            ]
+        },
+        {
+            "Name": "brachioradialis-right",
+            "Type": "polygon",
+            "X": 82,
+            "Y": 140,
+            "Width": 27,
+            "Height": 40,
+            "Vertices": [
+                {
+                    "X": 20,
+                    "Y": 0
+                },
+                {
+                    "X": 27,
+                    "Y": 4
+                },
+                {
+                    "X": 5,
+                    "Y": 40
+                },
+                {
+                    "X": 0,
+                    "Y": 37
+                }
+            ]
+        },
+        {
+            "Name": "brachioradialis-left",
+            "Type": "polygon",
+            "X": 214,
+            "Y": 143,
+            "Width": 25,
+            "Height": 42,
+            "Vertices": [
+                {
+                    "X": 0,
+                    "Y": 3
+                },
+                {
+                    "X": 7,
+                    "Y": 0
+                },
+                {
+                    "X": 25,
+                    "Y": 39
+                },
+                {
+                    "X": 20,
+                    "Y": 42
+                }
+            ]
+        },
+        {
+            "Name": "stomach-right",
+            "Type": "polygon",
+            "X": 126,
+            "Y": 118,
+            "Width": 39,
+            "Height": 55,
+            "Vertices": [
+                {
+                    "X": 19,
+                    "Y": 0
+                },
+                {
+                    "X": 39,
+                    "Y": 0
+                },
+                {
+                    "X": 37,
+                    "Y": 55
+                },
+                {
+                    "X": 0,
+                    "Y": 55
+                },
+                {
+                    "X": 2,
+                    "Y": 25
+                }
+            ]
+        },
+        {
+            "Name": "stomach-left",
+            "Type": "polygon",
+            "X": 163,
+            "Y": 118,
+            "Width": 37,
+            "Height": 55,
+            "Vertices": [
+                {
+                    "X": 2,
+                    "Y": 0
+                },
+                {
+                    "X": 22,
+                    "Y": 0
+                },
+                {
+                    "X": 37,
+                    "Y": 25
+                },
+                {
+                    "X": 37,
+                    "Y": 55
+                },
+                {
+                    "X": 0,
+                    "Y": 55
+                }
+            ]
+        },
+        {
+            "Name": "rib-right",
+            "Type": "polygon",
+            "X": 128,
+            "Y": 92,
+            "Width": 17,
+            "Height": 51,
+            "Vertices": [
+                {
+                    "X": 8,
+                    "Y": 0
+                },
+                {
+                    "X": 17,
+                    "Y": 26
+                },
+                {
+                    "X": 0,
+                    "Y": 51
+                }
+            ]
+        },
+        {
+            "Name": "rib-left",
+            "Type": "polygon",
+            "X": 185,
+            "Y": 94,
+            "Width": 15,
+            "Height": 49,
+            "Vertices": [
+                {
+                    "X": 8,
+                    "Y": 0
+                },
+                {
+                    "X": 15,
+                    "Y": 49
+                },
+                {
+                    "X": 0,
+                    "Y": 24
+                }
+            ]
+        },
+        {
+            "Name": "wrist-right",
+            "Type": "polygon",
+            "X": 79,
+            "Y": 177,
+            "Width": 13,
+            "Height": 12,
+            "Vertices": [
+                {
+                    "X": 3,
+                    "Y": 0
+                },
+                {
+                    "X": 13,
+                    "Y": 6
+                },
+                {
+                    "X": 11,
+                    "Y": 12
+                },
+                {
+                    "X": 0,
+                    "Y": 5
+                }
+            ]
+        },
+        {
+            "Name": "wrist-left",
+            "Type": "polygon",
+            "X": 229,
+            "Y": 182,
+            "Width": 13,
+            "Height": 11,
+            "Vertices": [
+                {
+                    "X": 0,
+                    "Y": 5
+                },
+                {
+                    "X": 10,
+                    "Y": 0
+                },
+                {
+                    "X": 13,
+                    "Y": 5
+                },
+                {
+                    "X": 3,
+                    "Y": 11
+                }
+            ]
+        },
+        {
+            "Name": "hand-right",
+            "Type": "polygon",
+            "X": 61,
+            "Y": 182,
+            "Width": 29,
+            "Height": 36,
+            "Vertices": [
+                {
+                    "X": 18,
+                    "Y": 0
+                },
+                {
+                    "X": 29,
+                    "Y": 7
+                },
+                {
+                    "X": 13,
+                    "Y": 36
+                },
+                {
+                    "X": 6,
+                    "Y": 36
+                },
+                {
+                    "X": 0,
+                    "Y": 30
+                },
+                {
+                    "X": 0,
+                    "Y": 2
+                }
+            ]
+        },
+        {
+            "Name": "hand-left",
+            "Type": "polygon",
+            "X": 232,
+            "Y": 187,
+            "Width": 28,
+            "Height": 36,
+            "Vertices": [
+                {
+                    "X": 0,
+                    "Y": 6
+                },
+                {
+                    "X": 10,
+                    "Y": 0
+                },
+                {
+                    "X": 28,
+                    "Y": 0
+                },
+                {
+                    "X": 28,
+                    "Y": 3
+                },
+                {
+                    "X": 17,
+                    "Y": 36
+                },
+                {
+                    "X": 15,
+                    "Y": 36
+                },
+                {
+                    "X": 0,
+                    "Y": 10
+                }
+            ]
+        }
+    ]
+}

@@ -1,13 +1,11 @@
 import 'package:flutter/services.dart';
 import 'package:shape_editor/src/abstraction_layer/policy/base_policy_set.dart';
-import 'package:shape_editor/shape_editor.dart';
 import 'package:flutter/material.dart';
 
 mixin StatePolicy on BasePolicySet {
   bool isGridVisible = true;
 
   List<String> bodies = [
-    //'junction',
     'rect',
     'polygon',
     'ellipse',
@@ -28,7 +26,6 @@ mixin StatePolicy on BasePolicySet {
   Offset tapLinkPosition = Offset.zero;
 
   hideAllHighlights() {
-    canvasWriter.model.hideAllLinkJoints();
     hideLinkOption();
     canvasReader.model.getAllComponents().values.forEach((component) {
       if (component.isHighlightVisible) {

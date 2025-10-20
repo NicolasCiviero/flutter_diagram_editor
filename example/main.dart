@@ -9,6 +9,8 @@ import 'package:http/http.dart' as http;
 import 'package:shape_editor/shape_editor.dart';
 import 'package:flutter/material.dart';
 
+import 'components_loader.dart';
+
 void main() => runApp(DiagramApp());
 
 class DiagramApp extends StatefulWidget {
@@ -41,24 +43,29 @@ class _DiagramAppState extends State<DiagramApp> {
 
 
   Future<void> initializeComponents(bool removeExistingRois) async {
-    diagramEditorContext.canvasModel.addComponent(ComponentData(
-        position: Offset(50, 50),
-        size: Size(80, 150),
-        minSize: Size(5, 5),
-        color: Colors.orange,
-        borderColor: Colors.deepOrange,
-        borderWidth: 2.0,
-        type: "rectangle",
-        vertices: []));
-    diagramEditorContext.canvasModel.addComponent(ComponentData(
-        position: Offset(250, 50),
-        size: Size(180, 120),
-        minSize: Size(5, 5),
-        color: Colors.orange,
-        borderColor: Colors.deepOrange,
-        borderWidth: 2.0,
-        type: "ellipse",
-        vertices: []));
+    final jsonString = await rootBundle.loadString('assets/up_front_shapes.json');
+    var json_components = loadComponentsFromJson(jsonString, color: Colors.orange.withAlpha(30));
+    for (var component in json_components) {
+      diagramEditorContext.canvasModel.addComponent(component);
+    }
+    // diagramEditorContext.canvasModel.addComponent(ComponentData(
+    //     position: Offset(50, 50),
+    //     size: Size(80, 150),
+    //     minSize: Size(5, 5),
+    //     color: Colors.orange,
+    //     borderColor: Colors.deepOrange,
+    //     borderWidth: 2.0,
+    //     type: "rectangle",
+    //     vertices: []));
+    // diagramEditorContext.canvasModel.addComponent(ComponentData(
+    //     position: Offset(250, 50),
+    //     size: Size(180, 120),
+    //     minSize: Size(5, 5),
+    //     color: Colors.orange,
+    //     borderColor: Colors.deepOrange,
+    //     borderWidth: 2.0,
+    //     type: "ellipse",
+    //     vertices: []));
     diagramEditorContext.canvasModel.addComponent(ComponentData(
         position: Offset(50, 250),
         size: Size(30, 35),
@@ -71,23 +78,12 @@ class _DiagramAppState extends State<DiagramApp> {
         type: "pixel_map",
         encodedBinaryData: base64Decode("EgMaBhcIFgkUCxMMEg0RDhAPDw8PDxANEQwRCgYGBwkHFggWCRUJFggWCRYIFgkWChQOEBAOEQwTCxMKFAoUCRUIFQgWBxcFDQ=="),
         vertices: []));
-    diagramEditorContext.canvasModel.addComponent(ComponentData(
-        position: Offset(250, 250),
-        size: Size(41, 45),
-        minSize: Size(5, 5),
-        locked: true,
-        color: Color.fromARGB(30, 255, 87, 34),
-        highlightColor: Color.fromARGB(30, 34, 71, 255),
-        borderColor: Colors.deepOrange,
-        borderWidth: 2.0,
-        type: "pixel_map",
-        encodedBinaryData: base64Decode("JQEBASUBAQEBASMBAQEBASIBAQEBAQEBIgEBAQEBAQEhAQEBAQEBAQEBHwEBAQEBAQEBASABAQEBAQEBAQEfAQEBAQEBAQEBIAEBAQEBAQEBAR8BAQEBAQEBAQEfAQEBAQEBAQEBDgEBAQEBDAEBAQEBAQEQAQEBAQEBAQkBAQEBAQEBEQEBAQEBAQEBAQYBAQEBAQEBAQERAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQERAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQERAQEBAQEBAQYBAQEBAQEBAQEBARABAQEBAQEBCAEBAQEBAQEBAQEBDQEBAQEBAQEKAQEBAQEBAQEBDgEBAQEBAQELAQEBAQEBAQEBDQEBAQEBAQEMAQEBAQEBAQEBDQEBAQEBDgEBAQEBAQEBAQwBAQEBAQEBDQEBAQEBAQEBAQwBAQEBAQ8BAQEBAQEBAQENARIBAQEBAQEBAQEhAQEBAQEBASIBAQEBAQEBIgEBAQEBAQEiAQEBAQEBASIBAQEBAQEBIQEBAQEBAQEiAQEBAQEBASEBAQEBAQEBIQEBAQEBAQEBASABAQEBAQEBAQEfAQEBAQEBAQEBAQEeAQEBAQEBAQEBAQEdAQEBAQEBAQEBAQEBAR0BAQEBAQEBAQEBAR4BAQEBAQEBAQEBAR8BAQEBAQEBAQEhAQEBAQEBASMBAQEBASUBAQER"),
-        vertices: []));
 
 
 
 
-    var image = await debugImage();
+    var image = await loadUiImageFromAsset('assets/up_front_image.jpg');
+    //var image = await debugImage();
     policySet.canvasReader.state.canvasState.setImage(image);
     policySet.canvasReader.state.canvasState.imageRescaleFactor = 1;
     setState(() { });
@@ -96,6 +92,14 @@ class _DiagramAppState extends State<DiagramApp> {
 
   void onComponentEvent(ComponentEvent? args) {
     if (args == null) return;
+  }
+
+  Future<ui.Image> loadUiImageFromAsset(String assetPath) async {
+    final data = await rootBundle.load(assetPath);
+    final bytes = data.buffer.asUint8List();
+    final codec = await ui.instantiateImageCodec(bytes);
+    final frame = await codec.getNextFrame();
+    return frame.image;
   }
 
   Future<ui.Image> debugImage() async {
@@ -155,16 +159,11 @@ class MyComponentData {
 }
 
 // A set of policies compound of mixins. There are some custom policy implementations and some policies defined by diagram_editor library.
-class MyPolicySet extends PolicySet
-    with
+class MyPolicySet extends PolicySet with
         MyInitPolicy,
         MyCanvasPolicy,
         MyComponentPolicy,
-        CustomPolicy,
-        //
-        LinkControlPolicy,
-        LinkJointControlPolicy,
-        LinkAttachmentRectPolicy {}
+        CustomPolicy {}
 
 // A place where you can init the canvas or your diagram (eg. load an existing diagram).
 mixin MyInitPolicy implements InitPolicy {
@@ -179,7 +178,6 @@ mixin MyInitPolicy implements InitPolicy {
 mixin MyCanvasPolicy implements CanvasPolicy, CustomPolicy {
   @override
   onCanvasTapUp(TapUpDetails details) {
-    canvasWriter.model.hideAllLinkJoints();
     if (selectedComponentId != null) {
       hideComponentHighlight(selectedComponentId);
     } else {
@@ -202,7 +200,6 @@ mixin MyComponentPolicy implements ComponentPolicy, CustomPolicy {
 
   @override
   onComponentTap(String componentId) {
-    canvasWriter.model.hideAllLinkJoints();
 
     bool connected = connectComponents(selectedComponentId, componentId);
     hideComponentHighlight(selectedComponentId);
@@ -214,7 +211,6 @@ mixin MyComponentPolicy implements ComponentPolicy, CustomPolicy {
   @override
   onComponentLongPress(String componentId) {
     hideComponentHighlight(selectedComponentId);
-    canvasWriter.model.hideAllLinkJoints();
     canvasWriter.model.removeComponent(componentId);
   }
 
@@ -246,18 +242,6 @@ mixin MyComponentPolicy implements ComponentPolicy, CustomPolicy {
             (connection.otherComponentId == targetComponentId))) {
       return false;
     }
-
-    // This connects two components (creates a link between), you can define the design of the link with LinkStyle.
-    canvasWriter.model.connectTwoComponents(
-      sourceComponentId: sourceComponentId,
-      targetComponentId: targetComponentId,
-      linkStyle: LinkStyle(
-        arrowType: ArrowType.pointedArrow,
-        lineWidth: 1.5,
-        backArrowType: ArrowType.centerCircle,
-      ),
-    );
-
     return true;
   }
 }

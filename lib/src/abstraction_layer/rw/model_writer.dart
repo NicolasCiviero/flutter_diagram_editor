@@ -4,7 +4,6 @@ import 'package:shape_editor/src/canvas_context/canvas_model.dart';
 import 'package:shape_editor/src/canvas_context/canvas_state.dart';
 import 'package:shape_editor/src/canvas_context/model/component_data.dart';
 import 'package:shape_editor/src/canvas_context/model/diagram_data.dart';
-import 'package:shape_editor/src/utils/link_style.dart';
 import 'package:flutter/material.dart';
 
 class ModelWriter {
@@ -14,8 +13,7 @@ class ModelWriter {
   ModelWriter(this._canvasModel, this._canvasState);
 }
 
-class CanvasModelWriter extends ModelWriter
-    with ComponentWriter, LinkWriter, ConnectionWriter {
+class CanvasModelWriter extends ModelWriter with ComponentWriter {
   /// Allows you to change the model.
   CanvasModelWriter(CanvasModel canvasModel, CanvasState canvasState)
       : super(canvasModel, canvasState);
@@ -27,6 +25,10 @@ class CanvasModelWriter extends ModelWriter
   String addComponent(ComponentData componentData) {
     _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.created, componentData));
     return _canvasModel.addComponent(componentData);
+  }
+
+  sendEvent(ComponentEvent event) {
+    _canvasState.componentUpdateEvent.broadcast(event);
   }
 
   /// Removes a component with [componentId] and all its links.
@@ -116,7 +118,7 @@ mixin ComponentWriter on ModelWriter {
     _checkComponentId(componentId);
     final component = _canvasModel.getComponent(componentId);
     component.setPosition(position);
-    _canvasModel.updateLinks(componentId);
+    //TODO: possible changes when vertices connect
     _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.setPosition, component));
   }
 
@@ -126,7 +128,7 @@ mixin ComponentWriter on ModelWriter {
     final component = _canvasModel.getComponent(componentId);
     if (component.locked) return;
     component.move(offset / _canvasState.canvasFinalScale());
-    _canvasModel.updateLinks(componentId);
+    //TODO: possible changes when vertices connect
     _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.move, component));
   }
 
@@ -140,7 +142,7 @@ mixin ComponentWriter on ModelWriter {
     _checkComponentId(componentId);
     final component = _canvasModel.getComponent(componentId);
     component.moveVertex(vertex, vertexLocation);
-    _canvasModel.updateLinks(componentId);
+    //TODO: possible changes when vertices connect
     _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.moveVertex, component));
   }
 
@@ -154,7 +156,7 @@ mixin ComponentWriter on ModelWriter {
     _checkComponentId(componentId);
     final component = _canvasModel.getComponent(componentId);
     component.addVertex(vertex, index);
-    _canvasModel.updateLinks(componentId);
+    //TODO: possible changes when vertices connect
     _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.addVertex, component));
   }
 
@@ -178,7 +180,7 @@ mixin ComponentWriter on ModelWriter {
   /// Use it when the component is somehow changed (its size or position) and the links are not updated to their proper positions.
   updateComponentLinks(String componentId) {
     _checkComponentId(componentId);
-    _canvasModel.updateLinks(componentId);
+    //TODO: possible changes when vertices connect
   }
 
   /// Sets the component's z-order to [zOrder].
@@ -292,121 +294,5 @@ mixin ComponentWriter on ModelWriter {
   _checkComponentId(String? id){
     assert(_canvasModel.componentExists(id),
       'model does not contain this component id: $id');
-  }
-}
-
-mixin LinkWriter on ModelWriter {
-  /// Makes all link's joints visible.
-  showLinkJoints(String linkId) {
-    assert(_canvasModel.linkExists(linkId),
-        'model does not contain this link id: $linkId');
-    _canvasModel.getLink(linkId).showJoints();
-  }
-
-  /// Makes all link's joints invisible.
-  hideLinkJoints(String linkId) {
-    assert(_canvasModel.linkExists(linkId),
-        'model does not contain this link id: $linkId');
-    _canvasModel.getLink(linkId).hideJoints();
-  }
-
-  /// Makes invisible all link joints on the canvas.
-  hideAllLinkJoints() {
-    _canvasModel.links.values.forEach((link) {
-      link.hideJoints();
-    });
-  }
-
-  /// Updates the link.
-  ///
-  /// Use it when something is changed and the link is not updated to its proper positions.
-  updateLink(String linkId) {
-    assert(_canvasModel.linkExists(linkId),
-        'model does not contain this link id: $linkId');
-    _canvasModel.updateLinks(_canvasModel.getLink(linkId).sourceComponentId);
-    _canvasModel.updateLinks(_canvasModel.getLink(linkId).targetComponentId);
-  }
-
-  /// Creates a new link's joint on [point] location.
-  ///
-  /// [index] is an index of link's segment where you want to insert the point.
-  /// Indexed from 1.
-  /// When the link is a straight line you want to add a point to index 1.
-  insertLinkMiddlePoint(String linkId, Offset point, int index) {
-    assert(_canvasModel.linkExists(linkId),
-        'model does not contain this link id: $linkId');
-    _canvasModel
-        .getLink(linkId)
-        .insertMiddlePoint(_canvasState.fromCanvasCoordinates(point), index);
-  }
-
-  /// Sets the new position ([point]) to the existing link's joint point.
-  ///
-  /// Joints are indexed from 1.
-  setLinkMiddlePointPosition(String linkId, Offset point, int index) {
-    assert(_canvasModel.linkExists(linkId),
-        'model does not contain this link id: $linkId');
-    _canvasModel.getLink(linkId).setMiddlePointPosition(
-        _canvasState.fromCanvasCoordinates(point), index);
-  }
-
-  /// Updates link's joint position by [offset].
-  ///
-  /// Joints are indexed from 1.
-  moveLinkMiddlePoint(String linkId, Offset offset, int index) {
-    assert(_canvasModel.linkExists(linkId),
-        'model does not contain this link id: $linkId');
-    _canvasModel
-        .getLink(linkId)
-        .moveMiddlePoint(offset / _canvasState.scale, index);
-  }
-
-  /// Removes the joint on [index]th place from the link.
-  ///
-  /// Joints are indexed from 1.
-  removeLinkMiddlePoint(String linkId, int index) {
-    assert(_canvasModel.linkExists(linkId),
-        'model does not contain this link id: $linkId');
-    _canvasModel.getLink(linkId).removeMiddlePoint(index);
-  }
-
-  /// Updates all link's joints position by [offset].
-  moveAllLinkMiddlePoints(String linkId, Offset position) {
-    assert(_canvasModel.linkExists(linkId),
-        'model does not contain this link id: $linkId');
-    _canvasModel
-        .getLink(linkId)
-        .moveAllMiddlePoints(position / _canvasState.scale);
-  }
-
-  sendEvent(ComponentEvent event) {
-    _canvasState.componentUpdateEvent.broadcast(event);
-  }
-}
-
-mixin ConnectionWriter on ModelWriter {
-  /// Connects two components with a new link. The link is added to the model.
-  ///
-  /// The link points from [sourceComponentId] to [targetComponentId].
-  /// Connection information is added to both components.
-  ///
-  /// Returns id of the created link.
-  ///
-  /// You can define the design of the link with [LinkStyle].
-  /// You can add your own dynamic [data] to the link.
-  String connectTwoComponents({
-    required String sourceComponentId,
-    required String targetComponentId,
-    LinkStyle? linkStyle,
-    dynamic data,
-  }) {
-    assert(_canvasModel.componentExists(sourceComponentId));
-    assert(_canvasModel.componentExists(targetComponentId));
-    return _canvasModel.connectTwoComponents(
-      sourceComponentId,
-      targetComponentId,
-      linkStyle,
-      data,
-    );
   }
 }

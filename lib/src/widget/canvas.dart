@@ -5,7 +5,6 @@ import 'package:shape_editor/src/canvas_context/canvas_state.dart';
 import 'package:shape_editor/src/canvas_context/model/component_data.dart';
 import 'package:shape_editor/src/canvas_context/model/link_data.dart';
 import 'package:shape_editor/src/widget/component.dart';
-import 'package:shape_editor/src/widget/link.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -85,17 +84,6 @@ class _DiagramEditorCanvasState extends State<DiagramEditorCanvas>
         .toList();
   }
 
-  List<Widget> showLinks(CanvasModel canvasModel) {
-    return canvasModel.links.values.map((LinkData linkData) {
-      return ChangeNotifierProvider<LinkData>.value(
-        value: linkData,
-        child: Link(
-          policy: widget.policy,
-        ),
-      );
-    }).toList();
-  }
-
   List<Widget> showOtherWithComponentDataUnder(CanvasModel canvasModel) {
     return canvasModel.components.values.map((ComponentData componentData) {
       return ChangeNotifierProvider<ComponentData>.value(
@@ -145,7 +133,6 @@ class _DiagramEditorCanvasState extends State<DiagramEditorCanvas>
         ...showBackgroundWidgets(),
         ...showOtherWithComponentDataUnder(canvasModel),
         ...showComponents(canvasModel),
-        ...showLinks(canvasModel),
         ...showOtherWithComponentDataOver(canvasModel),
         ...showForegroundWidgets(),
       ],
