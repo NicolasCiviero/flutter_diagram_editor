@@ -5,6 +5,7 @@ import 'package:shape_editor/src/canvas_context/canvas_state.dart';
 import 'package:shape_editor/src/canvas_context/model/component_data.dart';
 import 'package:shape_editor/src/canvas_context/model/diagram_data.dart';
 import 'package:flutter/material.dart';
+import 'package:shape_editor/src/canvas_context/model/vertex.dart';
 
 class ModelWriter {
   final CanvasModel _canvasModel;
@@ -35,25 +36,8 @@ class CanvasModelWriter extends ModelWriter with ComponentWriter {
   removeComponent(String componentId) {
     _checkComponentId(componentId);
     final component = _canvasModel.getComponent(componentId);
-    removeComponentParent(componentId);
-    _removeParentFromChildren(componentId);
     _canvasModel.removeComponent(componentId);
     _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.removed, component));
-  }
-
-  /// Removes a component with [componentId] and also removes all its children components.
-  removeComponentWithChildren(String componentId) {
-    _checkComponentId(componentId);
-    List<String> componentsToRemove = [];
-    _removeComponentWithChildren(componentId, componentsToRemove);
-    componentsToRemove.reversed.forEach(removeComponent);
-  }
-
-  _removeComponentWithChildren(String componentId, List<String> toRemove) {
-    toRemove.add(componentId);
-    _canvasModel.getComponent(componentId).childrenIds.forEach((childId) {
-      _removeComponentWithChildren(childId, toRemove);
-    });
   }
 
   /// Removes all components in the model. All links are also removed with the components.
@@ -138,11 +122,12 @@ mixin ComponentWriter on ModelWriter {
   }
 
   /// Moves the component's vertex to [vertexLocation] value.
-  moveVertex(String componentId, Offset vertex, Offset vertexLocation) {
+  moveVertex(String componentId, Vertex vertex, Offset vertexLocation) {
     _checkComponentId(componentId);
     final component = _canvasModel.getComponent(componentId);
     component.moveVertex(vertex, vertexLocation);
     //TODO: possible changes when vertices connect
+    _canvasModel.updateVertexCluster(componentId, vertex, vertexLocation);
     _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.moveVertex, component));
   }
 
@@ -164,15 +149,15 @@ mixin ComponentWriter on ModelWriter {
   moveComponentWithChildren(String componentId, Offset offset) {
     _checkComponentId(componentId);
     moveComponent(componentId, offset);
-    _canvasModel.getComponent(componentId).childrenIds.forEach((childId) {
-      moveComponentWithChildren(childId, offset);
-    });
+    // _canvasModel.getComponent(componentId).childrenIds.forEach((childId) {
+    //   moveComponentWithChildren(childId, offset);
+    // });
   }
 
   /// Removes all connections that the component with [componentId] has.
   removeComponentConnections(String componentId) {
     _checkComponentId(componentId);
-    _canvasModel.removeComponentConnections(componentId);
+    _canvasModel.removeComponentFromClusters(componentId);
   }
 
   /// Updates all links (their position) connected to the component with [componentId].
@@ -201,16 +186,8 @@ mixin ComponentWriter on ModelWriter {
   int moveComponentToTheFrontWithChildren(String componentId) {
     _checkComponentId(componentId);
     int zOrder = moveComponentToTheFront(componentId);
-    _setZOrderToChildren(componentId, zOrder);
+    //_setZOrderToChildren(componentId, zOrder);
     return zOrder;
-  }
-
-  _setZOrderToChildren(String componentId, int zOrder) {
-    _checkComponentId(componentId);
-    setComponentZOrder(componentId, zOrder);
-    _canvasModel.getComponent(componentId).childrenIds.forEach((childId) {
-      _setZOrderToChildren(childId, zOrder + 1);
-    });
   }
 
   /// Sets the components's z-order to the lowest z-order value of all components -1.
@@ -223,7 +200,7 @@ mixin ComponentWriter on ModelWriter {
   int moveComponentToTheBackWithChildren(String componentId) {
     _checkComponentId(componentId);
     int zOrder = moveComponentToTheBack(componentId);
-    _setZOrderToChildren(componentId, zOrder);
+    //_setZOrderToChildren(componentId, zOrder);
     return zOrder;
   }
 
@@ -246,49 +223,6 @@ mixin ComponentWriter on ModelWriter {
   setComponentSize(String componentId, Size size) {
     _checkComponentId(componentId);
     _canvasModel.getComponent(componentId).setSize(size);
-  }
-
-  /// Sets the component's parent.
-  ///
-  /// It's not possible to make a parent-child loop. (its ancestor cannot be its child)
-  setComponentParent(String componentId, String parentId) {
-    _checkComponentId(componentId);
-    removeComponentParent(componentId);
-    if (_checkParentChildLoop(componentId, parentId)) {
-      _canvasModel.getComponent(componentId).setParent(parentId);
-      _canvasModel.getComponent(parentId).addChild(componentId);
-    }
-  }
-
-  bool _checkParentChildLoop(String componentId, String parentId) {
-    if (componentId == parentId) return false;
-    final _parentIdOfParent = _canvasModel.getComponent(parentId).parentId;
-    if (_parentIdOfParent != null) {
-      return _checkParentChildLoop(componentId, _parentIdOfParent);
-    }
-
-    return true;
-  }
-
-  /// Removes the component's parent from a component.
-  ///
-  /// It also removes child from former parent.
-  removeComponentParent(String componentId) {
-    _checkComponentId(componentId);
-    final _parentId = _canvasModel.getComponent(componentId).parentId;
-    if (_parentId != null) {
-      _canvasModel.getComponent(componentId).removeParent();
-      _canvasModel.getComponent(_parentId).removeChild(componentId);
-    }
-  }
-
-  _removeParentFromChildren(componentId) {
-    _checkComponentId(componentId);
-    final _component = _canvasModel.getComponent(componentId);
-    final _childrenToRemove = List.from(_component.childrenIds);
-    _childrenToRemove.forEach((childId) {
-      removeComponentParent(childId);
-    });
   }
 
   _checkComponentId(String? id){

@@ -41,7 +41,7 @@ mixin CanvasWidgetsPolicy on BasePolicySet implements StatePolicy, CanvasControl
     var scale = canvasReader.model.canvasState.canvasAutoScale();
     newComponentData.size = Size(newComponentData.size.width / scale, newComponentData.size.height / scale);
     for (int i = 0; i < newComponentData.vertices.length; i++) {
-      newComponentData.vertices[i] = newComponentData.vertices[i].scale(1/scale, 1/scale);
+      newComponentData.vertices[i].position = newComponentData.vertices[i].position.scale(1/scale, 1/scale);
     }
 
     String componentId = canvasWriter.model.addComponent(newComponentData);

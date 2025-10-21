@@ -48,6 +48,7 @@ class _DiagramAppState extends State<DiagramApp> {
     for (var component in json_components) {
       diagramEditorContext.canvasModel.addComponent(component);
     }
+    diagramEditorContext.canvasModel.createClusters();
     // diagramEditorContext.canvasModel.addComponent(ComponentData(
     //     position: Offset(50, 50),
     //     size: Size(80, 150),

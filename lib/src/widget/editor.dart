@@ -39,7 +39,6 @@ class _DiagramEditorState extends State<DiagramEditor> {
       widget.diagramEditorContext.canvasState.isInitialized = true;
     }
     super.initState();
-
   }
 
   @override

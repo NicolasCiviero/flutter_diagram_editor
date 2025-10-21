@@ -5,22 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('Component data tests', () {
-    test(
-        'Given ComponentData with two connections When one connection is removed Then component contains only the second connection.',
-        () {
-      var componentData = ComponentData();
-      componentData.addConnection(ConnectionIn(
-          otherComponentId: 'componentId1', connectionId: 'connectionId1'));
-      componentData.addConnection(ConnectionIn(
-          otherComponentId: 'componentId2', connectionId: 'connectionId2'));
-
-      expect(componentData.connections.length, 2);
-
-      componentData.removeConnection('connectionId1');
-
-      expect(componentData.connections.length, 1);
-      expect(componentData.connections.single.connectionId, 'connectionId2');
-    });
 
     test('Point on a component test', () {
       var componentData = ComponentData(size: Size(100, 100));

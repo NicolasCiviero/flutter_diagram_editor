@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:shape_editor/shape_editor.dart';
+import 'package:shape_editor/src/canvas_context/model/vertex.dart';
 import 'package:shape_editor/src/widget/component/base_component_body.dart';
 import 'package:flutter/material.dart';
 import 'package:vector_math/vector_math.dart' as vector_math;
@@ -33,7 +34,7 @@ class ArrowPainter extends CustomPainter {
   final Color borderColor;
   final double borderWidth;
   final Size componentSize;
-  List<Offset> vertices = [];
+  List<Vertex> vertices = [];
   Size availableSize = Size(0,0);
 
   ArrowPainter({
@@ -76,8 +77,8 @@ class ArrowPainter extends CustomPainter {
     var xScale = availableSize.width / componentSize.width;
     var yScale = availableSize.height / componentSize.height;
 
-    path.moveTo(vertices[0].dx * xScale, vertices[0].dy * yScale);
-    path.lineTo(vertices[1].dx * xScale, vertices[1].dy * yScale);
+    path.moveTo(vertices[0].position.dx * xScale, vertices[0].position.dy * yScale);
+    path.lineTo(vertices[1].position.dx * xScale, vertices[1].position.dy * yScale);
     path.close();
 
     double minDistance = double.infinity;
@@ -112,22 +113,22 @@ class ArrowPainter extends CustomPainter {
     // maths
     final p1 = vertices[0];
     final p2 = vertices[1];
-    var dx = p2.dx - p1.dx;
-    var dy = p2.dy - p1.dy;
+    var dx = p2.position.dx - p1.position.dx;
+    var dy = p2.position.dy - p1.position.dy;
     var norm = sqrt(dx * dx + dy * dy);
     dx = dx / norm;
     dy = dy / norm;
     // find arrow base
-    var base = Offset(p2.dx - dx * tip_size, p2.dy - dy * tip_size);
+    var base = Offset(p2.position.dx - dx * tip_size, p2.position.dy - dy * tip_size);
     // find arrow edges
     var ledge = Offset(base.dx - dy * tip_size * 0.3, base.dy + dx * tip_size * 0.3);
     var redge = Offset(base.dx + dy * tip_size * 0.3, base.dy - dx * tip_size * 0.3);
 
     // move to arrow back
-    path.moveTo(p1.dx * xScale, p1.dy * yScale);
+    path.moveTo(p1.position.dx * xScale, p1.position.dy * yScale);
     path.lineTo(base.dx * xScale, base.dy * yScale); //base
     path.lineTo(ledge.dx * xScale, ledge.dy * yScale); //ledge
-    path.lineTo(p2.dx * xScale, p2.dy * yScale); // arrow tip
+    path.lineTo(p2.position.dx * xScale, p2.position.dy * yScale); // arrow tip
     path.lineTo(redge.dx * xScale, redge.dy * yScale); //redge
     path.lineTo(base.dx * xScale, base.dy * yScale); //base
     path.close();

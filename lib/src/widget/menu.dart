@@ -1,5 +1,6 @@
 import 'package:shape_editor/shape_editor.dart';
 import 'package:flutter/material.dart';
+import 'package:shape_editor/src/canvas_context/model/vertex.dart';
 
 class DraggableMenu extends StatelessWidget {
   final PolicySet myPolicySet;
@@ -69,18 +70,18 @@ class DraggableMenu extends StatelessWidget {
   ComponentData getComponentData(String componentType) {
     switch (componentType) {
       case 'arrow':
-        return ComponentData(
+        final c = ComponentData(
           size: Size(150 * scale, 100 * scale),
           minSize: Size(80 * scale, 64 * scale),
           color: color,
           borderColor: borderColor,
           borderWidth: borderWidth,
           type: componentType,
-          vertices: [
-            Offset(0, 100 * scale),
-            Offset(150 * scale, 0),
-          ],
+          vertices: [],
         );
+        c.addVertex(Offset(0, 100 * scale), null);
+        c.addVertex(Offset(150 * scale, 0), null);
+        return c;
       case 'text':
         return ComponentData(
           size: Size(350 * scale, 180 * scale),
@@ -93,19 +94,19 @@ class DraggableMenu extends StatelessWidget {
           textSize: textSize
         );
       case 'polygon':
-        return ComponentData(
+        final c = ComponentData(
           size: Size(150 * scale, 110 * scale),
           minSize: Size(80 * scale, 64 * scale),
           color: color,
           borderColor: borderColor,
           borderWidth: borderWidth,
           type: componentType,
-          vertices: [
-            Offset(75 * scale,0),
-            Offset(150 * scale,110 * scale),
-            Offset(0 * scale, 110 * scale)
-          ],
+          vertices: [],
         );
+        c.addVertex(Offset(75 * scale,0), null);
+        c.addVertex(Offset(150 * scale,110 * scale), null);
+        c.addVertex(Offset(0 * scale, 110 * scale), null);
+        return c;
       default:
         return ComponentData(
           size: Size(160 * scale, 100 * scale),

@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:shape_editor/shape_editor.dart';
 
+import '../../../canvas_context/model/vertex.dart';
+
 /// Allows you to add any widget to a component.
 mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
   Color buttonBackColor = Colors.grey.withOpacity(0.7);
@@ -169,8 +171,8 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
       child: CustomPaint(
         painter: componentData.type == "arrow" ?
         ArrowHighlightPainter(
-            p1: componentData.vertices[0].scale(finalScale, finalScale),
-            p2: componentData.vertices[1].scale(finalScale, finalScale),
+            p1: componentData.vertices[0].position.scale(finalScale, finalScale),
+            p2: componentData.vertices[1].position.scale(finalScale, finalScale),
             color: color,
         ) :
         RectHighlightPainter(
@@ -221,11 +223,12 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
 
   dragVertices(ComponentData componentData) {
     return componentData.vertices.map<Widget>(
-            (vertex) => dragVertex(componentData, vertex) ).toList();
+            (vertex) => dragVertex(componentData, vertex)
+    ).toList();
   }
-  dragVertex(ComponentData componentData, Offset vertex) {
+  dragVertex(ComponentData componentData, Vertex vertex) {
     Offset vertexPosition = canvasReader.state.toCanvasFinalCoordinates(
-        componentData.position + Offset(vertex.dx, vertex.dy));
+        componentData.position + Offset(vertex.position.dx, vertex.position.dy));
     return Positioned(
       left: vertexPosition.dx - 12,
       top: vertexPosition.dy - 12,
@@ -251,6 +254,7 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
                 width: 8,
                 height: 8,
                 decoration: BoxDecoration(
+                  //color: componentData.vertexClusters[vertex.id] == null ? Colors.white : Colors.lime,
                   color: Colors.white,
                   border: Border.all(color: Colors.grey[800]!),
                 ),
@@ -267,7 +271,7 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
     for (int i = 0; i < componentData.vertices.length; i++) {
       var a = componentData.vertices[i];
       var b = componentData.vertices[(i+1)%componentData.vertices.length];
-      offsets.add(Offset((a.dx + b.dx) / 2, (a.dy + b.dy) / 2));
+      offsets.add(Offset((a.position.dx + b.position.dx) / 2, (a.position.dy + b.position.dy) / 2));
     }
     List<Widget> widgets = [];
     for (int i = 0; i < offsets.length; i++) {

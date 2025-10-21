@@ -1,5 +1,9 @@
+import 'dart:collection';
+
 import 'package:shape_editor/src/canvas_context/model/connection.dart';
 import 'package:flutter/material.dart';
+import 'package:shape_editor/src/canvas_context/model/vertex.dart';
+import 'package:shape_editor/src/canvas_context/model/vertex_cluster.dart';
 import 'package:uuid/uuid.dart';
 import 'package:event/event.dart';
 import 'dart:typed_data';
@@ -20,7 +24,7 @@ class ComponentData with ChangeNotifier {
   /// When [resizeDelta] is called the size will not go under this value.
   final Size minSize;
 
-  /// Size of the component.
+  /// Responsible for prevent this ComponentData from moving
   bool locked;
 
   /// Component type to distinguish components.
@@ -35,18 +39,6 @@ class ComponentData with ChangeNotifier {
   /// Higher value means on the top.
   int zOrder = 0;
 
-  /// Assigned parent to this component.
-  ///
-  /// Use for hierarchical components.
-  /// Functions such as [moveComponentWithChildren] work with this property.
-  String? parentId;
-
-  /// List of children of this component.
-  ///
-  /// Use for hierarchical components.
-  /// Functions such as [moveComponentWithChildren] work with this property.
-  final List<String> childrenIds = [];
-
   /// Defines to which components is this components connected and what is the [connectionId].
   ///
   /// The connection can be [ConnectionOut] for link going from this component
@@ -56,7 +48,11 @@ class ComponentData with ChangeNotifier {
   /// List of vertices of a polygon.
   ///
   /// Each point's position is related to the current [position].
-  List<Offset> vertices = [];
+  List<Vertex> vertices = [];
+
+  /// Map potential clusters with component's vertices
+  HashMap<String, VertexCluster> vertexClusters = HashMap();
+
 
   Color color;
   Color highlightColor;
@@ -110,10 +106,10 @@ class ComponentData with ChangeNotifier {
   }
 
   /// Translates component's vertex by [offset] value.
-  moveVertex(Offset vertex, Offset newPosition) {
+  moveVertex(Vertex vertex, Offset newPosition) {
     for (int i = 0; i < vertices.length; i++){
       if (vertices[i] == vertex){
-        vertices[i] = newPosition - position;
+        vertices[i].position = newPosition - position;
 
         updateComponentPositionAndSize();
         notifyListeners();
@@ -122,28 +118,29 @@ class ComponentData with ChangeNotifier {
     }
   }
   /// Add a new vertex at [position] given.
-  addVertex(Offset vertex, int position) {
-    if (position == vertices.length) vertices.add(vertex);
-    else vertices.insert(position, vertex);
+  addVertex(Offset position, int? index) {
+    if (index == null || index == vertices.length) vertices.add(Vertex(position, this));
+    else vertices.insert(index, Vertex(position, this));
   }
 
   updateComponentPositionAndSize() {
     double minX=double.infinity, minY=double.infinity, maxX=0, maxY=0;
     for (int i = 0; i < vertices.length; i++) {
-      if (vertices[i].dx < minX) minX = vertices[i].dx;
-      if (vertices[i].dy < minY) minY = vertices[i].dy;
-      if (vertices[i].dx > maxX) maxX = vertices[i].dx;
-      if (vertices[i].dy > maxY) maxY = vertices[i].dy;
+      final position = vertices[i].position;
+      if (position.dx < minX) minX = position.dx;
+      if (position.dy < minY) minY = position.dy;
+      if (position.dx > maxX) maxX = position.dx;
+      if (position.dy > maxY) maxY = position.dy;
     }
     if (minX != 0) {
       var componentOffset = Offset(minX, 0);
       this.position += componentOffset;
-      for (int i = 0; i < vertices.length; i++) vertices[i] -= componentOffset;
+      for (int i = 0; i < vertices.length; i++) vertices[i].position -= componentOffset;
     }
     if (minY != 0) {
       var componentOffset = Offset(0, minY);
       this.position += componentOffset;
-      for (int i = 0; i < vertices.length; i++) vertices[i] -= componentOffset;
+      for (int i = 0; i < vertices.length; i++) vertices[i].position -= componentOffset;
     }
 
     size = new Size(maxX - minX, maxY - minY);
@@ -153,20 +150,6 @@ class ComponentData with ChangeNotifier {
   setPosition(Offset position) {
     this.position = position;
     notifyListeners();
-  }
-
-  /// Adds new connection to this component.
-  ///
-  /// Do not use it if you are not sure what you do. This is called in [connectTwoComponents] function.
-  addConnection(Connection connection) {
-    connections.add(connection);
-  }
-
-  /// Removes existing connection.
-  ///
-  /// Do not use it if you are not sure what you do. This is called eg. in [removeLink] function.
-  removeConnection(String connectionId) {
-    connections.removeWhere((conn) => conn.connectionId == connectionId);
   }
 
   /// Changes the component's size by [deltaSize].
@@ -204,38 +187,6 @@ class ComponentData with ChangeNotifier {
     );
   }
 
-  /// Sets the component's parent.
-  ///
-  /// It's not possible to make a parent-child loop. (its ancestor cannot be its child)
-  ///
-  /// You should use it only with [addChild] on the parent's component.
-  setParent(String parentId) {
-    this.parentId = parentId;
-  }
-
-  /// Removes parent's id from this component data.
-  ///
-  /// You should use it only with [removeChild] on the parent's component.
-  removeParent() {
-    this.parentId = null;
-  }
-
-  /// Sets the component's parent.
-  ///
-  /// It's not possible to make a parent-child loop. (its ancestor cannot be its child)
-  ///
-  /// You should use it only with [setParent] on the child's component.
-  addChild(String childId) {
-    childrenIds.add(childId);
-  }
-
-  /// Removes child's id from children.
-  ///
-  /// You should use it only with [removeParent] on the child's component.
-  removeChild(String childId) {
-    childrenIds.remove(childId);
-  }
-
   /// Returns true for non-shape components
   bool isOverlay() {
     if (this.type == "arrow") return true;
@@ -250,7 +201,7 @@ class ComponentData with ChangeNotifier {
       size: this.size,
       minSize: this.minSize,
       type: this.type,
-      vertices: this.vertices.map<Offset>((e) => Offset(e.dx, e.dy)).toList(),
+      vertices: this.vertices.map<Vertex>((e) => Vertex(Offset(e.position.dx, e.position.dy), this)).toList(),
       color: this.color,
       borderColor: this.borderColor,
       borderWidth: this.borderWidth,
@@ -275,7 +226,6 @@ class ComponentData with ChangeNotifier {
         locked = json['locked'],
         type = json['type'],
         zOrder = json['z_order'],
-        parentId = json['parent_id'],
         color = json['color'],
         highlightColor = json['highlightColor'],
         borderColor = json['borderColor'],
@@ -286,8 +236,6 @@ class ComponentData with ChangeNotifier {
         textSize = json['textSize'],
         textColor = json['textColor'],
         data = decodeCustomComponentData?.call(json['dynamic_data']) {
-    this.childrenIds.addAll(
-        (json['children_ids'] as List).map((id) => id as String).toList());
     this.connections.addAll((json['connections'] as List)
         .map((connectionJson) => Connection.fromJson(connectionJson)));
   }
@@ -299,8 +247,6 @@ class ComponentData with ChangeNotifier {
         'min_size': [minSize.width, minSize.height],
         'type': type,
         'z_order': zOrder,
-        'parent_id': parentId,
-        'children_ids': childrenIds,
         'connections': connections,
         //'vertices': vertices,
         'color': color,

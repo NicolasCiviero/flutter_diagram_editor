@@ -2,17 +2,19 @@ import 'dart:collection';
 
 import 'package:shape_editor/src/abstraction_layer/policy/base/policy_set.dart';
 import 'package:shape_editor/src/canvas_context/model/component_data.dart';
-import 'package:shape_editor/src/canvas_context/model/connection.dart';
 import 'package:shape_editor/src/canvas_context/model/diagram_data.dart';
 import 'package:shape_editor/src/canvas_context/model/link_data.dart';
-import 'package:shape_editor/src/utils/link_style.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
+
+import 'model/vertex.dart';
+import 'model/vertex_cluster.dart';
 
 class CanvasModel with ChangeNotifier {
   Uuid _uuid = Uuid();
   HashMap<String, ComponentData> components = HashMap();
   HashMap<String, LinkData> links = HashMap();
+  List<VertexCluster> clusters = [];
   PolicySet policySet;
 
   CanvasModel(this.policySet);
@@ -61,22 +63,17 @@ class CanvasModel with ChangeNotifier {
   }
 
   removeComponent(String id) {
-    removeComponentConnections(id);
+    removeComponentFromClusters(id);
     components.remove(id);
     notifyListeners();
   }
 
-  removeComponentConnections(String id) {
-    assert(components.keys.contains(id));
-
-    List<String> _linksToRemove = [];
-
-    getComponent(id).connections.forEach((connection) {
-      _linksToRemove.add(connection.connectionId);
-    });
-
-    _linksToRemove.forEach(removeLink);
-    notifyListeners();
+  removeComponentFromClusters(String id) {
+    assert(componentExists(id), 'model does not contain this component id: $id');
+    final component = getComponent(id);
+    for (final vertex in component.vertices) {
+      component.vertexClusters[vertex.id]?.removeVertex(vertex);
+    }
   }
 
   removeAllComponents() {
@@ -124,16 +121,76 @@ class CanvasModel with ChangeNotifier {
   }
 
   removeLink(String linkId) {
-    getComponent(getLink(linkId).sourceComponentId).removeConnection(linkId);
-    getComponent(getLink(linkId).targetComponentId).removeConnection(linkId);
+    // getComponent(getLink(linkId).sourceComponentId).removeConnection(linkId);
+    // getComponent(getLink(linkId).targetComponentId).removeConnection(linkId);
     links.remove(linkId);
     notifyListeners();
   }
 
   removeAllLinks() {
     components.values.forEach((component) {
-      removeComponentConnections(component.id);
+      removeComponentFromClusters(component.id);
     });
+  }
+
+  void updateVertexCluster(String componentId, Vertex vertex, Offset newPosition) {
+    assert(componentExists(componentId), 'model does not contain this component id: $componentId');
+    final component = getComponent(componentId);
+    final absolutePosition = component.position + vertex.position;
+    final cluster = component.vertexClusters[vertex.id];
+    if (cluster == null) return;
+
+    for (final v in cluster.vertices) {
+      if (v.id == vertex.id) continue;
+      v.componentData.moveVertex(v, absolutePosition);
+    };
+  }
+
+  void createClusters() {
+    final componentList = components.values.toList();
+
+    for (int i = 0; i < componentList.length; i++) {
+      final A = componentList[i];
+      if (A.vertices.isEmpty) continue;
+
+      for (int j = i + 1; j < componentList.length; j++) {
+        final B = componentList[j];
+        if (B.vertices.isEmpty) continue;
+
+        _checkComponentPair(A, B);
+      }
+    }
+  }
+
+  void _checkComponentPair(ComponentData A, ComponentData B) {
+    for (final vertexA in A.vertices) {
+      for (final vertexB in B.vertices) {
+        if (_areVerticesClose(vertexA, vertexB)) {
+          _mergeOrCreateCluster(vertexA, vertexB);
+        }
+      }
+    }
+  }
+
+  bool _areVerticesClose(Vertex vertexA, Vertex vertexB) {
+    return (vertexA.absolutePosition() - vertexB.absolutePosition()).distance < 2;
+  }
+
+  void _mergeOrCreateCluster(Vertex vertexA, Vertex vertexB) {
+    final clusterA = vertexA.componentData.vertexClusters[vertexA.id];
+    final clusterB = vertexB.componentData.vertexClusters[vertexB.id];
+    if (clusterA == null && clusterB == null) {
+      final cluster = VertexCluster();
+      cluster.addVertex(vertexA);
+      cluster.addVertex(vertexB);
+      clusters.add(cluster);
+      return;
+    }
+    else {
+      final target = clusterA ?? clusterB!;
+      target.addVertex(vertexA);
+      target.addVertex(vertexB);
+    }
   }
 
 }

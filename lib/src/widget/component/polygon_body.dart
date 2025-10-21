@@ -2,6 +2,8 @@ import 'package:shape_editor/shape_editor.dart';
 import 'package:shape_editor/src/widget/component/base_component_body.dart';
 import 'package:flutter/material.dart';
 
+import '../../canvas_context/model/vertex.dart';
+
 class PolygonBody extends StatelessWidget {
   final ComponentData componentData;
 
@@ -30,7 +32,7 @@ class PolygonPainter extends CustomPainter {
   final Color borderColor;
   final double borderWidth;
   final Size componentSize;
-  List<Offset> vertices = [];
+  List<Vertex> vertices = [];
   Size availableSize = Size(0,0);
 
   PolygonPainter({
@@ -78,9 +80,9 @@ class PolygonPainter extends CustomPainter {
     var xScale = availableSize.width / componentSize.width;
     var yScale = availableSize.height / componentSize.height;
 
-    path.moveTo(vertices[0].dx * xScale, vertices[0].dy * yScale);
+    path.moveTo(vertices[0].position.dx * xScale, vertices[0].position.dy * yScale);
     for (var i = 1 ; i < vertices.length; i++ ) {
-      path.lineTo(vertices[i].dx * xScale, vertices[i].dy * yScale);
+      path.lineTo(vertices[i].position.dx * xScale, vertices[i].position.dy * yScale);
     }
     path.close();
     return path;

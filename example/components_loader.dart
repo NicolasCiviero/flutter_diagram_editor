@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:shape_editor/shape_editor.dart';
+import 'package:shape_editor/src/canvas_context/model/vertex.dart';
 
 List<ComponentData> loadComponentsFromJson(String jsonString, {
       Color color = Colors.orange,
@@ -13,10 +14,7 @@ List<ComponentData> loadComponentsFromJson(String jsonString, {
   final shapes = data['Shapes'] as List<dynamic>;
 
   return shapes.map((shape) {
-    final verticesData = shape['Vertices'] as List<dynamic>? ?? [];
-    final vertices = verticesData.map((v) => Offset((v['X'] ?? 0).toDouble(), (v['Y'] ?? 0).toDouble())).toList();
-
-    return ComponentData(
+    var c = ComponentData(
       text: '',//shape['Name'] ?? '',
       type: shape['Type'] ?? 'rectangle',
       position: Offset((shape['X'] ?? 0).toDouble(), (shape['Y'] ?? 0).toDouble()),
@@ -25,7 +23,11 @@ List<ComponentData> loadComponentsFromJson(String jsonString, {
       color: color,
       borderColor: borderColor,
       borderWidth: borderWidth,
-      vertices: vertices,
+      vertices: [],
     );
+    final verticesData = shape['Vertices'] as List<dynamic>? ?? [];
+    verticesData.forEach((v) => c.addVertex(Offset((v['X'] ?? 0).toDouble(), (v['Y'] ?? 0)), null));
+
+    return c;
   }).toList();
 }
