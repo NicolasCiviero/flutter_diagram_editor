@@ -1,9 +1,6 @@
 import 'package:shape_editor/shape_editor.dart';
 import 'package:shape_editor/src/abstraction_layer/policy/base/state_policy.dart';
 import 'package:shape_editor/src/abstraction_layer/policy/base_policy_set.dart';
-import 'package:shape_editor/src/canvas_context/model/connection.dart';
-import 'package:shape_editor/src/utils/my_link_data.dart';
-import 'package:shape_editor/src/utils/link_style.dart';
 import 'package:flutter/gestures.dart';
 
 /// Allows you to define the component behaviour on any gesture registered by the [Component].
@@ -53,7 +50,6 @@ mixin ComponentPolicy on BasePolicySet implements StatePolicy  {
     if (selectedComponentId != componentId) return;
     lastFocalPoint = details.localFocalPoint;
 
-    hideLinkOption();
     if (isMultipleSelectionOn) {
       addComponentToMultipleSelection(componentId);
       highlightComponent(componentId);
@@ -69,7 +65,7 @@ mixin ComponentPolicy on BasePolicySet implements StatePolicy  {
       multipleSelected.forEach((compId) {
         //var cmp = canvasReader.model.getComponent(compId);
         canvasWriter.model.moveComponent(compId, positionDelta);
-        //TODO: possible changes when vertices connect
+        //TODO: possible changes when vertices have clusters
       });
     } else {
       canvasWriter.model.moveComponent(componentId, positionDelta);

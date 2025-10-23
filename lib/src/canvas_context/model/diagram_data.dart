@@ -2,33 +2,22 @@ import 'package:shape_editor/shape_editor.dart';
 
 class DiagramData {
   final List<ComponentData> components;
-  final List<LinkData> links;
+  //TODO: Add clusters here? may not be necessary. Check conversion first
 
-  /// Contains list of all components and list of all links of the diagram
+  /// Contains list of all components of the diagram
   DiagramData({
     required this.components,
-    required this.links,
   });
 
   DiagramData.fromJson(
     Map<String, dynamic> json, {
     Function(Map<String, dynamic> json)? decodeCustomComponentData,
-    Function(Map<String, dynamic> json)? decodeCustomLinkData,
-  })  : components = (json['components'] as List)
-            .map((componentJson) => ComponentData.fromJson(
+  })  : components = (json['components'] as List).map((componentJson) => ComponentData.fromJson(
                   componentJson,
                   decodeCustomComponentData: decodeCustomComponentData,
-                ))
-            .toList(),
-        links = (json['links'] as List)
-            .map((linkJson) => LinkData.fromJson(
-                  linkJson,
-                  decodeCustomLinkData: decodeCustomLinkData,
-                ))
-            .toList();
+                )).toList();
 
   Map<String, dynamic> toJson() => {
         'components': components,
-        'links': links,
       };
 }

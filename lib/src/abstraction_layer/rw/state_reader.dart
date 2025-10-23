@@ -48,7 +48,7 @@ class CanvasStateReader {
   /// Calculates position from the model to use it on Canvas.
   ///
   /// Use when you want to set widget's position on scaled or translated canvas, eg. in Positioned widget (top, left).
-  /// Usually in [ComponentWidgetsPolicy] or [LinkWidgetsPolicy].
+  /// Usually in [ComponentWidgetsPolicy].
   Offset toCanvasCoordinates(Offset position) {
     return canvasState.toCanvasCoordinates(position);
   }
@@ -63,7 +63,7 @@ class CanvasStateReader {
   /// Calculates position from the model to use it on Canvas, uses the image resize factor.
   ///
   /// Use when you want to set widget's position on scaled or translated canvas, eg. in Positioned widget (top, left).
-  /// Usually in [ComponentWidgetsPolicy] or [LinkWidgetsPolicy].
+  /// Usually in [ComponentWidgetsPolicy].
   Offset toCanvasFinalCoordinates(Offset position) {
     return canvasState.toCanvasFinalCoordinates(position);
   }

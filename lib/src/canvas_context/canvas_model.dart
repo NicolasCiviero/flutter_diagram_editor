@@ -3,7 +3,6 @@ import 'dart:collection';
 import 'package:shape_editor/src/abstraction_layer/policy/base/policy_set.dart';
 import 'package:shape_editor/src/canvas_context/model/component_data.dart';
 import 'package:shape_editor/src/canvas_context/model/diagram_data.dart';
-import 'package:shape_editor/src/canvas_context/model/link_data.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
@@ -11,9 +10,7 @@ import 'model/vertex.dart';
 import 'model/vertex_cluster.dart';
 
 class CanvasModel with ChangeNotifier {
-  Uuid _uuid = Uuid();
   HashMap<String, ComponentData> components = HashMap();
-  HashMap<String, LinkData> links = HashMap();
   List<VertexCluster> clusters = [];
   PolicySet policySet;
 
@@ -22,7 +19,6 @@ class CanvasModel with ChangeNotifier {
   DiagramData getDiagram() {
     return DiagramData(
       components: components.values.toList(),
-      links: links.values.toList(),
     );
   }
 
@@ -41,18 +37,6 @@ class CanvasModel with ChangeNotifier {
 
   HashMap<String, ComponentData> getAllComponents() {
     return components;
-  }
-
-  bool linkExists(String id) {
-    return links.containsKey(id);
-  }
-
-  LinkData getLink(String id) {
-    return links[id]!;
-  }
-
-  HashMap<String, LinkData> getAllLinks() {
-    return links;
   }
 
   /// Returns componentData id. useful when the id is set automatically.
@@ -77,7 +61,6 @@ class CanvasModel with ChangeNotifier {
   }
 
   removeAllComponents() {
-    links.clear();
     components.clear();
     notifyListeners();
   }
@@ -115,25 +98,15 @@ class CanvasModel with ChangeNotifier {
     return zOrderMin - 1;
   }
 
-  addLink(LinkData linkData) {
-    links[linkData.id] = linkData;
-    notifyListeners();
+  void updateComponentClusters(String componentId) {
+    assert(componentExists(componentId), 'model does not contain this component id: $componentId');
+    final component = getComponent(componentId);
+    for (final vertex in component.vertices) {
+      updateVertexCluster(componentId, vertex);
+    }
   }
 
-  removeLink(String linkId) {
-    // getComponent(getLink(linkId).sourceComponentId).removeConnection(linkId);
-    // getComponent(getLink(linkId).targetComponentId).removeConnection(linkId);
-    links.remove(linkId);
-    notifyListeners();
-  }
-
-  removeAllLinks() {
-    components.values.forEach((component) {
-      removeComponentFromClusters(component.id);
-    });
-  }
-
-  void updateVertexCluster(String componentId, Vertex vertex, Offset newPosition) {
+  void updateVertexCluster(String componentId, Vertex vertex) {
     assert(componentExists(componentId), 'model does not contain this component id: $componentId');
     final component = getComponent(componentId);
     final absolutePosition = component.position + vertex.position;

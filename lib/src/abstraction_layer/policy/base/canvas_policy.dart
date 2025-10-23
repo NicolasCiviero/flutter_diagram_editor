@@ -8,17 +8,12 @@ mixin CanvasPolicy implements StatePolicy {
   onCanvasTap() {
     multipleSelected = [];
 
-    if (isReadyToConnect) {
-      isReadyToConnect = false;
-      canvasWriter.model.updateComponent(selectedComponentId);
-    } else {
-      if (selectedComponentId != null) {
-        final componentData = canvasReader.model.getComponent(selectedComponentId!);
-        canvasWriter.model.sendEvent(ComponentEvent(ComponentEvent.deselected, componentData));
-      }
-      selectedComponentId = null;
-      hideAllHighlights();
+    if (selectedComponentId != null) {
+      final componentData = canvasReader.model.getComponent(selectedComponentId!);
+      canvasWriter.model.sendEvent(ComponentEvent(ComponentEvent.deselected, componentData));
     }
+    selectedComponentId = null;
+    hideAllHighlights();
   }
 
   onCanvasTapDown(TapDownDetails details) {}

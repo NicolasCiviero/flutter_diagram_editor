@@ -45,7 +45,7 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
     bool isJunction = componentData.type == 'junction';
     bool isPolygon = componentData.type == 'polygon';
     bool hasVertices = componentData.type == 'polygon' || componentData.type == 'arrow';
-    bool showOptions = (!isMultipleSelectionOn) && (!isReadyToConnect) && !isJunction;
+    bool showOptions = (!isMultipleSelectionOn) && !isJunction;
     bool isResizable = componentData.type != 'pixel_map' && !hasVertices;
 
     return Visibility(
@@ -58,15 +58,14 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
           if (isPolygon) ...appendVertices(componentData),
           if (hasVertices) ...dragVertices(componentData),
           if (isResizable) resizeCorner(componentData),
-          if (isJunction && !isReadyToConnect) junctionOptions(componentData),
+          if (isJunction) junctionOptions(componentData),
         ],
       ),
     );
   }
 
   Widget componentTopOptions(ComponentData componentData, context) {
-    Offset componentPosition =
-    canvasReader.state.toCanvasFinalCoordinates(componentData.position);
+    Offset componentPosition = canvasReader.state.toCanvasFinalCoordinates(componentData.position);
     return Positioned(
       left: componentPosition.dx,
       top: componentPosition.dy - 48,
@@ -104,15 +103,6 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
           //   size: 40,
           //   onPressed: () => showEditComponentDialog(context, componentData),
           // ),
-          // SizedBox(width: 12),
-          // OptionIcon(
-          //   color: Colors.grey.withOpacity(0.7),
-          //   iconData: Icons.link_off,
-          //   tooltip: 'remove links',
-          //   size: 40,
-          //   onPressed: () =>
-          //       canvasWriter.model.removeComponentConnections(componentData.id),
-          // ),
         ],
       ),
     );
@@ -146,16 +136,6 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
                 canvasWriter.model.moveComponentToTheBack(componentData.id),
           ),
           SizedBox(width: 40),
-          OptionIcon(
-            color: Colors.grey.withOpacity(0.7),
-            iconData: Icons.arrow_right_alt,
-            tooltip: 'connect',
-            size: 40,
-            onPressed: () {
-              isReadyToConnect = true;
-              componentData.updateComponent();
-            },
-          ),
         ],
       ),
     );
@@ -192,9 +172,7 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
       top: componentBottomRightCorner.dy - 12,
       child: GestureDetector(
         onPanUpdate: (details) {
-          canvasWriter.model.resizeComponent(
-              componentData.id, details.delta / canvasReader.state.finalScale);
-          canvasWriter.model.updateComponentLinks(componentData.id);
+          canvasWriter.model.resizeComponent(componentData.id, details.delta / canvasReader.state.finalScale);
         },
         onPanEnd: (details) {
           canvasWriter.model.resizeComponentEnd(componentData.id);
@@ -238,7 +216,6 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
               .canvasGlobalKey.currentContext?.findRenderObject() as RenderBox;
           var position = canvasReader.state.fromCanvasFinalCoordinates(renderBox.globalToLocal(details.globalPosition));
           canvasWriter.model.moveVertex(componentData.id, vertex, position);
-          canvasWriter.model.updateComponentLinks(componentData.id);
         },
         onPanEnd: (details) {
           canvasWriter.model.moveVertexEnd(componentData.id);
@@ -288,9 +265,7 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
       top: vertexPosition.dy - 12,
       child: GestureDetector(
         onTap: () {
-          canvasWriter.model.addVertex(
-              componentData.id, vertex, index);
-          canvasWriter.model.updateComponentLinks(componentData.id);
+          canvasWriter.model.addVertex(componentData.id, vertex, index);
           canvasWriter.model.updateComponent(componentData.id);
         },
         child: MouseRegion(
@@ -335,16 +310,6 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
             },
           ),
           SizedBox(width: 8),
-          OptionIcon(
-            color: Colors.grey.withOpacity(0.7),
-            iconData: Icons.arrow_right_alt,
-            tooltip: 'connect',
-            size: 32,
-            onPressed: () {
-              isReadyToConnect = true;
-              componentData.updateComponent();
-            },
-          ),
         ],
       ),
     );

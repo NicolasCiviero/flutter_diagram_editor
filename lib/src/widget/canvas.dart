@@ -3,7 +3,6 @@ import 'package:shape_editor/src/abstraction_layer/policy/defaults/canvas_contro
 import 'package:shape_editor/src/canvas_context/canvas_model.dart';
 import 'package:shape_editor/src/canvas_context/canvas_state.dart';
 import 'package:shape_editor/src/canvas_context/model/component_data.dart';
-import 'package:shape_editor/src/canvas_context/model/link_data.dart';
 import 'package:shape_editor/src/widget/component.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +14,7 @@ class DiagramEditorCanvas extends StatefulWidget {
   final PolicySet policy;
   final bool noEditing;
 
-  /// The canvas where all components and links are shown on.
+  /// The canvas where all components are shown on.
   const DiagramEditorCanvas({
     Key? key,
     required this.policy,

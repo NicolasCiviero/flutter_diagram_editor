@@ -32,7 +32,7 @@ class CanvasModelWriter extends ModelWriter with ComponentWriter {
     _canvasState.componentUpdateEvent.broadcast(event);
   }
 
-  /// Removes a component with [componentId] and all its links.
+  /// Removes a component with [componentId].
   removeComponent(String componentId) {
     _checkComponentId(componentId);
     final component = _canvasModel.getComponent(componentId);
@@ -40,23 +40,9 @@ class CanvasModelWriter extends ModelWriter with ComponentWriter {
     _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.removed, component));
   }
 
-  /// Removes all components in the model. All links are also removed with the components.
+  /// Removes all components in the model.
   removeAllComponents() {
     _canvasModel.removeAllComponents();
-  }
-
-  /// Removes link with [linkId] from the model.
-  ///
-  /// Also deletes the connection information from both components which were connected with this link.
-  removeLink(String linkId) {
-    assert(_canvasModel.linkExists(linkId),
-        'model does not contain this link id: $linkId');
-    _canvasModel.removeLink(linkId);
-  }
-
-  /// Removes all links from the model.
-  removeAllLinks() {
-    _canvasModel.removeAllLinks();
   }
 
   /// Loads a diagram from json string.
@@ -67,19 +53,13 @@ class CanvasModelWriter extends ModelWriter with ComponentWriter {
   deserializeDiagram(
     String json, {
     Function(Map<String, dynamic> json)? decodeCustomComponentData,
-    Function(Map<String, dynamic> json)? decodeCustomLinkData,
   }) {
     final diagram = DiagramData.fromJson(
       jsonDecode(json),
       decodeCustomComponentData: decodeCustomComponentData,
-      decodeCustomLinkData: decodeCustomLinkData,
     );
     for (final componentData in diagram.components) {
       _canvasModel.components[componentData.id] = componentData;
-    }
-    for (final linkData in diagram.links) {
-      _canvasModel.links[linkData.id] = linkData;
-      linkData.updateLink();
     }
     _canvasModel.updateCanvas();
   }
@@ -102,7 +82,7 @@ mixin ComponentWriter on ModelWriter {
     _checkComponentId(componentId);
     final component = _canvasModel.getComponent(componentId);
     component.setPosition(position);
-    //TODO: possible changes when vertices connect
+    _canvasModel.updateComponentClusters(componentId);
     _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.setPosition, component));
   }
 
@@ -112,7 +92,7 @@ mixin ComponentWriter on ModelWriter {
     final component = _canvasModel.getComponent(componentId);
     if (component.locked) return;
     component.move(offset / _canvasState.canvasFinalScale());
-    //TODO: possible changes when vertices connect
+    _canvasModel.updateComponentClusters(componentId);
     _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.move, component));
   }
 
@@ -126,8 +106,7 @@ mixin ComponentWriter on ModelWriter {
     _checkComponentId(componentId);
     final component = _canvasModel.getComponent(componentId);
     component.moveVertex(vertex, vertexLocation);
-    //TODO: possible changes when vertices connect
-    _canvasModel.updateVertexCluster(componentId, vertex, vertexLocation);
+    _canvasModel.updateVertexCluster(componentId, vertex);
     _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.moveVertex, component));
   }
 
@@ -136,36 +115,12 @@ mixin ComponentWriter on ModelWriter {
     _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.moveVertexEnded, component));
   }
 
-  /// Translates the component's vertex by [offset] value.
+  /// Adds vertex to the component with [componentId] at specified [index].
   addVertex(String componentId, Offset vertex, int index) {
     _checkComponentId(componentId);
     final component = _canvasModel.getComponent(componentId);
     component.addVertex(vertex, index);
-    //TODO: possible changes when vertices connect
     _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.addVertex, component));
-  }
-
-  /// Translates the component by [offset] value and all its children as well.
-  moveComponentWithChildren(String componentId, Offset offset) {
-    _checkComponentId(componentId);
-    moveComponent(componentId, offset);
-    // _canvasModel.getComponent(componentId).childrenIds.forEach((childId) {
-    //   moveComponentWithChildren(childId, offset);
-    // });
-  }
-
-  /// Removes all connections that the component with [componentId] has.
-  removeComponentConnections(String componentId) {
-    _checkComponentId(componentId);
-    _canvasModel.removeComponentFromClusters(componentId);
-  }
-
-  /// Updates all links (their position) connected to the component with [componentId].
-  ///
-  /// Use it when the component is somehow changed (its size or position) and the links are not updated to their proper positions.
-  updateComponentLinks(String componentId) {
-    _checkComponentId(componentId);
-    //TODO: possible changes when vertices connect
   }
 
   /// Sets the component's z-order to [zOrder].
@@ -182,26 +137,10 @@ mixin ComponentWriter on ModelWriter {
     return _canvasModel.moveComponentToTheFront(componentId);
   }
 
-  /// Sets the components's z-order to the highest z-order value of all components +1 and sets z-order of its children to +2...
-  int moveComponentToTheFrontWithChildren(String componentId) {
-    _checkComponentId(componentId);
-    int zOrder = moveComponentToTheFront(componentId);
-    //_setZOrderToChildren(componentId, zOrder);
-    return zOrder;
-  }
-
   /// Sets the components's z-order to the lowest z-order value of all components -1.
   int moveComponentToTheBack(String componentId) {
     _checkComponentId(componentId);
     return _canvasModel.moveComponentToTheBack(componentId);
-  }
-
-  /// Sets the components's z-order to the lowest z-order value of all components -1 and sets z-order of its children to one more than the component and their children to one more..
-  int moveComponentToTheBackWithChildren(String componentId) {
-    _checkComponentId(componentId);
-    int zOrder = moveComponentToTheBack(componentId);
-    //_setZOrderToChildren(componentId, zOrder);
-    return zOrder;
   }
 
   /// Changes the component's size by [deltaSize].

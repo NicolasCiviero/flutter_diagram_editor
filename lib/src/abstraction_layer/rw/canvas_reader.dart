@@ -3,7 +3,7 @@ import 'package:shape_editor/src/abstraction_layer/rw/state_reader.dart';
 
 /// Takes care of reading from model and state of the canvas.
 class CanvasReader {
-  /// Access to canvas model (components, links..).
+  /// Access to canvas model (components, clusters..).
   final CanvasModelReader model;
 
   /// Access to canvas state data (canvas scale, position..).

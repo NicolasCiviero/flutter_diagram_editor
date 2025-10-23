@@ -7,7 +7,7 @@ import 'package:shape_editor/shape_editor.dart';
 mixin CanvasWidgetsPolicy on BasePolicySet implements StatePolicy, CanvasControlPolicy {
   /// Allows you to add any widget to the canvas.
   ///
-  /// The widgets will be displayed under all components and links.
+  /// The widgets will be displayed under all components.
   ///
   /// Recommendation: use Positioned as the root widget.
   List<Widget> showCustomWidgetsOnCanvasBackground(BuildContext context) {
@@ -46,12 +46,12 @@ mixin CanvasWidgetsPolicy on BasePolicySet implements StatePolicy, CanvasControl
 
     String componentId = canvasWriter.model.addComponent(newComponentData);
 
-    canvasWriter.model.moveComponentToTheFrontWithChildren(componentId);
+    canvasWriter.model.moveComponentToTheFront(componentId);
   }
 
   /// Allows you to add any widget to the canvas.
   ///
-  /// The widgets will be displayed over all components and links.
+  /// The widgets will be displayed over all components.
   ///
   /// Recommendation: use Positioned as the root widget.
   List<Widget> showCustomWidgetsOnCanvasForeground(BuildContext context) {

@@ -15,7 +15,7 @@ class DiagramEditorContext {
   /// Set of policies where all the diagram customization is defined.
   final PolicySet policySet;
 
-  /// Canvas model containing all components and links with all the functions.
+  /// Canvas model containing all components with all the functions.
   CanvasModel get canvasModel => _canvasModel;
 
   /// Canvas state containing for example canvas position and scale.
@@ -32,8 +32,6 @@ class DiagramEditorContext {
   }
 
   /// Allows you to create [DiagramEditorContext] with shared model from another [DiagramEditorContext].
-  ///
-  /// Warning: [LinkAttachmentPolicy] is used in CanvasModel, so this policy will be shared as well, even if you put new one to [PolicySet].
   DiagramEditorContext.withSharedModel(
     DiagramEditorContext oldContext, {
     required this.policySet,
@@ -52,8 +50,6 @@ class DiagramEditorContext {
   }
 
   /// Allows you to create [DiagramEditorContext] with shared model and state from another [DiagramEditorContext].
-  ///
-  /// Warning: [LinkAttachmentPolicy] is used in CanvasModel, so this policy will be shared as well, even if you put new one to [PolicySet].
   DiagramEditorContext.withSharedModelAndState(
     DiagramEditorContext oldContext, {
     required this.policySet,

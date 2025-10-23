@@ -1,6 +1,5 @@
 import 'dart:collection';
 
-import 'package:shape_editor/src/canvas_context/model/connection.dart';
 import 'package:flutter/material.dart';
 import 'package:shape_editor/src/canvas_context/model/vertex.dart';
 import 'package:shape_editor/src/canvas_context/model/vertex_cluster.dart';
@@ -38,12 +37,6 @@ class ComponentData with ChangeNotifier {
   /// This value determines if this component will be above or under other components.
   /// Higher value means on the top.
   int zOrder = 0;
-
-  /// Defines to which components is this components connected and what is the [connectionId].
-  ///
-  /// The connection can be [ConnectionOut] for link going from this component
-  /// or [ConnectionIn] for link going from another to this component.
-  final List<Connection> connections = [];
 
   /// List of vertices of a polygon.
   ///
@@ -235,10 +228,7 @@ class ComponentData with ChangeNotifier {
         textAlignment = json['textAlignment'],
         textSize = json['textSize'],
         textColor = json['textColor'],
-        data = decodeCustomComponentData?.call(json['dynamic_data']) {
-    this.connections.addAll((json['connections'] as List)
-        .map((connectionJson) => Connection.fromJson(connectionJson)));
-  }
+        data = decodeCustomComponentData?.call(json['dynamic_data']) {}
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -247,7 +237,6 @@ class ComponentData with ChangeNotifier {
         'min_size': [minSize.width, minSize.height],
         'type': type,
         'z_order': zOrder,
-        'connections': connections,
         //'vertices': vertices,
         'color': color,
         'borderColor': borderColor,

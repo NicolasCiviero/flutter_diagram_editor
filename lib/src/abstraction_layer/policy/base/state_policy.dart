@@ -18,15 +18,7 @@ mixin StatePolicy on BasePolicySet {
   bool isMultipleSelectionOn = false;
   List<String> multipleSelected = [];
 
-  Offset deleteLinkPos = Offset.zero;
-
-  bool isReadyToConnect = false;
-
-  String? selectedLinkId;
-  Offset tapLinkPosition = Offset.zero;
-
   hideAllHighlights() {
-    hideLinkOption();
     canvasReader.model.getAllComponents().values.forEach((component) {
       if (component.isHighlightVisible) {
         component.isHighlightVisible = false;
@@ -49,7 +41,6 @@ mixin StatePolicy on BasePolicySet {
 
   turnOnMultipleSelection() {
     isMultipleSelectionOn = true;
-    isReadyToConnect = false;
 
     if (selectedComponentId != null) {
       addComponentToMultipleSelection(selectedComponentId);
@@ -74,14 +65,6 @@ mixin StatePolicy on BasePolicySet {
     multipleSelected.remove(componentId);
   }
 
-  showLinkOption(String linkId, Offset position) {
-    selectedLinkId = linkId;
-    tapLinkPosition = position;
-  }
-
-  hideLinkOption() {
-    selectedLinkId = null;
-  }
 }
 
 mixin CustomBehaviourPolicy implements StatePolicy {
