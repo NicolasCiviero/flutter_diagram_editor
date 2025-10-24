@@ -34,7 +34,7 @@ class _DiagramEditorCanvasState extends State<DiagramEditorCanvas>
 
     if (event is KeyUpEvent && key == LogicalKeyboardKey.delete) {
       if (widget.policy.selectedComponentId != null) {
-        widget.policy.canvasWriter.model.removeComponent(widget.policy.selectedComponentId!);
+        widget.policy.modelWriter.removeComponent(widget.policy.selectedComponentId!);
         widget.policy.selectedComponentId = null;
       }
     }

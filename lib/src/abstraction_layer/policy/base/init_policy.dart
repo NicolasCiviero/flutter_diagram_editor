@@ -7,6 +7,6 @@ mixin InitPolicy on BasePolicySet {
   ///
   /// It's possible to change canvas state here. Or load a diagram.
   initializeDiagramEditor() {
-    canvasWriter.state.setCanvasColor(Colors.white);
+    stateWriter.setCanvasColor(Colors.white);
   }
 }

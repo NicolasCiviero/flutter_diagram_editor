@@ -31,7 +31,7 @@ class _DiagramAppState extends State<DiagramApp> {
     policySet.isGridVisible = false;
     policySet.buttonBackColor = Colors.deepOrange;
     policySet.loadingIndicatorColor = Colors.deepOrange;
-    policySet.canvasReader.state.componentUpdateEvent
+    policySet.stateReader.componentUpdateEvent
         .subscribe(onComponentEvent);
 
     super.initState();
@@ -85,8 +85,8 @@ class _DiagramAppState extends State<DiagramApp> {
 
     var image = await loadUiImageFromAsset('assets/up_front_image.jpg');
     //var image = await debugImage();
-    policySet.canvasReader.state.canvasState.setImage(image);
-    policySet.canvasReader.state.canvasState.imageRescaleFactor = 1;
+    policySet.stateReader.canvasState.setImage(image);
+    policySet.stateReader.canvasState.imageRescaleFactor = 1;
     setState(() { });
   }
 
@@ -147,7 +147,7 @@ class MyComponentData {
     isHighlightVisible = false;
   }
 
-  // Function used to deserialize the diagram. Must be passed to `canvasWriter.model.deserializeDiagram` for proper deserialization.
+  // Function used to deserialize the diagram. Must be passed to `modelWriter.deserializeDiagram` for proper deserialization.
   MyComponentData.fromJson(Map<String, dynamic> json)
       : isHighlightVisible = json['highlight'],
         color = Color(int.parse(json['color'], radix: 16));
@@ -170,7 +170,7 @@ class MyPolicySet extends PolicySet with
 mixin MyInitPolicy implements InitPolicy {
   @override
   initializeDiagramEditor() {
-    canvasWriter.state.setCanvasColor(Colors.grey[300]!);
+    stateWriter.setCanvasColor(Colors.grey[300]!);
   }
 }
 
@@ -182,11 +182,11 @@ mixin MyCanvasPolicy implements CanvasPolicy, CustomPolicy {
     if (selectedComponentId != null) {
       hideComponentHighlight(selectedComponentId);
     } else {
-      canvasWriter.model.addComponent(
+      modelWriter.addComponent(
         ComponentData(
           size: const Size(96, 72),
           position:
-              canvasReader.state.fromCanvasCoordinates(details.localPosition),
+              stateReader.fromCanvasCoordinates(details.localPosition),
           data: MyComponentData(),
         ),
       );
@@ -208,7 +208,7 @@ mixin MyComponentPolicy implements ComponentPolicy, CustomPolicy {
   @override
   onComponentLongPress(String componentId) {
     hideComponentHighlight(selectedComponentId);
-    canvasWriter.model.removeComponent(componentId);
+    modelWriter.removeComponent(componentId);
   }
 
   @override
@@ -219,7 +219,7 @@ mixin MyComponentPolicy implements ComponentPolicy, CustomPolicy {
   @override
   onComponentScaleUpdate(componentId, details) {
     Offset positionDelta = details.localFocalPoint - lastFocalPoint;
-    canvasWriter.model.moveComponent(componentId, positionDelta);
+    modelWriter.moveComponent(componentId, positionDelta);
     lastFocalPoint = details.localFocalPoint;
   }
 
@@ -231,33 +231,33 @@ mixin CustomPolicy implements PolicySet {
   String serializedDiagram = '{"components": []}';
 
   highlightComponent(String componentId) {
-    canvasReader.model.getComponent(componentId).data.showHighlight();
-    canvasReader.model.getComponent(componentId).updateComponent();
+    modelReader.getComponent(componentId).data.showHighlight();
+    modelReader.getComponent(componentId).updateComponent();
     selectedComponentId = componentId;
   }
 
   hideComponentHighlight(String? componentId) {
     if (componentId != null) {
-      canvasReader.model.getComponent(componentId).data.hideHighlight();
-      canvasReader.model.getComponent(componentId).updateComponent();
+      modelReader.getComponent(componentId).data.hideHighlight();
+      modelReader.getComponent(componentId).updateComponent();
       selectedComponentId = null;
     }
   }
 
   deleteAllComponents() {
     selectedComponentId = null;
-    canvasWriter.model.removeAllComponents();
+    modelWriter.removeAllComponents();
   }
 
   // Save the diagram to String in json format.
   serialize() {
-    serializedDiagram = canvasReader.model.serializeDiagram();
+    serializedDiagram = modelReader.serializeDiagram();
   }
 
   // Load the diagram from json format. Do it cautiously, to prevent unstable state remove the previous diagram (id collision can happen).
   deserialize() {
-    canvasWriter.model.removeAllComponents();
-    canvasWriter.model.deserializeDiagram(
+    modelWriter.removeAllComponents();
+    modelWriter.deserializeDiagram(
       serializedDiagram,
       decodeCustomComponentData: (json) => MyComponentData.fromJson(json),
     );

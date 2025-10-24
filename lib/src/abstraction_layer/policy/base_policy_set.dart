@@ -1,16 +1,23 @@
-import 'package:shape_editor/src/abstraction_layer/rw/canvas_reader.dart';
-import 'package:shape_editor/src/abstraction_layer/rw/canvas_writer.dart';
+import '../rw/model_reader.dart';
+import '../rw/model_writer.dart';
+import '../rw/state_reader.dart';
+import '../rw/state_writer.dart';
 
 class BasePolicySet {
-  /// Allows you to read all data from diagram/canvas model.
-  late CanvasReader canvasReader;
+  /// Access to canvas model (components, vertexClusters and all the functions to change the model).
+  late final CanvasModelReader modelReader;
+  late final CanvasModelWriter modelWriter;
 
-  /// Allows you to change diagram/canvas model data.
-  late CanvasWriter canvasWriter;
+  /// Access to canvas state data (canvas scale, position..).
+  late final CanvasStateReader stateReader;
+  late final CanvasStateWriter stateWriter;
+
 
   /// Initialize policy in [DiagramEditorContext].
-  initializePolicy(CanvasReader canvasReader, CanvasWriter canvasWriter) {
-    this.canvasReader = canvasReader;
-    this.canvasWriter = canvasWriter;
+  initializePolicy(CanvasModelReader modelReader, CanvasModelWriter modelWriter, CanvasStateReader stateReader, CanvasStateWriter stateWriter) {
+    this.modelReader = modelReader;
+    this.modelWriter = modelWriter;
+    this.stateReader = stateReader;
+    this.stateWriter = stateWriter;
   }
 }

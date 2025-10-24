@@ -9,8 +9,8 @@ mixin CanvasPolicy implements StatePolicy {
     multipleSelected = [];
 
     if (selectedComponentId != null) {
-      final componentData = canvasReader.model.getComponent(selectedComponentId!);
-      canvasWriter.model.sendEvent(ComponentEvent(ComponentEvent.deselected, componentData));
+      final componentData = modelReader.getComponent(selectedComponentId!);
+      modelWriter.sendEvent(ComponentEvent(ComponentEvent.deselected, componentData));
     }
     selectedComponentId = null;
     hideAllHighlights();

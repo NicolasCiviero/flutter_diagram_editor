@@ -65,7 +65,7 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
   }
 
   Widget componentTopOptions(ComponentData componentData, context) {
-    Offset componentPosition = canvasReader.state.toCanvasFinalCoordinates(componentData.position);
+    Offset componentPosition = stateReader.toCanvasFinalCoordinates(componentData.position);
     return Positioned(
       left: componentPosition.dx,
       top: componentPosition.dy - 48,
@@ -77,7 +77,7 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
             tooltip: 'delete',
             size: 40,
             onPressed: () {
-              canvasWriter.model.removeComponent(componentData.id);
+              modelWriter.removeComponent(componentData.id);
               selectedComponentId = null;
             },
           ),
@@ -89,7 +89,7 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
           //   size: 40,
           //   onPressed: () {
           //     String newId = componentData.clone().id;
-          //     canvasWriter.model.moveComponentToTheFront(newId);
+          //     modelWriter.moveComponentToTheFront(newId);
           //     selectedComponentId = newId;
           //     hideComponentHighlight(componentData.id);
           //     highlightComponent(newId);
@@ -109,7 +109,7 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
   }
 
   Widget componentBottomOptions(ComponentData componentData) {
-    Offset componentBottomLeftCorner = canvasReader.state.toCanvasCoordinates(
+    Offset componentBottomLeftCorner = stateReader.toCanvasCoordinates(
         componentData.position + componentData.size.bottomLeft(Offset.zero));
     return Positioned(
       left: componentBottomLeftCorner.dx - 16,
@@ -123,7 +123,7 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
             size: 24,
             shape: BoxShape.rectangle,
             onPressed: () =>
-                canvasWriter.model.moveComponentToTheFront(componentData.id),
+                modelWriter.moveComponentToTheFront(componentData.id),
           ),
           SizedBox(width: 12),
           OptionIcon(
@@ -133,7 +133,7 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
             size: 24,
             shape: BoxShape.rectangle,
             onPressed: () =>
-                canvasWriter.model.moveComponentToTheBack(componentData.id),
+                modelWriter.moveComponentToTheBack(componentData.id),
           ),
           SizedBox(width: 40),
         ],
@@ -142,9 +142,9 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
   }
 
   Widget highlight(ComponentData componentData, Color color) {
-    var position = componentData.position * canvasReader.state.finalScale + canvasReader.state.position;
+    var position = componentData.position * stateReader.finalScale + stateReader.position;
     if (componentData.type != "arrow") position = position - Offset(2, 2);
-    final finalScale = canvasReader.state.finalScale;
+    final finalScale = stateReader.finalScale;
     return Positioned(
       left: position.dx,
       top: position.dy,
@@ -165,17 +165,17 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
   }
 
   resizeCorner(ComponentData componentData) {
-    Offset componentBottomRightCorner = canvasReader.state.toCanvasFinalCoordinates(
+    Offset componentBottomRightCorner = stateReader.toCanvasFinalCoordinates(
         componentData.position + componentData.size.bottomRight(Offset.zero));
     return Positioned(
       left: componentBottomRightCorner.dx - 12,
       top: componentBottomRightCorner.dy - 12,
       child: GestureDetector(
         onPanUpdate: (details) {
-          canvasWriter.model.resizeComponent(componentData.id, details.delta / canvasReader.state.finalScale);
+          modelWriter.resizeComponent(componentData.id, details.delta / stateReader.finalScale);
         },
         onPanEnd: (details) {
-          canvasWriter.model.resizeComponentEnd(componentData.id);
+          modelWriter.resizeComponentEnd(componentData.id);
         },
         child: MouseRegion(
           cursor: SystemMouseCursors.resizeDownRight,
@@ -205,20 +205,20 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
     ).toList();
   }
   dragVertex(ComponentData componentData, Vertex vertex) {
-    Offset vertexPosition = canvasReader.state.toCanvasFinalCoordinates(
+    Offset vertexPosition = stateReader.toCanvasFinalCoordinates(
         componentData.position + Offset(vertex.position.dx, vertex.position.dy));
     return Positioned(
       left: vertexPosition.dx - 12,
       top: vertexPosition.dy - 12,
       child: GestureDetector(
         onPanUpdate: (details) {
-          final RenderBox renderBox = canvasReader.state.canvasState
+          final RenderBox renderBox = stateReader.canvasState
               .canvasGlobalKey.currentContext?.findRenderObject() as RenderBox;
-          var position = canvasReader.state.fromCanvasFinalCoordinates(renderBox.globalToLocal(details.globalPosition));
-          canvasWriter.model.moveVertex(componentData.id, vertex, position);
+          var position = stateReader.fromCanvasFinalCoordinates(renderBox.globalToLocal(details.globalPosition));
+          modelWriter.moveVertex(componentData.id, vertex, position);
         },
         onPanEnd: (details) {
-          canvasWriter.model.moveVertexEnd(componentData.id);
+          modelWriter.moveVertexEnd(componentData.id);
         },
         child: MouseRegion(
           cursor: SystemMouseCursors.resizeDownRight,
@@ -258,15 +258,15 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
   }
 
   appendVertex(ComponentData componentData, Offset vertex, int index) {
-    Offset vertexPosition = canvasReader.state.toCanvasFinalCoordinates(
+    Offset vertexPosition = stateReader.toCanvasFinalCoordinates(
         componentData.position + Offset(vertex.dx, vertex.dy));
     return Positioned(
       left: vertexPosition.dx - 12,
       top: vertexPosition.dy - 12,
       child: GestureDetector(
         onTap: () {
-          canvasWriter.model.addVertex(componentData.id, vertex, index);
-          canvasWriter.model.updateComponent(componentData.id);
+          modelWriter.addVertex(componentData.id, vertex, index);
+          modelWriter.updateComponent(componentData.id);
         },
         child: MouseRegion(
           cursor: SystemMouseCursors.click,
@@ -293,7 +293,7 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
 
   Widget junctionOptions(ComponentData componentData) {
     Offset componentPosition =
-    canvasReader.state.toCanvasCoordinates(componentData.position);
+    stateReader.toCanvasCoordinates(componentData.position);
     return Positioned(
       left: componentPosition.dx - 24,
       top: componentPosition.dy - 48,
@@ -305,7 +305,7 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
             tooltip: 'delete',
             size: 32,
             onPressed: () {
-              canvasWriter.model.removeComponent(componentData.id);
+              modelWriter.removeComponent(componentData.id);
               selectedComponentId = null;
             },
           ),

@@ -1,6 +1,4 @@
 import 'package:shape_editor/src/abstraction_layer/policy/base/policy_set.dart';
-import 'package:shape_editor/src/abstraction_layer/rw/canvas_reader.dart';
-import 'package:shape_editor/src/abstraction_layer/rw/canvas_writer.dart';
 import 'package:shape_editor/src/abstraction_layer/rw/model_reader.dart';
 import 'package:shape_editor/src/abstraction_layer/rw/model_writer.dart';
 import 'package:shape_editor/src/abstraction_layer/rw/state_reader.dart';
@@ -28,43 +26,12 @@ class DiagramEditorContext {
     required this.policySet,
   })  : this._canvasModel = CanvasModel(policySet),
         this._canvasState = CanvasState() {
-    policySet.initializePolicy(_getReader(), _getWriter());
+    policySet.initializePolicy(
+        CanvasModelReader(canvasModel, canvasState),
+        CanvasModelWriter(canvasModel, canvasState),
+        CanvasStateReader(canvasState),
+        CanvasStateWriter(canvasState),
+    );
   }
 
-  /// Allows you to create [DiagramEditorContext] with shared model from another [DiagramEditorContext].
-  DiagramEditorContext.withSharedModel(
-    DiagramEditorContext oldContext, {
-    required this.policySet,
-  })  : this._canvasModel = oldContext.canvasModel,
-        this._canvasState = CanvasState() {
-    policySet.initializePolicy(_getReader(), _getWriter());
-  }
-
-  /// Allows you to create [DiagramEditorContext] with shared state (eg. canvas position and scale) from another [DiagramEditorContext].
-  DiagramEditorContext.withSharedState(
-    DiagramEditorContext oldContext, {
-    required this.policySet,
-  })  : this._canvasModel = CanvasModel(policySet),
-        this._canvasState = oldContext.canvasState {
-    policySet.initializePolicy(_getReader(), _getWriter());
-  }
-
-  /// Allows you to create [DiagramEditorContext] with shared model and state from another [DiagramEditorContext].
-  DiagramEditorContext.withSharedModelAndState(
-    DiagramEditorContext oldContext, {
-    required this.policySet,
-  })  : this._canvasModel = oldContext.canvasModel,
-        this._canvasState = oldContext.canvasState {
-    policySet.initializePolicy(_getReader(), _getWriter());
-  }
-
-  CanvasReader _getReader() {
-    return CanvasReader(CanvasModelReader(canvasModel, canvasState),
-        CanvasStateReader(canvasState));
-  }
-
-  CanvasWriter _getWriter() {
-    return CanvasWriter(CanvasModelWriter(canvasModel, canvasState),
-        CanvasStateWriter(canvasState));
-  }
 }

@@ -51,7 +51,7 @@ class _TextBodyState extends State<TextBody> {
               textAlign: TextAlign.center,
               maxLines: null,
               style: TextStyle(
-                fontSize: widget.componentData.textSize * widget.policy.canvasReader.state.scale,
+                fontSize: widget.componentData.textSize * widget.policy.stateReader.scale,
                 color: widget.componentData.textColor,
                 fontWeight: FontWeight.normal,
               ),

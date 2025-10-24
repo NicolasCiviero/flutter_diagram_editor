@@ -15,13 +15,13 @@ mixin CanvasWidgetsPolicy on BasePolicySet implements StatePolicy, CanvasControl
       CustomPaint(
         size: Size.infinite,
         painter: GridPainter(
-          offset: canvasReader.state.position / canvasReader.state.scale,
-          scale: canvasReader.state.scale,
-          lineWidth: (canvasReader.state.scale < 1.0)
-              ? canvasReader.state.scale : 1.0,
+          offset: stateReader.position / stateReader.scale,
+          scale: stateReader.scale,
+          lineWidth: (stateReader.scale < 1.0)
+              ? stateReader.scale : 1.0,
           matchParentSize: false,
           lineColor: Colors.blue[900]!,
-          image: canvasReader.state.canvasState.image,
+          image: stateReader.canvasState.image,
           showHorizontal: isGridVisible,
           showVertical: isGridVisible,
         ),
@@ -32,21 +32,21 @@ mixin CanvasWidgetsPolicy on BasePolicySet implements StatePolicy, CanvasControl
   receiveDraggedComponent( DragTargetDetails details, BuildContext context) {
     final renderBox = context.findRenderObject() as RenderBox;
     final Offset localOffset = renderBox.globalToLocal(details.offset);
-    Offset componentPosition = canvasReader.state.fromCanvasFinalCoordinates(localOffset);
+    Offset componentPosition = stateReader.fromCanvasFinalCoordinates(localOffset);
 
     ComponentData componentDataModel = details.data;
     var newComponentData = componentDataModel.clone();
     newComponentData.position = componentPosition;
 
-    var scale = canvasReader.model.canvasState.canvasAutoScale();
+    var scale = modelReader.canvasState.canvasAutoScale();
     newComponentData.size = Size(newComponentData.size.width / scale, newComponentData.size.height / scale);
     for (int i = 0; i < newComponentData.vertices.length; i++) {
       newComponentData.vertices[i].position = newComponentData.vertices[i].position.scale(1/scale, 1/scale);
     }
 
-    String componentId = canvasWriter.model.addComponent(newComponentData);
+    String componentId = modelWriter.addComponent(newComponentData);
 
-    canvasWriter.model.moveComponentToTheFront(componentId);
+    modelWriter.moveComponentToTheFront(componentId);
   }
 
   /// Allows you to add any widget to the canvas.

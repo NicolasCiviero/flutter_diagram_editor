@@ -20,8 +20,8 @@ mixin ComponentPolicy on BasePolicySet implements StatePolicy  {
       selectedComponentId = componentId;
       highlightComponent(componentId);
 
-      final componentData = canvasReader.model.getComponent(componentId);
-      canvasWriter.model.sendEvent(ComponentEvent(ComponentEvent.selected, componentData));
+      final componentData = modelReader.getComponent(componentId);
+      modelWriter.sendEvent(ComponentEvent(ComponentEvent.selected, componentData));
     }
   }
 
@@ -64,17 +64,17 @@ mixin ComponentPolicy on BasePolicySet implements StatePolicy  {
     if (isMultipleSelectionOn) {
       multipleSelected.forEach((compId) {
         //var cmp = canvasReader.model.getComponent(compId);
-        canvasWriter.model.moveComponent(compId, positionDelta);
+        modelWriter.moveComponent(compId, positionDelta);
         //TODO: possible changes when vertices have clusters
       });
     } else {
-      canvasWriter.model.moveComponent(componentId, positionDelta);
+      modelWriter.moveComponent(componentId, positionDelta);
     }
     lastFocalPoint = details.localFocalPoint;
   }
 
   onComponentScaleEnd(String componentId, ScaleEndDetails details) {
-    canvasWriter.model.moveComponentEnd(componentId);
+    modelWriter.moveComponentEnd(componentId);
   }
 
   onComponentLongPress(String componentId) {}

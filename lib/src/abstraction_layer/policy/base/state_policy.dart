@@ -19,22 +19,22 @@ mixin StatePolicy on BasePolicySet {
   List<String> multipleSelected = [];
 
   hideAllHighlights() {
-    canvasReader.model.getAllComponents().values.forEach((component) {
+    modelReader.getAllComponents().values.forEach((component) {
       if (component.isHighlightVisible) {
         component.isHighlightVisible = false;
-        canvasWriter.model.updateComponent(component.id);
+        modelWriter.updateComponent(component.id);
       }
     });
   }
 
   highlightComponent(String componentId) {
-    final component = canvasReader.model.getComponent(componentId);
+    final component = modelReader.getComponent(componentId);
     component.isHighlightVisible = true;
     component.updateComponent();
   }
 
   hideComponentHighlight(String componentId) {
-    final component = canvasReader.model.getComponent(componentId);
+    final component = modelReader.getComponent(componentId);
     component.isHighlightVisible = false;
     component.updateComponent();
   }
@@ -69,16 +69,16 @@ mixin StatePolicy on BasePolicySet {
 
 mixin CustomBehaviourPolicy implements StatePolicy {
   removeAll() {
-    canvasWriter.model.removeAllComponents();
+    modelWriter.removeAllComponents();
   }
 
   resetView() {
-    canvasWriter.state.resetCanvasView();
+    stateWriter.resetCanvasView();
   }
 
   removeSelected() {
     multipleSelected.forEach((compId) {
-      canvasWriter.model.removeComponent(compId);
+      modelWriter.removeComponent(compId);
     });
     multipleSelected = [];
   }
@@ -86,7 +86,7 @@ mixin CustomBehaviourPolicy implements StatePolicy {
   duplicateSelected() {
     List<String> duplicated = [];
     multipleSelected.forEach((componentId) {
-      String newId = canvasReader.model.getComponent(componentId).clone().id;
+      String newId = modelReader.getComponent(componentId).clone().id;
       duplicated.add(newId);
     });
     hideAllHighlights();
@@ -94,12 +94,12 @@ mixin CustomBehaviourPolicy implements StatePolicy {
     duplicated.forEach((componentId) {
       addComponentToMultipleSelection(componentId);
       highlightComponent(componentId);
-      canvasWriter.model.moveComponentToTheFront(componentId);
+      modelWriter.moveComponentToTheFront(componentId);
     });
   }
 
   selectAll() {
-    var components = canvasReader.model.canvasModel.components.keys;
+    var components = modelReader.canvasModel.components.keys;
 
     components.forEach((componentId) {
       addComponentToMultipleSelection(componentId);
@@ -113,16 +113,16 @@ mixin CustomBehaviourPolicy implements StatePolicy {
 
     final step = 1.0;
     if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
-      final componentData = canvasReader.model.getComponent(selectedComponentId!);
+      final componentData = modelReader.getComponent(selectedComponentId!);
       componentData.move(Offset(0, -step));
     } else if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
-      final componentData = canvasReader.model.getComponent(selectedComponentId!);
+      final componentData = modelReader.getComponent(selectedComponentId!);
       componentData.move(Offset(0, step));
     } else if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
-      final componentData = canvasReader.model.getComponent(selectedComponentId!);
+      final componentData = modelReader.getComponent(selectedComponentId!);
       componentData.move(Offset(-step, 0));
     } else if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
-      final componentData = canvasReader.model.getComponent(selectedComponentId!);
+      final componentData = modelReader.getComponent(selectedComponentId!);
       componentData.move(Offset(step, 0));
     }
 
