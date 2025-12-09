@@ -31,8 +31,7 @@ class _DiagramAppState extends State<DiagramApp> {
     policySet.isGridVisible = false;
     policySet.buttonBackColor = Colors.deepOrange;
     policySet.loadingIndicatorColor = Colors.deepOrange;
-    policySet.stateReader.componentUpdateEvent
-        .subscribe(onComponentEvent);
+    policySet.stateReader.componentUpdateEvent.subscribe(onComponentEvent);
 
     super.initState();
 
@@ -47,46 +46,35 @@ class _DiagramAppState extends State<DiagramApp> {
     for (var component in json_components) {
       diagramEditorContext.canvasModel.addComponent(component);
     }
-    diagramEditorContext.canvasModel.createClusters();
-    // diagramEditorContext.canvasModel.addComponent(ComponentData(
-    //     position: Offset(50, 50),
-    //     size: Size(80, 150),
-    //     minSize: Size(5, 5),
-    //     color: Colors.orange,
-    //     borderColor: Colors.deepOrange,
-    //     borderWidth: 2.0,
-    //     type: "rectangle",
-    //     vertices: []));
-    // diagramEditorContext.canvasModel.addComponent(ComponentData(
-    //     position: Offset(250, 50),
-    //     size: Size(180, 120),
-    //     minSize: Size(5, 5),
-    //     color: Colors.orange,
-    //     borderColor: Colors.deepOrange,
-    //     borderWidth: 2.0,
-    //     type: "ellipse",
-    //     vertices: []));
+
+    final start = DateTime.now();
+
+    policySet.createClusters();
+
+    final end = DateTime.now();
+    final elapsed = end.difference(start);
+    print('Execution time: ${elapsed.inMilliseconds} ms');
+
+
     diagramEditorContext.canvasModel.addComponent(ComponentData(
-        position: Offset(50, 250),
+        position: Offset(50, 50),
         size: Size(30, 35),
         minSize: Size(5, 5),
         locked: true,
-        color: Color.fromARGB(30, 255, 87, 34),
+        color: Color.fromARGB(255, 1, 87, 34),
         highlightColor: Color.fromARGB(30, 34, 71, 255),
         borderColor: Colors.deepOrange,
         borderWidth: 2.0,
         type: "pixel_map",
-        encodedBinaryData: base64Decode("EgMaBhcIFgkUCxMMEg0RDhAPDw8PDxANEQwRCgYGBwkHFggWCRUJFggWCRYIFgkWChQOEBAOEQwTCxMKFAoUCRUIFQgWBxcFDQ=="),
+        encodedBinaryData: base64Decode(
+            "EgMaBhcIFgkUCxMMEg0RDhAPDw8PDxANEQwRCgYGBwkHFggWCRUJFggWCRYIFgkWChQOEBAOEQwTCxMKFAoUCRUIFQgWBxcFDQ=="),
         vertices: []));
-
-
-
 
     var image = await loadUiImageFromAsset('assets/up_front_image.jpg');
     //var image = await debugImage();
     policySet.stateReader.canvasState.setImage(image);
     policySet.stateReader.canvasState.imageRescaleFactor = 1;
-    setState(() { });
+    setState(() {});
   }
 
   void onComponentEvent(ComponentEvent? args) {
@@ -102,7 +90,8 @@ class _DiagramAppState extends State<DiagramApp> {
   }
 
   Future<ui.Image> debugImage() async {
-    final url = 'https://63293d826eeab0f978a0119f8726d455.cdn.bubble.io/f1746189111268x549167210405818500/005.jpg?_gl=1*j3emgr*_gcl_au*MjA3MTgyMTczMS4xNzUwNjgwNTU4*_ga*MTc1NTYxMzM3My4xNzA2NzIxMzkw*_ga_BFPVR2DEE2*czE3NTA4Njk3MzkkbzMwMCRnMCR0MTc1MDg2OTczOSRqNjAkbDAkaDA.'; // 200x200 random image
+    final url =
+        'https://63293d826eeab0f978a0119f8726d455.cdn.bubble.io/f1746189111268x549167210405818500/005.jpg?_gl=1*j3emgr*_gcl_au*MjA3MTgyMTczMS4xNzUwNjgwNTU4*_ga*MTc1NTYxMzM3My4xNzA2NzIxMzkw*_ga_BFPVR2DEE2*czE3NTA4Njk3MzkkbzMwMCRnMCR0MTc1MDg2OTczOSRqNjAkbDAkaDA.'; // 200x200 random image
     final response = await http.get(Uri.parse(url));
     final codec = await ui.instantiateImageCodec(response.bodyBytes);
     final frame = await codec.getNextFrame();
@@ -119,7 +108,8 @@ class _DiagramAppState extends State<DiagramApp> {
               Container(color: Colors.grey),
               Padding(
                 padding: const EdgeInsets.all(36),
-                child: DiagramEditor(diagramEditorContext: diagramEditorContext),
+                child:
+                    DiagramEditor(diagramEditorContext: diagramEditorContext),
               ),
               Positioned(
                 top: 0,
@@ -195,11 +185,8 @@ class MyComponentData {
 }
 
 // A set of policies compound of mixins. There are some custom policy implementations and some policies defined by diagram_editor library.
-class MyPolicySet extends PolicySet with
-        MyInitPolicy,
-        MyCanvasPolicy,
-        MyComponentPolicy,
-        CustomPolicy {}
+class MyPolicySet extends PolicySet
+    with MyInitPolicy, MyCanvasPolicy, MyComponentPolicy, CustomPolicy {}
 
 // A place where you can init the canvas or your diagram (eg. load an existing diagram).
 mixin MyInitPolicy implements InitPolicy {
@@ -220,8 +207,7 @@ mixin MyCanvasPolicy implements CanvasPolicy, CustomPolicy {
       modelWriter.addComponent(
         ComponentData(
           size: const Size(96, 72),
-          position:
-              stateReader.fromCanvasCoordinates(details.localPosition),
+          position: stateReader.fromCanvasCoordinates(details.localPosition),
           data: MyComponentData(),
         ),
       );
@@ -257,7 +243,6 @@ mixin MyComponentPolicy implements ComponentPolicy, CustomPolicy {
     modelWriter.moveComponent(componentId, positionDelta);
     lastFocalPoint = details.localFocalPoint;
   }
-
 }
 
 // You can create your own Policy to define own variables and functions with canvasReader and canvasWriter.

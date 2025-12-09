@@ -53,7 +53,8 @@ class CanvasModel with ChangeNotifier {
   }
 
   removeComponentFromClusters(String id) {
-    assert(componentExists(id), 'model does not contain this component id: $id');
+    assert(
+        componentExists(id), 'model does not contain this component id: $id');
     final component = getComponent(id);
     for (final vertex in component.vertices) {
       component.vertexClusters[vertex.id]?.removeVertex(vertex);
@@ -99,7 +100,8 @@ class CanvasModel with ChangeNotifier {
   }
 
   void updateComponentClusters(String componentId) {
-    assert(componentExists(componentId), 'model does not contain this component id: $componentId');
+    assert(componentExists(componentId),
+        'model does not contain this component id: $componentId');
     final component = getComponent(componentId);
     for (final vertex in component.vertices) {
       updateVertexCluster(componentId, vertex);
@@ -107,7 +109,8 @@ class CanvasModel with ChangeNotifier {
   }
 
   void updateVertexCluster(String componentId, Vertex vertex) {
-    assert(componentExists(componentId), 'model does not contain this component id: $componentId');
+    assert(componentExists(componentId),
+        'model does not contain this component id: $componentId');
     final component = getComponent(componentId);
     final absolutePosition = component.position + vertex.position;
     final cluster = component.vertexClusters[vertex.id];
@@ -116,54 +119,7 @@ class CanvasModel with ChangeNotifier {
     for (final v in cluster.vertices) {
       if (v.id == vertex.id) continue;
       v.componentData.moveVertex(v, absolutePosition);
-    };
-  }
-
-  void createClusters() {
-    final componentList = components.values.toList();
-
-    for (int i = 0; i < componentList.length; i++) {
-      final A = componentList[i];
-      if (A.vertices.isEmpty) continue;
-
-      for (int j = i + 1; j < componentList.length; j++) {
-        final B = componentList[j];
-        if (B.vertices.isEmpty) continue;
-
-        _checkComponentPair(A, B);
-      }
     }
+    ;
   }
-
-  void _checkComponentPair(ComponentData A, ComponentData B) {
-    for (final vertexA in A.vertices) {
-      for (final vertexB in B.vertices) {
-        if (_areVerticesClose(vertexA, vertexB)) {
-          _mergeOrCreateCluster(vertexA, vertexB);
-        }
-      }
-    }
-  }
-
-  bool _areVerticesClose(Vertex vertexA, Vertex vertexB) {
-    return (vertexA.absolutePosition() - vertexB.absolutePosition()).distance < 2;
-  }
-
-  void _mergeOrCreateCluster(Vertex vertexA, Vertex vertexB) {
-    final clusterA = vertexA.componentData.vertexClusters[vertexA.id];
-    final clusterB = vertexB.componentData.vertexClusters[vertexB.id];
-    if (clusterA == null && clusterB == null) {
-      final cluster = VertexCluster();
-      cluster.addVertex(vertexA);
-      cluster.addVertex(vertexB);
-      clusters.add(cluster);
-      return;
-    }
-    else {
-      final target = clusterA ?? clusterB!;
-      target.addVertex(vertexA);
-      target.addVertex(vertexB);
-    }
-  }
-
 }
