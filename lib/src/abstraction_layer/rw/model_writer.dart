@@ -123,6 +123,14 @@ mixin ComponentWriter on ModelWriter {
     _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.addVertex, component));
   }
 
+  /// Removes vertex to the component with [componentId] at specified [index].
+  removeVertex(String componentId, Vertex vertex) {
+    _checkComponentId(componentId);
+    final component = _canvasModel.getComponent(componentId);
+    component.removeVertex(vertex);
+    _canvasState.componentUpdateEvent.broadcast(ComponentEvent(ComponentEvent.removeVertex, component));
+  }
+
   /// Sets the component's z-order to [zOrder].
   ///
   /// Higher z-order means that the component will be shown on top of another component with lower z-order.

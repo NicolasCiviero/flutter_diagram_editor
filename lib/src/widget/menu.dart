@@ -72,7 +72,7 @@ class DraggableMenu extends StatelessWidget {
       case 'arrow':
         final c = ComponentData(
           size: Size(150 * scale, 100 * scale),
-          minSize: Size(80 * scale, 64 * scale),
+          minSize: Size(10, 10),
           color: color,
           borderColor: borderColor,
           borderWidth: borderWidth,
@@ -85,7 +85,7 @@ class DraggableMenu extends StatelessWidget {
       case 'text':
         return ComponentData(
           size: Size(350 * scale, 180 * scale),
-          minSize: Size(60 * scale, 30 * scale),
+          minSize: Size(10, 10),
           color: textBackgroundColor,
           borderColor: Colors.transparent,
           borderWidth: borderWidth,
@@ -96,7 +96,7 @@ class DraggableMenu extends StatelessWidget {
       case 'polygon':
         final c = ComponentData(
           size: Size(150 * scale, 110 * scale),
-          minSize: Size(80 * scale, 64 * scale),
+          minSize: Size(5, 5),
           color: color,
           borderColor: borderColor,
           borderWidth: borderWidth,
@@ -110,7 +110,7 @@ class DraggableMenu extends StatelessWidget {
       default:
         return ComponentData(
           size: Size(160 * scale, 100 * scale),
-          minSize: Size(32 * scale, 24 * scale),
+          minSize: Size(5, 5),
           color: color,
           borderColor: borderColor,
           borderWidth: borderWidth,

@@ -41,7 +41,6 @@ class _DiagramAppState extends State<DiagramApp> {
     });
   }
 
-
   Future<void> initializeComponents(bool removeExistingRois) async {
     final jsonString = await rootBundle.loadString('assets/up_front_shapes.json');
     var json_components = loadComponentsFromJson(jsonString, color: Colors.orange.withAlpha(30));
@@ -90,7 +89,6 @@ class _DiagramAppState extends State<DiagramApp> {
     setState(() { });
   }
 
-
   void onComponentEvent(ComponentEvent? args) {
     if (args == null) return;
   }
@@ -122,6 +120,43 @@ class _DiagramAppState extends State<DiagramApp> {
               Padding(
                 padding: const EdgeInsets.all(36),
                 child: DiagramEditor(diagramEditorContext: diagramEditorContext),
+              ),
+              Positioned(
+                top: 0,
+                left: 0,
+                bottom: 0,
+                child: Row(
+                  children: [
+                    Container(
+                      width: 100,
+                      height: 290,
+                      decoration: BoxDecoration(
+                        //color: FlutterFlowTheme.of(context).secondary,
+                        color: Color.fromARGB(255, 150, 150, 150),
+                        borderRadius: const BorderRadius.only(
+                          topRight: Radius.circular(20.0),
+                          bottomRight: Radius.circular(20.0),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.5),
+                            spreadRadius: 1,
+                            blurRadius: 3,
+                            offset: Offset(2, 1), // changes position of shadow
+                          ),
+                        ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
+                        child: DraggableMenu(
+                            myPolicySet: policySet,
+                            color: Color.fromARGB(30, 255, 87, 34),
+                            borderColor: Colors.deepOrange,
+                            scale: 0.8),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

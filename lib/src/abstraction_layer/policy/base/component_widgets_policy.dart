@@ -1,9 +1,7 @@
 import 'package:shape_editor/src/abstraction_layer/policy/base/state_policy.dart';
-import 'package:shape_editor/src/abstraction_layer/policy/base/component_policy.dart';
 import 'package:shape_editor/src/abstraction_layer/policy/base_policy_set.dart';
 import 'package:shape_editor/src/canvas_context/model/component_data.dart';
 import 'package:shape_editor/src/utils/painter/arrow_highlight_painter.dart';
-import 'package:shape_editor/src/widget/dialog/edit_component_dialog.dart';
 import 'package:shape_editor/src/widget/option_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -219,6 +217,10 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
         },
         onPanEnd: (details) {
           modelWriter.moveVertexEnd(componentData.id);
+        },
+        onDoubleTap: () {
+          modelWriter.removeVertex(componentData.id, vertex);
+          modelWriter.updateComponent(componentData.id);
         },
         child: MouseRegion(
           cursor: SystemMouseCursors.resizeDownRight,

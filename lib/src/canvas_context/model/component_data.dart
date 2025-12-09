@@ -115,6 +115,12 @@ class ComponentData with ChangeNotifier {
     if (index == null || index == vertices.length) vertices.add(Vertex(position, this));
     else vertices.insert(index, Vertex(position, this));
   }
+  /// Remove vertex at [position] given.
+  removeVertex(Vertex? vertex) {
+    if (vertices.contains(vertex)) {
+      vertices.remove(vertex);
+    }
+  }
 
   updateComponentPositionAndSize() {
     double minX=double.infinity, minY=double.infinity, maxX=0, maxY=0;
@@ -264,6 +270,7 @@ class ComponentEvent extends EventArgs {
   static String moveVertex = "moveVertex";
   static String moveVertexEnded = "moveVertexEnded";
   static String addVertex = "addVertex";
+  static String removeVertex = "removeVertex";
   static String setPosition = "setPosition";
   static String update = "update";
   static String resize = "resize";
