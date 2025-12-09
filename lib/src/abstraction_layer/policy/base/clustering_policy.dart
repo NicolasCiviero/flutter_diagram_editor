@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:shape_editor/src/abstraction_layer/policy/base_policy_set.dart';
 import 'package:shape_editor/src/canvas_context/model/component_data.dart';
 import 'package:shape_editor/src/canvas_context/model/vertex.dart';
@@ -6,7 +8,10 @@ import 'package:shape_editor/src/canvas_context/model/vertex_cluster.dart';
 mixin ClusteringPolicy on BasePolicySet {
   createClusters() {
     final componentList =
-        modelReader.canvasModel.getAllComponents().values.toList();
+    modelReader.canvasModel
+        .getAllComponents()
+        .values
+        .toList();
 
     for (int i = 0; i < componentList.length; i++) {
       final A = componentList[i];
@@ -50,5 +55,36 @@ mixin ClusteringPolicy on BasePolicySet {
       target.addVertex(vertexA);
       target.addVertex(vertexB);
     }
+  }
+
+  void findClusterableVertices(Vertex sourceVertex, double radius) {
+    final componentList = modelReader.canvasModel.getAllComponents().values.toList();
+    final sourceAbsPos = sourceVertex.absolutePosition();
+    print("findClusterableVertices: checking ${componentList.length} items");
+    print("source vertex position: x${sourceAbsPos.dx} y${sourceAbsPos.dy}");
+
+    for (final component in componentList) {
+      if (component.id == sourceVertex.componentData.id) continue;
+      final cPos = component.position;
+
+      // Optimization: Skip components far from source vertex.
+      if (sourceAbsPos.dx < cPos.dx - radius) continue;
+      if (sourceAbsPos.dy < cPos.dy - radius) continue;
+      if (sourceAbsPos.dx > cPos.dx + component.size.width + radius) continue;
+      if (sourceAbsPos.dy > cPos.dy + component.size.height + radius) continue;
+      // Skip Component if both already share a cluster
+      final sourceCluster = sourceVertex.componentData.vertexClusters[sourceVertex.id];
+      if (component.vertexClusters.containsValue(sourceCluster)) continue;
+
+      // Check each vertex in the candidate component
+      for (final targetVertex in component.vertices) {
+        final dist = (sourceAbsPos - targetVertex.absolutePosition()).distance;
+        print("        x${targetVertex.absolutePosition().dx} y${targetVertex.absolutePosition().dy}  dist${dist}");
+        if (dist <= radius) {
+          clusterVertices(sourceVertex, targetVertex);
+        }
+      }
+    }
+    return null;
   }
 }

@@ -2,6 +2,8 @@ import 'package:flutter/services.dart';
 import 'package:shape_editor/src/abstraction_layer/policy/base_policy_set.dart';
 import 'package:flutter/material.dart';
 
+import 'package:shape_editor/src/canvas_context/model/vertex.dart';
+
 mixin StatePolicy on BasePolicySet {
   bool isGridVisible = true;
 
@@ -14,6 +16,7 @@ mixin StatePolicy on BasePolicySet {
   ];
 
   String? selectedComponentId;
+  Vertex? selectedVertex;
 
   bool isMultipleSelectionOn = false;
   List<String> multipleSelected = [];
@@ -64,7 +67,6 @@ mixin StatePolicy on BasePolicySet {
   removeComponentFromMultipleSelection(String componentId) {
     multipleSelected.remove(componentId);
   }
-
 }
 
 mixin CustomBehaviourPolicy implements StatePolicy {
