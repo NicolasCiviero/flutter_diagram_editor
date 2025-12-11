@@ -6,6 +6,9 @@ import 'package:shape_editor/src/canvas_context/model/vertex.dart';
 import 'package:shape_editor/src/canvas_context/model/vertex_cluster.dart';
 
 mixin ClusteringPolicy on BasePolicySet {
+  static const double autoClusteringDistance = 2.0;
+  static const double userClusteringDistance = 10.0;
+
   createClusters() {
     final componentList =
     modelReader.canvasModel
@@ -38,7 +41,7 @@ mixin ClusteringPolicy on BasePolicySet {
 
   bool _areVerticesClose(Vertex vertexA, Vertex vertexB) {
     return (vertexA.absolutePosition() - vertexB.absolutePosition()).distance <
-        2;
+        autoClusteringDistance;
   }
 
   void clusterVertices(Vertex vertexA, Vertex vertexB) {
@@ -85,6 +88,19 @@ mixin ClusteringPolicy on BasePolicySet {
         }
       }
     }
-    return null;
+  }
+
+  void detachVertexFromCluster(Vertex vertex) {
+    final cluster = vertex.componentData.vertexClusters[vertex.id];
+    if (cluster == null) return;
+
+    cluster.removeVertex(vertex);
+
+    if (cluster.vertices.length < 2) {
+      modelReader.canvasModel.clusters.remove(cluster);
+      for (final v in cluster.vertices) {
+        v.componentData.vertexClusters.remove(v.id);
+      }
+    }
   }
 }

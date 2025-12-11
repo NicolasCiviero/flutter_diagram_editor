@@ -4,12 +4,12 @@
 The current focus is on maintaining and updating the documentation (Memory Bank) for the `shape_editor` project. The agent has just initialized the memory bank.
 
 ## Recent Changes
-- **Initialization**: Created the initial set of Memory Bank files (`projectbrief.md`, `productContext.md`, `systemPatterns.md`, `techContext.md`, `activeContext.md`, `progress.md`).
+- **Refactoring**: Moved vertex clustering logic from `CanvasModel` to `ClusteringPolicy`.
+- **Initialization**: Created the initial set of Memory Bank files.
 
 ## Active Tasks
-- [x] Initialize Memory Bank
 - [x] Analyze Clustering Logic
-- [ ] Refactor Clustering Logic (Extract to Policy)
+- [x] Refactor Clustering Logic (Extract to Policy)
 - [ ] Review library core functionality (ongoing/future)
 
 ## Open Questions

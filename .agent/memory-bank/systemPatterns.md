@@ -13,6 +13,7 @@ The project follows a modular architecture centered around the `DiagramEditor` w
     - **CanvasPolicy**: Handling canvas gestures (tap, drag).
     - **ComponentPolicy**: Handling component interaction.
     - **LinkPolicy**: Handling link interaction.
+    - **ClusteringPolicy**: Handling vertex clustering logic.
 5.  **State Management**:
     - **CanvasReader**: Used to read the current state of the diagram (components, links, canvas position).
     - **CanvasWriter**: Used to modify the state (add components, move items, chang properties).
@@ -22,6 +23,7 @@ The project follows a modular architecture centered around the `DiagramEditor` w
 - **Mixin Composition**: heavily used for defining Policies. This allows developers to pick and choose behaviors (e.g., `with MyInitPolicy, CanvasControlPolicy`).
 - **Command/Action Pattern**: (Implicit) `CanvasWriter` acts as the executor of actions.
 - **Observer/Listener**: The diagram likely listens to state changes to repaint.
+- **Separation of Concens**: `CanvasModel` holds data (e.g., clusters), while Policies (e.g., `ClusteringPolicy`) define behavior.
 
 ## File Structure (inferred)
 - `lib/shape_editor.dart`: Entry point.

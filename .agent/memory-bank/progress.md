@@ -4,6 +4,7 @@
 The project is a published Flutter package (`shape_editor` / `diagram_editor`). The memory bank has been initialized.
 
 ## Milestones
+- **Refactor**: Clustering logic extracted to `ClusteringPolicy` (Completed).
 - **Initialization**: Memory Bank structure created.
 - **Version**: 0.0.21 (Current Package Version).
 

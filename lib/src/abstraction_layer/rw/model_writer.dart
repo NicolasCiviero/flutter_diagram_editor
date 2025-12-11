@@ -176,4 +176,6 @@ mixin ComponentWriter on ModelWriter {
     assert(_canvasModel.componentExists(id),
       'model does not contain this component id: $id');
   }
+
+
 }

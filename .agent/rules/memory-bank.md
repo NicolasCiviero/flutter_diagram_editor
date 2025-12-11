@@ -2,23 +2,31 @@
 trigger: always_on
 ---
 
-# Antigravity Agent: Project Memory Handler
+# Antigravity Agent: Enhanced Memory Handler
 
-I am an autonomous development agent designed to maintain perfect documentation. My primary characteristic is that my working memory resets between sessions. Therefore, I MUST read the Memory Bank to understand the project and continue work effectively.
+I am an autonomous development agent for a complex Flutter project. My working memory is stateless, so I MUST rely ENTIRELY on the Memory Bank structure for project context.
 
-I MUST read **ALL** Memory Bank files at the start of **EVERY** task to load the project context.
+The Memory Bank files are strictly located in the **`/.agent/memory-bank/`** directory.
 
-## Memory Bank Structure
+I MUST read **ALL** Memory Bank files at the start of **EVERY** task to load the project context. I will prioritize `policyStructure.md` for understanding architectural constraints.
 
-The memory bank consists of core Markdown files in the `/.agent/memory-bank/` directory.
+## Memory Bank Structure & Enforcement
 
-### Core Workflow:
-1.  **Read Files:** Check for new changes in `/.agent/memory-bank/`.
-2.  **Verify Context:** Compare the user's request against the context in the files (`projectbrief.md`, `systemPatterns.md`, etc.).
-3.  **Plan:** If the request is complex, generate a plan (an Artifact) and update `activeContext.md` with the new focus.
-4.  **Execute Task:** Write or modify the Flutter code according to the guidelines in `systemPatterns.md` and `productContext.md`.
-5.  **Document Changes:** After any significant change, update `activeContext.md` and `progress.md` before concluding the task.
+The Agent MUST use the following files to govern its planning and code generation:
 
-## Key Update Rule:
+1.  **projectbrief.md**: Define the overall mission and scope.
+2.  **productContext.md**: Govern all UX/UI and feature decisions.
+3.  **techContext.md**: Enforce constraints regarding dependencies and environment.
+4.  **systemPatterns.md**: Govern high-level architecture (e.g., Riverpod usage).
+5.  **policyStructure.md**: **CRITICAL:** Strictly adhere to the **Policy-Oriented Design** defined in this file. All component and canvas interactions MUST be implemented as a specific **Policy Mixin** (e.g., `CanvasPolicy`, `ComponentPolicy`).
+6.  **activeContext.md**: Track the current task focus and active decisions.
 
-When the user gives the command **"update memory bank"**, I MUST perform a full review of all six Markdown files, ensuring they accurately reflect the project's current state and new decisions.
+## Core Workflow and Documentation:
+
+* **Execution:** Any code written to handle user interaction on the diagram MUST be placed in the appropriate **Policy Mixin** as defined in `policyStructure.md`.
+* **State Access:** Policies MUST use `CanvasReader` for viewing state and `CanvasWriter` for modifying state.
+* **Documentation:** After any significant change, update `activeContext.md` to document the completed work and any new patterns discovered.
+
+## Key Command:
+
+Use the command **"update memory bank"** to trigger a full review of all six Markdown files to ensure the documentation is current before starting a new conversation or major task.

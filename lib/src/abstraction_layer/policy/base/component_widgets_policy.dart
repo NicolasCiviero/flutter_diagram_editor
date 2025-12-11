@@ -1,3 +1,4 @@
+import 'package:shape_editor/src/abstraction_layer/policy/base/clustering_policy.dart';
 import 'package:shape_editor/src/abstraction_layer/policy/base/state_policy.dart';
 import 'package:shape_editor/src/abstraction_layer/policy/base_policy_set.dart';
 import 'package:shape_editor/src/canvas_context/model/component_data.dart';
@@ -6,6 +7,7 @@ import 'package:shape_editor/src/widget/option_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:shape_editor/shape_editor.dart';
+import 'package:flutter/services.dart'; // For HardwareKeyboard
 
 import '../../../canvas_context/model/vertex.dart';
 
@@ -39,10 +41,12 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
   /// These widgets will be displayed over all components.
   ///
   /// You have [ComponentData] here so you can customize the widgets to individual component.
-  Widget showCustomWidgetWithComponentDataOver(BuildContext context, ComponentData componentData) {
+  Widget showCustomWidgetWithComponentDataOver(
+      BuildContext context, ComponentData componentData) {
     bool isJunction = componentData.type == 'junction';
     bool isPolygon = componentData.type == 'polygon';
-    bool hasVertices = componentData.type == 'polygon' || componentData.type == 'arrow';
+    bool hasVertices =
+        componentData.type == 'polygon' || componentData.type == 'arrow';
     bool showOptions = (!isMultipleSelectionOn) && !isJunction;
     bool isResizable = componentData.type != 'pixel_map' && !hasVertices;
 
@@ -52,7 +56,8 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
         children: [
           if (showOptions) componentTopOptions(componentData, context),
           //if (showOptions) componentBottomOptions(componentData),
-          highlight( componentData, isMultipleSelectionOn ? Colors.cyan : Colors.red),
+          highlight(
+              componentData, isMultipleSelectionOn ? Colors.cyan : Colors.red),
           if (isPolygon) ...appendVertices(componentData),
           if (hasVertices) ...dragVertices(componentData),
           if (isResizable) resizeCorner(componentData),
@@ -63,7 +68,8 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
   }
 
   Widget componentTopOptions(ComponentData componentData, context) {
-    Offset componentPosition = stateReader.toCanvasFinalCoordinates(componentData.position);
+    Offset componentPosition =
+        stateReader.toCanvasFinalCoordinates(componentData.position);
     return Positioned(
       left: componentPosition.dx,
       top: componentPosition.dy - 48,
@@ -140,24 +146,27 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
   }
 
   Widget highlight(ComponentData componentData, Color color) {
-    var position = componentData.position * stateReader.finalScale + stateReader.position;
+    var position =
+        componentData.position * stateReader.finalScale + stateReader.position;
     if (componentData.type != "arrow") position = position - Offset(2, 2);
     final finalScale = stateReader.finalScale;
     return Positioned(
       left: position.dx,
       top: position.dy,
       child: CustomPaint(
-        painter: componentData.type == "arrow" ?
-        ArrowHighlightPainter(
-            p1: componentData.vertices[0].position.scale(finalScale, finalScale),
-            p2: componentData.vertices[1].position.scale(finalScale, finalScale),
-            color: color,
-        ) :
-        RectHighlightPainter(
-          width: componentData.size.width * finalScale + 4,
-          height: componentData.size.height * finalScale + 4,
-          color: color,
-        ),
+        painter: componentData.type == "arrow"
+            ? ArrowHighlightPainter(
+                p1: componentData.vertices[0].position
+                    .scale(finalScale, finalScale),
+                p2: componentData.vertices[1].position
+                    .scale(finalScale, finalScale),
+                color: color,
+              )
+            : RectHighlightPainter(
+                width: componentData.size.width * finalScale + 4,
+                height: componentData.size.height * finalScale + 4,
+                color: color,
+              ),
       ),
     );
   }
@@ -170,7 +179,8 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
       top: componentBottomRightCorner.dy - 12,
       child: GestureDetector(
         onPanUpdate: (details) {
-          modelWriter.resizeComponent(componentData.id, details.delta / stateReader.finalScale);
+          modelWriter.resizeComponent(
+              componentData.id, details.delta / stateReader.finalScale);
         },
         onPanEnd: (details) {
           modelWriter.resizeComponentEnd(componentData.id);
@@ -197,26 +207,67 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
     );
   }
 
-  dragVertices(ComponentData componentData) {
-    return componentData.vertices.map<Widget>(
-            (vertex) => dragVertex(componentData, vertex)
-    ).toList();
+  //Helper to check shift status
+  bool _isShiftPressed() {
+    return HardwareKeyboard.instance.logicalKeysPressed
+            .contains(LogicalKeyboardKey.shiftLeft) ||
+        HardwareKeyboard.instance.logicalKeysPressed
+            .contains(LogicalKeyboardKey.shiftRight);
   }
+
+  bool _isCtrlPressed() {
+    return HardwareKeyboard.instance.logicalKeysPressed
+            .contains(LogicalKeyboardKey.controlLeft) ||
+        HardwareKeyboard.instance.logicalKeysPressed
+            .contains(LogicalKeyboardKey.controlRight);
+  }
+
+  dragVertices(ComponentData componentData) {
+    return componentData.vertices
+        .map<Widget>((vertex) => dragVertex(componentData, vertex))
+        .toList();
+  }
+
   dragVertex(ComponentData componentData, Vertex vertex) {
     Offset vertexPosition = stateReader.toCanvasFinalCoordinates(
-        componentData.position + Offset(vertex.position.dx, vertex.position.dy));
+        componentData.position +
+            Offset(vertex.position.dx, vertex.position.dy));
+
+    bool showClusterArea = _isShiftPressed() && selectedVertex == vertex;
+    double radius = ClusteringPolicy.userClusteringDistance;
+
     return Positioned(
-      left: vertexPosition.dx - 12,
-      top: vertexPosition.dy - 12,
+      left: vertexPosition.dx - (showClusterArea ? radius : 12),
+      top: vertexPosition.dy - (showClusterArea ? radius : 12),
       child: GestureDetector(
+        onTap: () {
+          if (_isCtrlPressed()) {
+            modelReader.canvasModel.policySet.detachVertexFromCluster(vertex);
+          }
+        },
+        onPanStart: (details) {
+          selectedVertex = vertex;
+          if (_isCtrlPressed()) {
+            modelReader.canvasModel.policySet.detachVertexFromCluster(vertex);
+          }
+        },
         onPanUpdate: (details) {
-          final RenderBox renderBox = stateReader.canvasState
-              .canvasGlobalKey.currentContext?.findRenderObject() as RenderBox;
-          var position = stateReader.fromCanvasFinalCoordinates(renderBox.globalToLocal(details.globalPosition));
+          final RenderBox renderBox = stateReader
+              .canvasState.canvasGlobalKey.currentContext
+              ?.findRenderObject() as RenderBox;
+          var position = stateReader.fromCanvasFinalCoordinates(
+              renderBox.globalToLocal(details.globalPosition));
           modelWriter.moveVertex(componentData.id, vertex, position);
+          if (showClusterArea) {
+            modelReader.canvasModel.policySet.findClusterableVertices(vertex, radius / stateReader.finalScale);
+          }
+          if (_isCtrlPressed()) {
+            modelReader.canvasModel.policySet.detachVertexFromCluster(vertex);
+          }
         },
         onPanEnd: (details) {
           modelWriter.moveVertexEnd(componentData.id);
+          selectedVertex = null;
         },
         onDoubleTap: () {
           modelWriter.removeVertex(componentData.id, vertex);
@@ -225,18 +276,32 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
         child: MouseRegion(
           cursor: SystemMouseCursors.resizeDownRight,
           child: Container(
-            width: 24,
-            height: 24,
+            width: showClusterArea ? radius * 2 : 24,
+            height: showClusterArea ? radius * 2 : 24,
             color: Colors.transparent,
             child: Center(
-              child: Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  //color: componentData.vertexClusters[vertex.id] == null ? Colors.white : Colors.lime,
-                  color: Colors.white,
-                  border: Border.all(color: Colors.grey[800]!),
-                ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  if (showClusterArea)
+                    Container(
+                      width: radius * 2,
+                      height: radius * 2,
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withOpacity(0.5),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      //color: componentData.vertexClusters[vertex.id] == null ? Colors.white : Colors.lime,
+                      color: Colors.white,
+                      border: Border.all(color: Colors.grey[800]!),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -249,12 +314,13 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
     List<Offset> offsets = [];
     for (int i = 0; i < componentData.vertices.length; i++) {
       var a = componentData.vertices[i];
-      var b = componentData.vertices[(i+1)%componentData.vertices.length];
-      offsets.add(Offset((a.position.dx + b.position.dx) / 2, (a.position.dy + b.position.dy) / 2));
+      var b = componentData.vertices[(i + 1) % componentData.vertices.length];
+      offsets.add(Offset((a.position.dx + b.position.dx) / 2,
+          (a.position.dy + b.position.dy) / 2));
     }
     List<Widget> widgets = [];
     for (int i = 0; i < offsets.length; i++) {
-      widgets.add(appendVertex(componentData, offsets[i], i+1));
+      widgets.add(appendVertex(componentData, offsets[i], i + 1));
     }
     return widgets;
   }
@@ -295,7 +361,7 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
 
   Widget junctionOptions(ComponentData componentData) {
     Offset componentPosition =
-    stateReader.toCanvasCoordinates(componentData.position);
+        stateReader.toCanvasCoordinates(componentData.position);
     return Positioned(
       left: componentPosition.dx - 24,
       top: componentPosition.dy - 48,
@@ -316,5 +382,4 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
       ),
     );
   }
-
 }
