@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:shape_editor/src/abstraction_layer/policy/base_policy_set.dart';
 import 'package:shape_editor/src/canvas_context/model/component_data.dart';
 import 'package:shape_editor/src/canvas_context/model/vertex.dart';
@@ -8,6 +9,7 @@ import 'package:shape_editor/src/canvas_context/model/vertex_cluster.dart';
 mixin ClusteringPolicy on BasePolicySet {
   static const double autoClusteringDistance = 2.0;
   static const double userClusteringDistance = 10.0;
+  static Color clusterIndicatorColor = Colors.blue.withOpacity(0.5);
 
   createClusters() {
     final componentList =

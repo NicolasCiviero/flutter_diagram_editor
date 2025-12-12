@@ -215,13 +215,6 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
             .contains(LogicalKeyboardKey.shiftRight);
   }
 
-  bool _isCtrlPressed() {
-    return HardwareKeyboard.instance.logicalKeysPressed
-            .contains(LogicalKeyboardKey.controlLeft) ||
-        HardwareKeyboard.instance.logicalKeysPressed
-            .contains(LogicalKeyboardKey.controlRight);
-  }
-
   dragVertices(ComponentData componentData) {
     return componentData.vertices
         .map<Widget>((vertex) => dragVertex(componentData, vertex))
@@ -230,8 +223,7 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
 
   dragVertex(ComponentData componentData, Vertex vertex) {
     Offset vertexPosition = stateReader.toCanvasFinalCoordinates(
-        componentData.position +
-            Offset(vertex.position.dx, vertex.position.dy));
+        componentData.position + Offset(vertex.position.dx, vertex.position.dy));
 
     bool showClusterArea = _isShiftPressed() && selectedVertex == vertex;
     double radius = ClusteringPolicy.userClusteringDistance;
@@ -240,16 +232,9 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
       left: vertexPosition.dx - (showClusterArea ? radius : 12),
       top: vertexPosition.dy - (showClusterArea ? radius : 12),
       child: GestureDetector(
-        onTap: () {
-          if (_isCtrlPressed()) {
-            modelReader.canvasModel.policySet.detachVertexFromCluster(vertex);
-          }
-        },
+        onTap: () {},
         onPanStart: (details) {
           selectedVertex = vertex;
-          if (_isCtrlPressed()) {
-            modelReader.canvasModel.policySet.detachVertexFromCluster(vertex);
-          }
         },
         onPanUpdate: (details) {
           final RenderBox renderBox = stateReader
@@ -257,12 +242,16 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
               ?.findRenderObject() as RenderBox;
           var position = stateReader.fromCanvasFinalCoordinates(
               renderBox.globalToLocal(details.globalPosition));
-          modelWriter.moveVertex(componentData.id, vertex, position);
-          if (showClusterArea) {
-            modelReader.canvasModel.policySet.findClusterableVertices(vertex, radius / stateReader.finalScale);
-          }
-          if (_isCtrlPressed()) {
+
+          if (!_isShiftPressed()) {
             modelReader.canvasModel.policySet.detachVertexFromCluster(vertex);
+          }
+
+          modelWriter.moveVertex(componentData.id, vertex, position);
+
+          if (_isShiftPressed()) {
+            modelReader.canvasModel.policySet.findClusterableVertices(
+                vertex, radius / stateReader.finalScale);
           }
         },
         onPanEnd: (details) {
@@ -288,7 +277,7 @@ mixin ComponentWidgetsPolicy on BasePolicySet implements StatePolicy {
                       width: radius * 2,
                       height: radius * 2,
                       decoration: BoxDecoration(
-                        color: Colors.blue.withOpacity(0.5),
+                        color: ClusteringPolicy.clusterIndicatorColor,
                         shape: BoxShape.circle,
                       ),
                     ),
