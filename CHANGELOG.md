@@ -24,3 +24,8 @@
 ### Added
 - Image type components
 - 'locked' flag to lock components
+- 
+## 0.0.22
+
+### Added
+- Add multiple vertices movement
