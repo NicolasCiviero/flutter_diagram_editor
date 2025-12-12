@@ -1,4 +1,4 @@
-import 'package:shape_editor/src/abstraction_layer/policy/base/policy_set.dart';
+import 'package:shape_editor/src/abstraction_layer/policy/policy_set.dart';
 import 'package:shape_editor/src/canvas_context/canvas_state.dart';
 import 'package:shape_editor/src/canvas_context/model/component_data.dart';
 import 'package:flutter/gestures.dart';

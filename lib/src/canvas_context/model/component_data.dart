@@ -195,12 +195,12 @@ class ComponentData with ChangeNotifier {
 
   /// Create a copy of this ComponentData
   ComponentData clone(){
-    return ComponentData(
+    var componentData =
+    ComponentData(
       position: this.position,
       size: this.size,
       minSize: this.minSize,
       type: this.type,
-      vertices: this.vertices.map<Vertex>((e) => Vertex(Offset(e.position.dx, e.position.dy), this)).toList(),
       color: this.color,
       borderColor: this.borderColor,
       borderWidth: this.borderWidth,
@@ -208,6 +208,9 @@ class ComponentData with ChangeNotifier {
       textAlignment: this.textAlignment,
       textSize: this.textSize,
     );
+    componentData.vertices = this.vertices.map<Vertex>((e) => Vertex(Offset(e.position.dx, e.position.dy), componentData)).toList();
+
+    return componentData;
   }
 
   @override

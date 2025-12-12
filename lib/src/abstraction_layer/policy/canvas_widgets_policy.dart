@@ -1,4 +1,4 @@
-import 'package:shape_editor/src/abstraction_layer/policy/base/state_policy.dart';
+import 'package:shape_editor/src/abstraction_layer/policy/state_policy.dart';
 import 'package:shape_editor/src/abstraction_layer/policy/base_policy_set.dart';
 import 'package:flutter/material.dart';
 import 'package:shape_editor/shape_editor.dart';

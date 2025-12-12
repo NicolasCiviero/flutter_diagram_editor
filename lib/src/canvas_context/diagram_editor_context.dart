@@ -1,4 +1,4 @@
-import 'package:shape_editor/src/abstraction_layer/policy/base/policy_set.dart';
+import 'package:shape_editor/src/abstraction_layer/policy/policy_set.dart';
 import 'package:shape_editor/src/abstraction_layer/rw/model_reader.dart';
 import 'package:shape_editor/src/abstraction_layer/rw/model_writer.dart';
 import 'package:shape_editor/src/abstraction_layer/rw/state_reader.dart';
