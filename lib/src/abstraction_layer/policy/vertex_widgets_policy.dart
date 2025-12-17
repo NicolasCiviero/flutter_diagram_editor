@@ -41,8 +41,7 @@ mixin VertexWidgetsPolicy on BasePolicySet implements StatePolicy {
           final RenderBox renderBox = stateReader
               .canvasState.canvasGlobalKey.currentContext
               ?.findRenderObject() as RenderBox;
-          var position = stateReader.fromCanvasFinalCoordinates(
-              renderBox.globalToLocal(details.globalPosition));
+          var position = stateReader.fromCanvasFinalCoordinates(renderBox.globalToLocal(details.globalPosition));
 
           if (!_isShiftPressed()) {
             (modelReader.canvasModel.policySet as dynamic)
@@ -53,8 +52,7 @@ mixin VertexWidgetsPolicy on BasePolicySet implements StatePolicy {
 
           if (_isShiftPressed()) {
             (modelReader.canvasModel.policySet as dynamic)
-                .findClusterableVertices(
-                    vertex, radius / stateReader.finalScale);
+                .findClusterableVertices(vertex, radius / stateReader.finalScale);
           }
         },
         onPanEnd: (details) {

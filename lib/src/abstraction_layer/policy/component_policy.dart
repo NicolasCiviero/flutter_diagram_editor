@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:shape_editor/shape_editor.dart';
 import 'package:shape_editor/src/abstraction_layer/policy/state_policy.dart';
 import 'package:shape_editor/src/abstraction_layer/policy/base_policy_set.dart';
@@ -68,6 +69,12 @@ mixin ComponentPolicy on BasePolicySet implements StatePolicy  {
         //TODO: possible changes when vertices have clusters
       });
     } else {
+      if (!_isShiftPressed()) {
+        var cmp = modelReader.getComponent(componentId);
+        for (var vertex in cmp.vertices) {
+          (modelReader.canvasModel.policySet as dynamic).detachVertexFromCluster(vertex);
+        }
+      }
       modelWriter.moveComponent(componentId, positionDelta);
     }
     lastFocalPoint = details.localFocalPoint;
@@ -91,4 +98,10 @@ mixin ComponentPolicy on BasePolicySet implements StatePolicy  {
 
   onComponentPointerSignal(String componentId, PointerSignalEvent event) {}
 
+  bool _isShiftPressed() {
+    return HardwareKeyboard.instance.logicalKeysPressed
+        .contains(LogicalKeyboardKey.shiftLeft) ||
+        HardwareKeyboard.instance.logicalKeysPressed
+            .contains(LogicalKeyboardKey.shiftRight);
+  }
 }

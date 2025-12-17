@@ -120,6 +120,7 @@ class ComponentData with ChangeNotifier {
     if (vertices.contains(vertex)) {
       vertices.remove(vertex);
     }
+    notifyListeners();
   }
 
   updateComponentPositionAndSize() {
