@@ -29,3 +29,8 @@
 
 ### Added
 - Add multiple vertices movement
+
+## 0.0.23
+
+### Changed
+- component movement detach clusters if shift is not pressed
